@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon Shop | MM2 Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Scripts de Google Identity -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #020617; color: white; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .blue-glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        .bg-gradient-moon { background: radial-gradient(circle at top right, #1e3a8a 0%, #020617 60%); }
+        [data-fs-success], [data-fs-error] { display: none; }
+        .fs-success [data-fs-success] { display: block; }
+        .fs-error [data-fs-error] { display: block; }
+        
+        /* Estilos para el estado de bloqueo */
+        .btn-locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+    </style>
+</head>
+<body class="bg-gradient-moon min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center px-8 py-6 max-w-7xl mx-auto">
+        <h1 class="text-2xl font-extrabold tracking-tighter text-blue-400">MOON <span class="text-white">SHOP</span></h1>
+        <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+            <a href="#" class="hover:text-blue-400 transition">Inicio</a>
+            <a href="#catalogo" class="hover:text-blue-400 transition">Catálogo Godly</a>
+            <div id="g_id_onload"
+                 data-client_id="1077686187923-5qq7ceq027qoqgl4nf5op21eijpr2s5d.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" data-type="standard"></div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span id="user-status" class="inline text-xs text-red-400 font-bold uppercase tracking-widest">● Desconectado</span>
+            <button class="bg-blue-600 hover:bg-blue-500 px-5 py-2 rounded-full text-sm font-bold transition blue-glow">TikTok Live</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="text-center py-20 px-4">
+        <div class="inline-block bg-blue-900/30 text-blue-400 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-500/30 mb-6">
+            Stock Verificado 2026
+        </div>
+        <h2 class="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight">Tu Arsenal de MM2 <br><span class="text-blue-500">Al Siguiente Nivel</span></h2>
+        <p class="text-gray-400 max-w-xl mx-auto text-lg leading-relaxed">
+            Inicia sesión con Google para habilitar las compras.
+        </p>
+    </header>
+
+    <!-- Catálogo de Ítems -->
+    <section id="catalogo" class="max-w-7xl mx-auto px-8 pb-24">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Item 1: Harvester -->
+            <div class="glass p-6 rounded-[2.5rem] hover:scale-[1.02] transition-all duration-300 group">
+                <div class="bg-blue-950/40 rounded-[2rem] h-56 mb-6 flex items-center justify-center overflow-hidden border border-white/5 relative">
+                    <img src="https://static.wikia.nocookie.net/murder-mystery-2/images/b/b5/HarvesterImproved.png" alt="Harvester" class="object-contain w-full h-full p-6 group-hover:rotate-3 transition-transform">
+                </div>
+                <h3 class="text-2xl font-bold mb-1">Harvester</h3>
+                <p class="text-gray-500 text-sm mb-6 uppercase tracking-wider font-semibold">Ancient</p>
+                <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-extrabold text-white">$27.000 <small class="text-xs text-blue-400">COP</small></span>
+                    </div>
+                    <button onclick="openModal('Harvester', '$27.000')" class="buy-btn btn-locked bg-white text-black px-6 py-3 rounded-2xl font-bold transition-colors" disabled>Comprar</button>
+                </div>
+            </div>
+
+            <!-- Item 2: Icebreaker -->
+            <div class="glass p-6 rounded-[2.5rem] hover:scale-[1.02] transition-all duration-300 group">
+                <div class="bg-blue-950/40 rounded-[2rem] h-56 mb-6 flex items-center justify-center overflow-hidden border border-white/5 relative">
+                    <img src="https://static.wikia.nocookie.net/murder-mystery-2/images/e/eb/Icebreaker.png" alt="Icebreaker" class="object-contain w-full h-full p-6 group-hover:rotate-3 transition-transform">
+                </div>
+                <h3 class="text-2xl font-bold mb-1">Icebreaker</h3>
+                <p class="text-gray-500 text-sm mb-6 uppercase tracking-wider font-semibold">Godly Knife</p>
+                <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-extrabold text-white">$12.500 <small class="text-xs text-blue-400">COP</small></span>
+                    </div>
+                    <button onclick="openModal('Icebreaker', '$12.500')" class="buy-btn btn-locked bg-white text-black px-6 py-3 rounded-2xl font-bold transition-colors" disabled>Comprar</button>
+                </div>
+            </div>
+
+            <!-- Item 3: Candy -->
+            <div class="glass p-6 rounded-[2.5rem] hover:scale-[1.02] transition-all duration-300 group">
+                <div class="bg-blue-950/40 rounded-[2rem] h-56 mb-6 flex items-center justify-center overflow-hidden border border-white/5 relative">
+                    <img src="https://static.wikia.nocookie.net/murder-mystery-2/images/1/1a/Updated_Candy.png" alt="Candy" class="object-contain w-full h-full p-6 group-hover:rotate-3 transition-transform">
+                </div>
+                <h3 class="text-2xl font-bold mb-1">Candy</h3>
+                <p class="text-gray-500 text-sm mb-6 uppercase tracking-wider font-semibold">Godly Knife</p>
+                <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-extrabold text-white">$11.500 <small class="text-xs text-blue-400">COP</small></span>
+                    </div>
+                    <button onclick="openModal('Candy', '$11.500')" class="buy-btn btn-locked bg-white text-black px-6 py-3 rounded-2xl font-bold transition-colors" disabled>Comprar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Pago -->
+    <div id="paymentModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div class="glass max-w-md w-full p-8 rounded-[2.5rem] relative overflow-y-auto max-h-[90vh] shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl transition">&times;</button>
+            <div class="text-center">
+                <div data-fs-success class="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-2xl text-sm font-medium">
+                    ✨ ¡Pedido enviado! Moon Shop te contactará pronto.
+                </div>
+                <div data-fs-error class="mb-6 p-4 bg-red-500/20 border border-red-500 text-red-400 rounded-2xl text-sm font-medium">
+                    ⚠️ Error al enviar. Por favor intenta de nuevo.
+                </div>
+
+                <h3 class="text-2xl font-extrabold mb-1">Confirmar Pedido</h3>
+                <p id="modalItemName" class="text-blue-400 font-bold mb-6"></p>
+                
+                <!-- ID de Usuario Visual -->
+                <div class="mb-4 text-xs font-mono bg-blue-500/10 py-2 rounded-lg border border-blue-500/20">
+                    ID DE COMPRADOR: <span id="displayID" class="text-white font-bold">Inicia sesión primero</span>
+                </div>
+
+                <div class="bg-white p-3 rounded-3xl inline-block mb-4 shadow-xl">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=Nequi-MoonShop" alt="QR Nequi" class="w-44 h-44 rounded-xl">
+                </div>
+                
+                <form id="my-form" class="space-y-4 text-left">
+                    <!-- ID obligatorio para el correo -->
+                    <input type="hidden" id="hiddenID" name="ID_Usuario_Google">
+                    <input type="hidden" id="hiddenItem" name="Item_Seleccionado">
+                    <input type="hidden" id="hiddenName" name="Nombre_Google">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 uppercase ml-3 tracking-widest">TikTok</label>
+                            <input type="text" name="tiktok" placeholder="@usuario" required class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm text-white">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 uppercase ml-3 tracking-widest">Roblox</label>
+                            <input type="text" name="roblox" placeholder="Usuario" required class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm text-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-3 tracking-widest">Titular de Cuenta (Nequi)</label>
+                        <input type="text" name="titular_nequi" placeholder="Nombre completo de quien paga" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm text-white">
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-500 uppercase ml-3 tracking-widest">Número de Cuenta (Nequi)</label>
+                        <input type="tel" name="numero_nequi" placeholder="3xx xxx xxxx" required class="w-full bg-white/5 border border-white/10 p-4 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm text-white">
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-lg mt-4 transition-all blue-glow tracking-tight">
+                        FINALIZAR COMPRA
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-16 border-t border-white/5 text-center px-8">
+        <p class="text-gray-500 text-[11px] max-w-2xl mx-auto leading-loose uppercase">
+            <b>MOON SHOP</b> — moonshopmm2@gmail.com <br>
+            Sistema de trade oficial de Murder Mystery 2.
+        </p>
+    </footer>
+
+    <script>
+        let userLoggedIn = false;
+        let userData = { id: "", name: "" };
+
+        // Función para manejar el inicio de sesión de Google
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function handleCredentialResponse(response) {
+            const responsePayload = parseJwt(response.credential);
+            
+            // Generar ID de 6 dígitos basado en su ID de Google
+            const shortID = responsePayload.sub.substring(0, 6);
+            userData.id = shortID;
+            userData.name = responsePayload.name;
+            userLoggedIn = true;
+
+            // Actualizar Interfaz
+            document.getElementById('user-status').innerText = "● Conectado: " + responsePayload.given_name;
+            document.getElementById('user-status').classList.replace('text-red-400', 'text-green-400');
+            document.getElementById('displayID').innerText = shortID;
+            
+            // Desbloquear botones de compra
+            document.querySelectorAll('.buy-btn').forEach(btn => {
+                btn.classList.remove('btn-locked');
+                btn.classList.add('hover:bg-blue-500', 'hover:text-white');
+                btn.disabled = false;
+            });
+            
+            console.log("ID Generado:", shortID);
+        }
+
+        const modal = document.getElementById('paymentModal');
+        const form = document.getElementById('my-form');
+        const btn = document.getElementById('submit-btn');
+
+        function openModal(name, price) {
+            if(!userLoggedIn) {
+                alert("Debes iniciar sesión con Google para comprar.");
+                return;
+            }
+            modal.classList.remove('hidden');
+            document.getElementById('modalItemName').innerText = name + ' — ' + price;
+            
+            // Inyectar datos obligatorios en campos ocultos
+            document.getElementById('hiddenItem').value = name + " (" + price + ")";
+            document.getElementById('hiddenID').value = userData.id;
+            document.getElementById('hiddenName').value = userData.name;
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            form.reset();
+        }
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.innerText = "ENVIANDO DATOS...";
+
+            const formData = new FormData(form);
+            
+            // Aquí se personaliza el mensaje que llegará al correo
+            // Formspree enviará todos los campos, incluyendo ID_Usuario_Google y Nombre_Google
+            
+            try {
+                const response = await fetch('https://formspree.io/f/mdabaowk', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    modal.classList.add('fs-success');
+                    btn.innerText = "¡PEDIDO ENVIADO!";
+                    btn.style.backgroundColor = "#22c55e"; 
+                    setTimeout(closeModal, 4000);
+                } else { throw new Error(); }
+            } catch (error) {
+                modal.classList.add('fs-error');
+                btn.disabled = false;
+                btn.innerText = "REINTENTAR ENVÍO";
+            }
+        };
+
+        window.onclick = (event) => { if (event.target == modal) closeModal(); }
+    </script>
+</body>
+</html>
