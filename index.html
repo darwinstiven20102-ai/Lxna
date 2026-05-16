@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Global En Vivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#0B141A] text-zinc-100 font-sans h-screen flex flex-col justify-between select-none overflow-hidden antialiased">
+
+    <!-- MODAL ELEGANTE PARA NOMBRE OBLIGATORIO -->
+    <div id="custom-name-modal" class="fixed inset-0 bg-black/85 backdrop-blur-xl z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#1F2C34] border border-zinc-800/80 rounded-2xl w-full max-w-sm p-6 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.7)] animate-scale-up text-center">
+            <div class="w-14 h-14 bg-gradient-to-tr from-sky-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl shadow-sky-500/10">
+                <i data-lucide="user-plus" class="w-6 h-6 text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-zinc-100 tracking-tight mb-2">Identificación Requerida</h3>
+            <p class="text-xs text-zinc-400 max-w-[280px] mx-auto mb-6 leading-relaxed">Ingresa un nombre o apodo para unirte a las conversaciones del chat global de forma segura.</p>
+            <div class="relative mb-5">
+                <input type="text" id="modal-name-input" placeholder="Tu nombre o apodo..." autocomplete="off"
+                       class="w-full bg-[#111B21] border border-zinc-800 focus:border-sky-500 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none transition-all placeholder-zinc-600 text-center font-medium shadow-inner">
+                <p id="modal-name-error" class="text-red-400 text-[11px] mt-2 hidden animate-fade-in flex items-center justify-center gap-1">
+                    <i data-lucide="alert-circle" class="w-3 h-3"></i> El nombre ingresado no es válido.
+                </p>
+            </div>
+            <button id="modal-name-btn" class="w-full bg-sky-600 text-white text-sm font-semibold py-3.5 rounded-xl hover:bg-sky-500 transition-all shadow-lg shadow-sky-600/10 active:scale-[0.99] tracking-wide">
+                Comenzar a chatear
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL ELEGANTE DE CONFIRMACIÓN DE ELIMINACIÓN -->
+    <div id="custom-delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#1F2C34] border border-zinc-800/60 rounded-2xl w-full max-w-xs p-5 shadow-2xl animate-scale-up text-center">
+            <div class="w-12 h-12 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20 shadow-inner">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400"></i>
+            </div>
+            <h3 id="delete-modal-title" class="text-base font-bold text-zinc-100 mb-2 tracking-tight">¿Eliminar mensaje?</h3>
+            <p id="delete-modal-desc" class="text-xs text-zinc-400 mb-5 leading-relaxed px-2">Esta acción borrará el elemento seleccionado de forma definitiva.</p>
+            <div class="flex space-x-3">
+                <button onclick="closeDeleteModal()" class="flex-1 bg-zinc-800 text-zinc-300 hover:bg-zinc-750 text-xs font-semibold py-3 rounded-xl transition-all active:scale-95 border border-zinc-750">
+                    Cancelar
+                </button>
+                <button id="confirm-delete-btn" class="flex-1 bg-red-600 text-white hover:bg-red-500 text-xs font-semibold py-3 rounded-xl transition-all shadow-lg shadow-red-600/10 active:scale-95">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR ENVOLTORIO PARA LA ISLA DINÁMICA -->
+    <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] pointer-events-none flex flex-col items-center justify-start w-full px-4">
+        
+        <!-- TOAST DE NOTIFICACIÓN DE MENSAJE ELIMINADO (MODO ISLA DINÁMICA) -->
+        <div id="delete-success-toast" class="hidden pointer-events-auto bg-black/95 text-zinc-200 px-5 py-3 rounded-full shadow-2xl border border-zinc-800/60 backdrop-blur-xl items-center space-x-3 animate-dynamic-island max-w-xs w-max justify-center overflow-hidden">
+            <div class="w-5 h-5 bg-red-500/20 border border-red-500/40 rounded-full flex items-center justify-center flex-shrink-0">
+                <i data-lucide="trash-2" class="w-3 h-3 text-red-400"></i>
+            </div>
+            <span class="text-xs font-medium tracking-wide whitespace-nowrap">Mensaje eliminado correctamente</span>
+        </div>
+
+        <!-- NOTIFICACIÓN EN APP / PRIVADOS (MODO ISLA DINÁMICA EXPANDIDA) -->
+        <div id="in-app-notification" class="hidden pointer-events-auto bg-black/95 text-white px-4 py-3.5 rounded-[24px] shadow-[0_25px_60px_rgba(0,0,0,0.8)] items-center space-x-3.5 cursor-pointer hover:bg-zinc-950 transition-all max-w-[360px] w-full animate-dynamic-island-expanded border border-zinc-800/50 backdrop-blur-xl overflow-hidden">
+            <div id="notif-avatar" class="w-10 h-10 bg-gradient-to-tr from-purple-600 via-indigo-500 to-blue-500 rounded-full flex items-center justify-center font-bold text-xs text-white flex-shrink-0 uppercase tracking-wider shadow-md">
+                U
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-[13px] font-bold text-zinc-100 truncate pr-2" id="notif-user">Usuario</h4>
+                    <span class="text-[9px] text-sky-400 font-bold flex-shrink-0 uppercase tracking-widest bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">Privado</span>
+                </div>
+                <p class="text-[12px] text-zinc-400 truncate mt-0.5" id="notif-text">Te envió un mensaje</p>
+            </div>
+            <div class="flex-shrink-0 pl-1">
+                <button class="bg-[#1F2C34] border border-zinc-800 text-white text-[11px] font-bold px-3.5 py-2 rounded-full hover:bg-zinc-800 transition-colors shadow-sm active:scale-95">
+                    Abrir
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SIDEBAR MEJORADO -->
+    <div id="sidebar-chats" class="fixed inset-y-0 left-0 w-80 bg-[#111B21] border-r border-zinc-800/50 z-40 transform -translate-x-full transition-transform duration-300 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col shadow-2xl">
+        <div class="p-4 border-b border-zinc-800/40 flex items-center justify-between bg-[#111B21]">
+            <h2 class="font-bold text-base tracking-tight text-zinc-100">Conversaciones</h2>
+            <button onclick="toggleSidebar(false)" class="text-zinc-400 hover:text-white p-1.5 hover:bg-zinc-800 rounded-full transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div class="p-3 bg-[#111B21]">
+            <div class="flex items-center space-x-2 bg-[#202C33] px-3 py-2.5 rounded-xl border border-transparent focus-within:border-zinc-700/80 transition-all shadow-inner">
+                <button onclick="goToGlobalChat(); toggleSidebar(false);" class="text-zinc-400 hover:text-sky-400 transition-colors mr-1" title="Volver al Chat Global">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                </button>
+                <i data-lucide="search" class="w-4 h-4 text-zinc-500"></i>
+                <input type="text" id="search-user-input" placeholder="Buscar usuario..." class="bg-transparent text-sm text-white focus:outline-none w-full placeholder-zinc-500">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-2 space-y-1 bg-[#111B21] custom-scrollbar" id="private-chats-list">
+            <p class="text-[12px] text-zinc-500 text-center py-6">No hay interacciones recientes</p>
+        </div>
+    </div>
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-30 hidden transition-opacity duration-300" onclick="toggleSidebar(false)"></div>
+
+    <!-- HEADER PRO ESTILO GLASSMORPHISM -->
+    <header class="bg-[#111B21]/90 backdrop-blur-md border-b border-zinc-800/40 p-4 flex items-center justify-between sticky top-0 z-10 shadow-md">
+        <div class="flex items-center space-x-3.5 cursor-pointer group" id="global-header-btn">
+            <div class="bg-gradient-to-tr from-sky-400 via-blue-500 to-indigo-600 p-[2px] rounded-full shadow-lg shadow-blue-500/10 active:scale-95 transition-transform duration-200">
+                <div class="bg-[#111B21] p-2 rounded-full text-white">
+                    <i data-lucide="globe" id="header-icon" class="w-4.5 h-4.5 text-sky-400"></i>
+                </div>
+            </div>
+            <div>
+                <h1 class="font-bold text-[15px] tracking-tight flex items-center space-x-1 text-zinc-100 group-hover:text-zinc-300 transition-colors">
+                    <span id="chat-title-text">Chat Global</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors"></i>
+                </h1>
+                <p class="text-[11px] text-zinc-400 flex items-center mt-0.5 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse shadow-sm shadow-emerald-500"></span>
+                    En vivo
+                </p>
+            </div>
+        </div>
+        
+        <!-- ICONO DE PERFIL CON LÁPIZ INTERACTIVO -->
+        <div id="profile-container" class="flex items-center space-x-2 bg-[#202C33] p-1.5 pr-3 rounded-full border border-zinc-800/40 shadow-inner cursor-pointer hover:bg-[#2A3942] hover:border-zinc-700/50 transition-all duration-200 relative group/profile" title="Ver / Editar Perfil">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-zinc-700 to-zinc-600 flex items-center justify-center text-zinc-200 shadow-md">
+                <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="flex items-center space-x-1.5">
+                <input type="text" id="username-input" value="Usuario Anonimo" class="bg-transparent text-xs font-bold focus:outline-none w-24 text-zinc-200 pointer-events-none select-none truncate" readonly>
+                <i data-lucide="pencil" id="edit-icon" class="w-3 h-3 text-zinc-400 group-hover/profile:text-zinc-200 transition-colors"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA DE CHAT PRINCIPAL -->
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3.5 bg-[#0B141A] scrollbar-none pb-4">
+    </main>
+
+    <!-- MENÚ DE ACCIONES FLOTANTE PREMIUM -->
+    <div id="action-menu" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 transition-all" onclick="closeActionMenu()">
+        <div class="bg-[#1F2C34] border border-zinc-800/60 rounded-2xl w-full max-w-xs overflow-hidden shadow-2xl animate-scale-up" onclick="event.stopPropagation()">
+            <div id="menu-options" class="flex flex-col p-1.5">
+                <button id="btn-menu-private-chat" class="flex items-center space-x-3 px-4 py-3 hover:bg-[#2A3942] rounded-xl text-left text-sm transition-all text-zinc-200 hidden font-medium">
+                    <i data-lucide="message-square" class="w-4 h-4 text-sky-400"></i>
+                    <span id="text-menu-private-chat">Chatear</span>
+                </button>
+                <button id="btn-menu-edit" class="flex items-center space-x-3 px-4 py-3 hover:bg-[#2A3942] rounded-xl text-left text-sm transition-all text-zinc-200 font-medium">
+                    <i data-lucide="pencil" class="w-4 h-4 text-zinc-400"></i>
+                    <span>Editar mensaje</span>
+                </button>
+                <div class="h-[1px] bg-zinc-800/40 my-1"></div>
+                <button id="btn-menu-delete" class="flex items-center space-x-3 px-4 py-3 hover:bg-red-500/10 rounded-xl text-left text-sm text-red-400 font-semibold transition-all">
+                    <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
+                    <span id="text-menu-delete">Eliminar para todos</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER / ENTRADA DE TEXTO PREMIUM -->
+    <footer class="p-3 bg-[#111B21] border-t border-zinc-800/30 sticky bottom-0 z-10 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.5)]">
+        <form id="chat-form" class="flex flex-col max-w-3xl mx-auto relative">
+            <div id="recording-waveform" class="hidden flex items-center justify-center space-x-2 py-3 mb-2.5 bg-[#1F2C34] border border-red-500/20 rounded-xl animate-fade-in shadow-inner">
+                <span class="text-xs text-red-400 font-bold mr-2 flex items-center tracking-wide">
+                    <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse shadow-sm shadow-red-500"></span> Grabando Audio
+                </span>
+                <div class="w-1 h-4 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-6 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-3 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-5 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-2 bg-red-500 rounded-full wave-bar"></div>
+            </div>
+
+            <div class="flex items-center space-x-2 w-full relative">
+                <div class="relative flex items-center">
+                    <button type="button" id="plus-btn" class="bg-[#202C33] border border-transparent hover:border-zinc-700 hover:bg-[#2A3942] text-zinc-300 p-2.5 rounded-full transition-all active:scale-95 flex items-center justify-center shadow-md">
+                        <i data-lucide="plus" class="w-5 h-5 transition-transform duration-200" id="plus-icon-state"></i>
+                    </button>
+                    <div id="attachment-menu" class="absolute bottom-14 left-0 bg-[#1F2C34] border border-zinc-800/80 rounded-2xl hidden flex-col w-44 p-1 shadow-2xl z-20 animate-scale-up">
+                        <button type="button" id="opt-camera" class="flex items-center space-x-3 px-3.5 py-2.5 hover:bg-[#2A3942] rounded-xl text-left text-sm text-zinc-200 transition-colors font-medium">
+                            <i data-lucide="camera" class="w-4 h-4 text-zinc-400"></i>
+                            <span>Tomar foto</span>
+                        </button>
+                        <button type="button" id="opt-gallery" class="flex items-center space-x-3 px-3.5 py-2.5 hover:bg-[#2A3942] rounded-xl text-left text-sm text-zinc-200 transition-colors font-medium">
+                            <i data-lucide="image" class="w-4 h-4 text-zinc-400"></i>
+                            <span>Dispositivo</span>
+                        </button>
+                    </div>
+                    <input type="file" id="camera-input" accept="image/*" capture="camera" class="hidden">
+                    <input type="file" id="gallery-input" accept="image/*" class="hidden">
+                </div>
+
+                <div class="flex-1 relative flex items-center bg-[#202C33] border border-transparent rounded-2xl px-4 py-3 focus-within:border-zinc-700 focus-within:bg-[#2A3942]/60 transition-all shadow-inner">
+                    <input type="text" id="message-input" autocomplete="off" placeholder="Escribe un mensaje aquí..." 
+                           class="w-full bg-transparent text-sm focus:outline-none text-zinc-100 placeholder-zinc-500 pr-14 select-text font-normal">
+                    <button type="submit" class="absolute right-4 text-sky-500 hover:text-sky-400 font-bold text-sm transition-all active:scale-95 tracking-wide">
+                        Enviar
+                    </button>
+                </div>
+                
+                <button type="button" id="mic-btn" class="bg-[#202C33] border border-transparent hover:border-zinc-700 hover:bg-[#2A3942] text-zinc-300 p-2.5 rounded-full transition-all active:scale-95 flex items-center justify-center relative shadow-md">
+                    <i data-lucide="mic" id="mic-icon" class="w-5 h-5"></i>
+                    <span id="mic-pulse" class="absolute inset-0 rounded-full bg-red-500/20 animate-ping hidden"></span>
+                </button>
+            </div>
+        </form>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpszIcvVtVhaNqUu9C2SicT5UbZOrXA8E",
+            authDomain: "chatglobal-c68a3.firebaseapp.com",
+            databaseURL: "https://chatglobal-c68a3-default-rtdb.firebaseio.com",
+            projectId: "chatglobal-c68a3",
+            storageBucket: "chatglobal-c68a3.firebasestorage.app",
+            messagingSenderId: "149154535708",
+            appId: "1:149154535708:web:276b94267ce1c4b5c3c2d9",
+            measurementId: "G-03PGJ4HNPK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let currentChatMode = 'global'; 
+        let privateChatId = null;
+        let currentActiveRef = ref(db, 'messages');
+        let unsubscribeCurrentListener = null;
+        let isNavigatingToPrivate = false;
+
+        lucide.createIcons();
+
+        const chatBox = document.getElementById('chat-box');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const usernameInput = document.getElementById('username-input');
+        const micBtn = document.getElementById('mic-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const micPulse = document.getElementById('mic-pulse');
+        const recordingWaveform = document.getElementById('recording-waveform');
+        
+        const plusBtn = document.getElementById('plus-btn');
+        const attachmentMenu = document.getElementById('attachment-menu');
+        const optCamera = document.getElementById('opt-camera');
+        const optGallery = document.getElementById('opt-gallery');
+        const cameraInput = document.getElementById('camera-input');
+        const galleryInput = document.getElementById('gallery-input');
+
+        const actionMenu = document.getElementById('action-menu');
+        const menuOptions = document.getElementById('menu-options');
+        const btnMenuEdit = document.getElementById('btn-menu-edit');
+        const btnMenuDelete = document.getElementById('btn-menu-delete');
+        const btnMenuPrivateChat = document.getElementById('btn-menu-private-chat');
+        const textMenuPrivateChat = document.getElementById('text-menu-private-chat');
+        const globalHeaderBtn = document.getElementById('global-header-btn');
+        const chatTitleText = document.getElementById('chat-title-text');
+        const headerIcon = document.getElementById('header-icon');
+
+        // AUDIOS ACTUALIZADOS CON SONIDOS DE WHATSAPP REALES (BASE64 CORREGIDO)
+        const sendSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjEwMC4xMDMAAAAAAAAAAAAAAJAAdgBfAAAAAAAA//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZgAAAA8AAAALAAAL3wAHBwcHBwcHBwcHBwcHBwEBAQEBAQEBAQEBAQEBAQICAwMDR0wBAQEBAQEBAQEBAQEBAQIDBAQEBAQEBAQEBAQEBAQEBf/7kmRAAT8AAA0gAAAAAALgD/8AAAAs9YAF7OAEZq0AH2cAIAAAYVb/7kuRAwWcAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABhVv/uS5EEhXwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFFW/+5JkQgFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAYVb/+5LkQoFfAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABhVv/uS5EMBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkQ4FfAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABVv/uS5EQBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRIFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABVv/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABVv/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb//uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZ0A=");
+        const receiveSound = new Audio("data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjEwMC4xMDMAAAAAAAAAAAAAAJAAdgBfAAAAAAAA//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZgAAAA8AAAAMAAAL6AALCwsLCwsLCwsLCwsLCwEBAQEBAQEBAQEBAQEBAQICAwMDR0wBAQEBAQEBAQEBAQEBAQIDBAQEBAQEBAQEBAQEBAQEBf/7kmRAAT8AAA0gAAAAAALgD/8AAAAs9YAF7OAEZq0AH2cAIAAAYVb/7kuRAwWcAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABhVv/uS5EEhXwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFFW/+5JkQgFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAYVb/+5LkQoFfAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABhVv/uS5EMBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkQ4FfAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABVv/uS5EQBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRIFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABVv/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb/7kmRAAWYAAA0gAAAAAAXgD/wAAAC26gAXs4ARmrQAfZwAgAABVv/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAUVb//uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFW/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5JkQAFmAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uS5ETBZwAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZq0AH2cAIAAAWf/uSZEABZgAADSAAAAAABeAP/AAAALbqABezgBGatAB9nACAAAFn/+5LkRMFnAAANIAAAAAAF4A/8AAAAtuoAF7OAEZ0A=");
+        sendSound.volume = 0.5;
+        receiveSound.volume = 0.5;
+
+        let globalUsersMap = {};
+        let privateInteractionsMap = JSON.parse(localStorage.getItem('chat_private_interactions') || '{}');
+
+        if (!localStorage.getItem('chat_user_id')) {
+            localStorage.setItem('chat_user_id', 'user_' + Math.random().toString(36).substr(2, 9));
+        }
+        const myUserId = localStorage.getItem('chat_user_id');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let selectedMessageId = null;
+
+        let localName = localStorage.getItem('chat_username');
+        let localNameDate = localStorage.getItem('chat_username_change_date');
+
+        const customNameModal = document.getElementById('custom-name-modal');
+        const modalNameInput = document.getElementById('modal-name-input');
+        const modalNameBtn = document.getElementById('modal-name-btn');
+        const modalNameError = document.getElementById('modal-name-error');
+
+        if (!localName || localName === 'Usuario Anonimo' || localName.trim() === '') {
+            customNameModal.classList.remove('hidden');
+            customNameModal.classList.add('flex');
+            lucide.createIcons();
+
+            modalNameBtn.addEventListener('click', () => {
+                const forcedName = modalNameInput.value.trim();
+                if (!forcedName || forcedName === 'Usuario Anonimo' || forcedName.length < 2) {
+                    modalNameError.classList.remove('hidden');
+                } else {
+                    localName = forcedName;
+                    localNameDate = Date.now().toString();
+                    localStorage.setItem('chat_username', localName);
+                    localStorage.setItem('chat_username_change_date', localNameDate);
+                    usernameInput.value = localName;
+                    customNameModal.classList.remove('flex');
+                    customNameModal.classList.add('hidden');
+                    checkNameLock();
+                }
+            });
+        } else {
+            usernameInput.value = localName;
+        }
+
+        const msIn37Days = 37 * 24 * 60 * 60 * 1000; 
+        function checkNameLock() {
+            const currentChangeDate = localStorage.getItem('chat_username_change_date');
+            const profileContainer = document.getElementById('profile-container');
+            const editIcon = document.getElementById('edit-icon');
+            
+            if (currentChangeDate && (Date.now() - parseInt(currentChangeDate) < msIn37Days)) {
+                profileContainer.title = "No puedes cambiar tu nombre hasta cumplir el lapso de 37 días.";
+                profileContainer.classList.add('opacity-70');
+                if (editIcon) editIcon.classList.add('hidden');
+                return true; 
+            } else {
+                profileContainer.title = "Presiona para editar tu nombre";
+                profileContainer.classList.remove('opacity-70');
+                if (editIcon) editIcon.classList.remove('hidden');
+                return false; 
+            }
+        }
+
+        checkNameLock();
+
+        document.getElementById('profile-container').addEventListener('click', () => {
+            if (checkNameLock()) {
+                alert("No puedes cambiar tu nombre hasta cumplir el lapso de 37 días.");
+                return;
+            }
+            
+            const currentName = usernameInput.value;
+            const newName = prompt("Ingresa tu nuevo nombre o apodo:", currentName);
+            
+            if (newName !== null) {
+                const trimmedName = newName.trim();
+                if (trimmedName === '' || trimmedName === 'Usuario Anonimo' || trimmedName.length < 2) {
+                    alert("Por favor ingresa un nombre válido (mínimo 2 caracteres).");
+                } else if (trimmedName !== currentName) {
+                    localStorage.setItem('chat_username', trimmedName);
+                    localStorage.setItem('chat_username_change_date', Date.now().toString());
+                    usernameInput.value = trimmedName;
+                    checkNameLock(); 
+                    lucide.createIcons();
+                }
+            }
+        });
+
+        plusBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            attachmentMenu.classList.toggle('hidden');
+            const plusIcon = document.getElementById('plus-icon-state');
+            if(!attachmentMenu.classList.contains('hidden')) {
+                plusIcon.style.transform = 'rotate(45deg)';
+            } else {
+                plusIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        document.addEventListener('click', () => {
+            attachmentMenu.classList.add('hidden');
+            document.getElementById('plus-icon-state').style.transform = 'rotate(0deg)';
+        });
+
+        optCamera.addEventListener('click', () => cameraInput.click());
+        optGallery.addEventListener('click', () => galleryInput.click());
+
+        function handleImageUpload(inputElement) {
+            const file = inputElement.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                const base64Image = reader.result;
+                const username = usernameInput.value.trim() || 'Anónimo';
+
+                const newMessageRef = push(currentActiveRef);
+                const payload = {
+                    userId: myUserId,
+                    username: username,
+                    image: base64Image,
+                    type: 'image',
+                    timestamp: serverTimestamp()
+                };
+                if (currentChatMode === 'private') {
+                    payload.status = 'sent';
+                }
+                set(newMessageRef, payload).then(() => {
+                    sendSound.play().catch(()=>{});
+                });
+            };
+            inputElement.value = '';
+        }
+
+        cameraInput.addEventListener('change', () => handleImageUpload(cameraInput));
+        galleryInput.addEventListener('change', () => handleImageUpload(galleryInput));
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            const username = usernameInput.value.trim() || 'Anónimo';
+
+            if (text === '') return;
+
+            const newMessageRef = push(currentActiveRef);
+            const payload = {
+                userId: myUserId,
+                username: username,
+                text: text,
+                type: 'text',
+                timestamp: serverTimestamp()
+            };
+            if (currentChatMode === 'private') {
+                payload.status = 'sent';
+            }
+            set(newMessageRef, payload).then(() => {
+                sendSound.play().catch(()=>{});
+            });
+
+            messageInput.value = '';
+        });
+
+        micBtn.addEventListener('click', async () => {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            const base64Audio = reader.result;
+                            const username = usernameInput.value.trim() || 'Anónimo';
+                            
+                            const newMessageRef = push(currentActiveRef);
+                            const payload = {
+                                userId: myUserId,
+                                username: username,
+                                audio: base64Audio,
+                                type: 'audio',
+                                timestamp: serverTimestamp()
+                            };
+                            if (currentChatMode === 'private') {
+                                payload.status = 'sent';
+                            }
+                            set(newMessageRef, payload).then(() => {
+                                sendSound.play().catch(()=>{});
+                            });
+                        };
+
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    micBtn.classList.add('bg-red-600', 'border-red-500');
+                    micIcon.classList.add('text-white');
+                    micPulse.classList.remove('hidden');
+                    recordingWaveform.classList.remove('hidden');
+                    recordingWaveform.classList.add('flex');
+
+                } catch (err) {
+                    alert('No se pudo acceder al micrófono: ' + err.message);
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                micBtn.classList.remove('bg-red-600', 'border-red-500');
+                micIcon.classList.remove('text-white');
+                micPulse.classList.add('hidden');
+                recordingWaveform.classList.add('hidden');
+                recordingWaveform.classList.remove('flex');
+            }
+        });
+
+        function listenToMessages() {
+            if (unsubscribeCurrentListener) {
+                unsubscribeCurrentListener();
+            }
+
+            unsubscribeCurrentListener = onValue(currentActiveRef, (snapshot) => {
+                const isAtBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 100;
+
+                const welcomeText = currentChatMode === 'global' 
+                    ? 'Conectado al canal global. ¡Mantén presionado o haz click en un mensaje para ver opciones!'
+                    : 'Estás en un chat privado cifrado. Presiona la sección superior para regresar al listado.';
+
+                while (chatBox.firstChild) {
+                    chatBox.removeChild(chatBox.firstChild);
+                }
+
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = "flex justify-center my-4 animate-fade-in";
+                welcomeDiv.innerHTML = `
+                    <span class="text-zinc-400 text-[11.5px] text-center px-4 max-w-sm bg-[#1F2C34]/60 backdrop-blur-md py-2 rounded-xl border border-zinc-800/50 shadow-md font-medium tracking-wide">
+                        ${welcomeText}
+                    </span>
+                `;
+                chatBox.appendChild(welcomeDiv);
+                
+                if (snapshot.exists()) {
+                    let snapshotMessages = [];
+                    snapshot.forEach((childSnapshot) => {
+                        snapshotMessages.push({ id: childSnapshot.key, data: childSnapshot.val() });
+                    });
+
+                    // VALIDACIÓN PREMIUM DE SONIDO AL RECIBIR MENSAJE EN CHAT ACTIVO
+                    if (snapshotMessages.length > 0) {
+                        const lastIncomming = snapshotMessages[snapshotMessages.length - 1];
+                        if (lastIncomming.data.userId !== myUserId && lastIncomming.data.timestamp && (Date.now() - lastIncomming.data.timestamp < 3500)) {
+                            receiveSound.play().catch(()=>{});
+                        }
+                    }
+
+                    snapshotMessages.forEach((msg) => {
+                        const isMe = msg.data.userId === myUserId;
+                        if (currentChatMode === 'private' && !isMe && msg.data.status !== 'read') {
+                            update(ref(db, `private_messages/${privateChatId}/${msg.id}`), { status: 'read' });
+                            msg.data.status = 'read';
+                        }
+                        appendMessage(msg.id, msg.data, isMe);
+                    });
+                }
+
+                if (isAtBottom) {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        window.goToGlobalChat = function() {
+            currentChatMode = 'global';
+            chatTitleText.innerText = `Chat Global`;
+            headerIcon.setAttribute('data-lucide', 'globe');
+            currentActiveRef = ref(db, 'messages');
+            listenToMessages();
+            lucide.createIcons();
+        };
+
+        window.toggleSidebar = function(show) {
+            const sidebar = document.getElementById('sidebar-chats');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (show) {
+                renderInteractionsList();
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        };
+
+        onValue(ref(db, 'messages'), (snapshot) => {
+            if(snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    if(data.userId && data.username && data.userId !== myUserId) {
+                        globalUsersMap[data.userId] = data.username;
+                    }
+                });
+            }
+        });
+
+        onValue(ref(db, 'private_messages'), (snapshot) => {
+            if(snapshot.exists()) {
+                snapshot.forEach((chatChild) => {
+                    const chatId = chatChild.key;
+                    if(chatId.includes(myUserId)) {
+                        let lastMsg = null;
+                        let lastMsgId = null;
+                        chatChild.forEach((msgChild) => { 
+                            lastMsg = msgChild.val(); 
+                            lastMsgId = msgChild.key;
+                        });
+                        
+                        if(lastMsg && lastMsg.userId !== myUserId) {
+                            if (lastMsg.status === 'sent') {
+                                update(ref(db, `private_messages/${chatId}/${lastMsgId}`), { status: 'delivered' });
+                                lastMsg.status = 'delivered';
+                            }
+                            
+                            if (lastMsg.timestamp && (Date.now() - lastMsg.timestamp < 6000)) {
+                                if (currentChatMode !== 'private' || privateChatId !== chatId) {
+                                    receiveSound.play().catch(()=>{});
+                                    showInAppNotification(lastMsg, chatId);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        function showInAppNotification(msg, chatId) {
+            if (isNavigatingToPrivate) return;
+            const notifBox = document.getElementById('in-app-notification');
+            const notifUser = document.getElementById('notif-user');
+            const notifText = document.getElementById('notif-text');
+            const notifAvatar = document.getElementById('notif-avatar');
+            
+            notifUser.innerText = msg.username || "Usuario";
+            notifAvatar.innerText = (msg.username || "U").substring(0, 2);
+            
+            if(msg.type === 'image' || msg.image) {
+                notifText.innerText = "Te envió una Foto ";
+            } else if(msg.type === 'audio' || msg.audio) {
+                notifText.innerText = "Te envió un Audio ";
+            } else {
+                notifText.innerText = msg.text || "Te envió un mensaje";
+            }
+
+            notifBox.classList.remove('hidden');
+            notifBox.classList.add('flex');
+
+            notifBox.onclick = () => {
+                isNavigatingToPrivate = true;
+                notifBox.onclick = null;
+                notifBox.classList.add('hidden');
+                notifBox.classList.remove('flex');
+                currentChatMode = 'private';
+                privateChatId = chatId;
+                
+                saveInteraction(msg.userId, msg.username);
+                
+                chatTitleText.innerText = `Chat con ${msg.username}`;
+                headerIcon.setAttribute('data-lucide', 'message-square');
+                currentActiveRef = ref(db, `private_messages/${privateChatId}`);
+                listenToMessages();
+                lucide.createIcons();
+                setTimeout(() => { isNavigatingToPrivate = false; }, 800);
+            };
+
+            setTimeout(() => {
+                if (notifBox.onclick) {
+                    notifBox.classList.add('hidden');
+                    notifBox.classList.remove('flex');
+                }
+            }, 4500);
+        }
+
+        function saveInteraction(userId, username) {
+            privateInteractionsMap[userId] = username;
+            localStorage.setItem('chat_private_interactions', JSON.stringify(privateInteractionsMap));
+        }
+
+        function renderInteractionsList(filterText = '') {
+            const container = document.getElementById('private-chats-list');
+            container.innerHTML = '';
+
+            let displayMap = { ...privateInteractionsMap };
+            if (filterText.trim() !== '') {
+                displayMap = { ...globalUsersMap, ...privateInteractionsMap };
+            }
+
+            const keys = Object.keys(displayMap).filter(id => id !== myUserId);
+            let addedCount = 0;
+
+            keys.forEach((id) => {
+                const name = displayMap[id];
+                if (filterText !== '' && !name.toLowerCase().includes(filterText.toLowerCase())) return;
+                
+                addedCount++;
+                const itemHTML = `
+                    <div onclick="startPrivateChat('${id}', '${name}')" class="flex items-center space-x-3.5 p-3 hover:bg-[#202C33] rounded-xl cursor-pointer transition-all border border-transparent hover:border-zinc-800/40 group">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-zinc-700 to-zinc-850 border border-zinc-700/60 flex items-center justify-center font-bold text-xs text-zinc-300 shadow-sm uppercase tracking-wider group-hover:scale-105 transition-transform">
+                            ${name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h3 class="text-sm font-semibold text-zinc-200 truncate group-hover:text-sky-400 transition-colors">${name}</h3>
+                            <p class="text-[11.5px] text-zinc-500 truncate mt-0.5">Presiona para chatear en privado</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHTML);
+            });
+
+            if(addedCount === 0) {
+                container.innerHTML = `<p class="text-[12px] text-zinc-600 text-center py-6 font-medium">No se encontraron resultados</p>`;
+            }
+        }
+
+        document.getElementById('search-user-input').addEventListener('input', (e) => {
+            renderInteractionsList(e.target.value);
+        });
+
+        globalHeaderBtn.addEventListener('click', () => {
+            toggleSidebar(true);
+        });
+
+        window.toggleAudioPlay = function(btn, audioId) {
+            const audioEl = document.getElementById(audioId);
+            const playIcon = btn.querySelector('.play-ic');
+            const pauseIcon = btn.querySelector('.pause-ic');
+            const progressEl = btn.closest('.audio-player-container').querySelector('.audio-progress');
+            const timeEl = btn.closest('.audio-player-container').querySelector('.audio-time');
+
+            if (audioEl.paused) {
+                document.querySelectorAll('audio').forEach(a => {
+                    if (a.id !== audioId && !a.paused) {
+                        a.pause();
+                        const trackingBtn = a.closest('.message-bubble').querySelector('.audio-play-btn');
+                        if (trackingBtn) {
+                            trackingBtn.querySelector('.play-ic').classList.remove('hidden');
+                            trackingBtn.querySelector('.pause-ic').classList.add('hidden');
+                        }
+                    }
+                });
+
+                audioEl.play();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            } else {
+                audioEl.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            }
+
+            audioEl.ontimeupdate = () => {
+                const percentage = (audioEl.currentTime / audioEl.duration) * 100;
+                progressEl.style.width = `${percentage}%`;
+                
+                let mins = Math.floor(audioEl.currentTime / 60);
+                let secs = Math.floor(audioEl.currentTime % 60);
+                timeEl.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            };
+
+            audioEl.onended = () => {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                progressEl.style.width = '0%';
+                timeEl.innerText = '0:00';
+            };
+
+            audioEl.onloadedmetadata = () => {
+                let mins = Math.floor(audioEl.duration / 60);
+                let secs = Math.floor(audioEl.duration % 60);
+                if (!isNaN(audioEl.duration)) {
+                    timeEl.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }
+            };
+        };
+
+        function appendMessage(messageId, data, isMe) {
+            let timeString = "...";
+            if(data.timestamp) {
+                timeString = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            // PALETA DE COLOR PREMIUM WHATSAPP REFINADA
+            const bubbleBg = isMe ? 'bg-[#005C4B]' : 'bg-[#1F2C34]';
+            const alignClass = isMe ? 'justify-end' : 'justify-start';
+            const roundedClass = isMe 
+                ? 'rounded-[12px] rounded-tr-none shadow-[0_2px_5px_rgba(0,0,0,0.2)]' 
+                : 'rounded-[12px] rounded-tl-none shadow-[0_2px_5px_rgba(0,0,0,0.25)]';
+
+            let statusTicks = '';
+            if (currentChatMode === 'private' && isMe) {
+                if (data.status === 'read') {
+                    statusTicks = `<span class="text-[#53bdeb] ml-1 text-[11px] font-bold"></span>`;
+                } else if (data.status === 'delivered') {
+                    statusTicks = `<span class="text-[#8696a0] ml-1 text-[11px]"></span>`;
+                } else {
+                    statusTicks = `<span class="text-[#8696a0] ml-1 text-[11px]"></span>`;
+                }
+            }
+
+            let contentHTML = '';
+            if (data.type === 'audio' || data.audio) {
+                const uniqueAudioId = `native-audio-${messageId}`;
+                contentHTML = `
+                    <div class="flex items-center space-x-3 py-1.5 min-w-[250px] audio-player-container select-none" onclick="event.stopPropagation();">
+                        <audio id="${uniqueAudioId}" src="${data.audio}" class="hidden" preload="metadata"></audio>
+                        
+                        <button onclick="toggleAudioPlay(this, '${uniqueAudioId}')" class="audio-play-btn flex items-center justify-center w-11 h-11 rounded-full bg-zinc-800/40 hover:bg-zinc-800/80 transition-all flex-shrink-0 active:scale-95 shadow-inner">
+                            <i data-lucide="play" class="w-5 h-5 play-ic text-[#e9edef] fill-[#e9edef] ml-0.5"></i>
+                            <i data-lucide="pause" class="w-5 h-5 pause-ic text-[#e9edef] fill-[#e9edef] hidden"></i>
+                        </button>
+                        
+                        <div class="flex-1 flex flex-col justify-center space-y-1.5 pr-2">
+                            <div class="relative w-full h-[3.5px] bg-zinc-700 rounded-full overflow-hidden">
+                                <div class="audio-progress absolute top-0 left-0 h-full bg-emerald-400 rounded-full transition-all duration-100" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-[11px] text-[#8696a0]">
+                                <span class="audio-time font-mono tracking-wider">0:00</span>
+                            </div>
+                        </div>
+                        <div class="relative flex-shrink-0 self-center pr-2">
+                            <i data-lucide="mic" class="w-4 h-4 text-emerald-400"></i>
+                        </div>
+                    </div>
+                `;
+            } else if (data.type === 'image' || data.image) {
+                contentHTML = `
+                    <div class="p-1 relative max-w-[290px]">
+                        <img src="${data.image}" class="rounded-lg w-full object-cover shadow-md border border-zinc-800/20 active:scale-[0.99] transition-transform" onclick="event.stopPropagation(); shadow-box" alt="Imagen">
+                    </div>`;
+            } else {
+                contentHTML = `<div class="text-[14.5px] break-words text-[#e9edef] leading-relaxed select-text font-normal pr-14 pb-2 pt-0.5 tracking-normal">${data.text || ''}</div>`;
+            }
+
+            const messageHTML = `
+                <div class="flex w-full max-w-3xl mx-auto ${alignClass} animate-fade-in relative group custom-msg-select px-1.5"
+                     data-id="${messageId}" 
+                     data-me="${isMe}" 
+                     data-userid="${data.userId}"
+                     data-username="${btoa(encodeURIComponent(data.username || 'Anónimo'))}"
+                     data-type="${data.type || 'text'}" 
+                     data-text="${btoa(encodeURIComponent(data.text || ''))}"
+                     oncontextmenu="event.preventDefault(); openMessageMenu(this);"
+                     onload="setupLongPress(this)">
+                    
+                    <div class="flex flex-col max-w-[85%] relative">
+                        <div class="message-bubble ${bubbleBg} px-3 pt-2 pb-1.5 ${roundedClass} relative cursor-pointer border border-zinc-800/10 hover:brightness-[1.03] transition-all" onclick="openMessageMenu(this.closest('[data-id]'))">
+                            
+                            ${!isMe ? `<span class="text-[12.5px] font-bold text-sky-400 block mb-1 tracking-wide">${data.username}</span>` : ''}
+                            
+                            ${contentHTML}
+                            
+                            <div class="absolute bottom-1 right-2 flex items-center space-x-1 select-none pointer-events-none mt-1">
+                                <span class="text-[9.5px] text-[#8696a0] font-normal tracking-wide">${timeString} ${data.edited ? '(editado)' : ''}</span>
+                                ${statusTicks}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            chatBox.appendChild(document.createRange().createContextualFragment(messageHTML));
+            setupLongPress(chatBox.lastElementChild);
+            lucide.createIcons();
+        }
+
+        function setupLongPress(element) {
+            let pressTimer;
+            const startPress = () => { pressTimer = setTimeout(() => { openMessageMenu(element); }, 500); };
+            const cancelPress = () => { clearTimeout(pressTimer); };
+
+            element.addEventListener('touchstart', startPress, { passive: true });
+            element.addEventListener('touchend', cancelPress, { passive: true });
+            element.addEventListener('touchmove', cancelPress, { passive: true });
+            element.addEventListener('mousedown', startPress);
+            element.addEventListener('mouseup', cancelPress);
+            element.addEventListener('mouseleave', cancelPress);
+        }
+
+        window.openMessageMenu = function(element) {
+            if (navigator.vibrate) { navigator.vibrate(40); }
+            selectedMessageId = element.getAttribute('data-id');
+            const isMe = element.getAttribute('data-me') === 'true';
+            const targetUserId = element.getAttribute('data-userid');
+            const targetUsername = decodeURIComponent(atob(element.getAttribute('data-username')));
+            const isAudio = element.getAttribute('data-type') === 'audio';
+            const isImage = element.getAttribute('data-type') === 'image';
+            const encodedText = element.getAttribute('data-text');
+
+            const textMenuDelete = document.getElementById('text-menu-delete');
+
+            if (!isMe && currentChatMode === 'global') {
+                btnMenuPrivateChat.classList.remove('hidden');
+                textMenuPrivateChat.innerText = `Chatear en privado con ${targetUsername}`;
+                btnMenuPrivateChat.onclick = () => {
+                    closeActionMenu();
+                    startPrivateChat(targetUserId, targetUsername);
+                };
+            } else {
+                btnMenuPrivateChat.classList.add('hidden');
+            }
+
+            if (isMe) {
+                menuOptions.classList.remove('hidden');
+                btnMenuEdit.classList.remove('hidden');
+                textMenuDelete.innerText = "Eliminar para todos";
+                if(isAudio || isImage) {
+                    btnMenuEdit.classList.add('hidden');
+                } else {
+                    btnMenuEdit.classList.remove('hidden');
+                    btnMenuEdit.onclick = () => { closeActionMenu(); triggerEdit(selectedMessageId, encodedText); };
+                }
+                btnMenuDelete.onclick = () => { closeActionMenu(); triggerDelete(selectedMessageId, true); };
+            } else {
+                btnMenuEdit.classList.add('hidden');
+                menuOptions.classList.remove('hidden');
+                textMenuDelete.innerText = "Eliminar para mí solo";
+                btnMenuDelete.onclick = () => {
+                    closeActionMenu();
+                    triggerDelete(selectedMessageId, false);
+                };
+            }
+
+            actionMenu.classList.remove('hidden');
+            actionMenu.classList.add('flex');
+        };
+
+        window.startPrivateChat = function(targetUserId, targetUsername) {
+            currentChatMode = 'private';
+            saveInteraction(targetUserId, targetUsername);
+            
+            const sortedIds = [myUserId, targetUserId].sort();
+            privateChatId = `chat_${sortedIds[0]}_${sortedIds[1]}`;
+            
+            chatTitleText.innerText = `Chat con ${targetUsername}`;
+            headerIcon.setAttribute('data-lucide', 'message-square');
+            
+            currentActiveRef = ref(db, `private_messages/${privateChatId}`);
+            listenToMessages();
+            lucide.createIcons();
+        }
+
+        window.closeActionMenu = function() {
+            actionMenu.classList.remove('flex');
+            actionMenu.classList.add('hidden');
+        };
+
+        function triggerEdit(messageId, encodedText) {
+            const currentText = decodeURIComponent(atob(encodedText));
+            const newText = prompt('Edita tu mensaje:', currentText);
+            
+            if (newText !== null && newText.trim() !== '' && newText.trim() !== currentText) {
+                const messageRef = ref(db, `${currentChatMode === 'global' ? 'messages' : 'private_messages/' + privateChatId}/${messageId}`);
+                update(messageRef, {
+                    text: newText.trim(),
+                    edited: true
+                }).catch((error) => alert('Error al editar: ' + error.message));
+            }
+        }
+
+        window.closeDeleteModal = function() {
+            document.getElementById('custom-delete-modal').classList.add('hidden');
+            document.getElementById('custom-delete-modal').classList.remove('flex');
+        };
+
+        function triggerDelete(messageId, isForEveryone) {
+            const deleteModal = document.getElementById('custom-delete-modal');
+            const confirmBtn = document.getElementById('confirm-delete-btn');
+            const modalTitle = document.getElementById('delete-modal-title');
+            const modalDesc = document.getElementById('delete-modal-desc');
+
+            if(isForEveryone) {
+                modalTitle.innerText = "¿Eliminar para todos?";
+                modalDesc.innerText = "El mensaje seleccionado se eliminará por completo para todos los usuarios del chat.";
+            } else {
+                modalTitle.innerText = "¿Eliminar para mí?";
+                modalDesc.innerText = "Este mensaje desaparecerá de tu vista, pero seguirá siendo visible para los demás usuarios.";
+            }
+
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+            lucide.createIcons();
+
+            confirmBtn.onclick = () => {
+                if(isForEveryone) {
+                    const messageRef = ref(db, `${currentChatMode === 'global' ? 'messages' : 'private_messages/' + privateChatId}/${messageId}`);
+                    remove(messageRef).then(() => {
+                        showDeleteSuccessToast();
+                    }).catch((error) => alert('Error al eliminar: ' + error.message));
+                } else {
+                    const targetBubble = document.querySelector(`[data-id="${messageId}"]`);
+                    if(targetBubble) targetBubble.remove();
+                    showDeleteSuccessToast();
+                }
+                closeDeleteModal();
+            };
+        }
+
+        function showDeleteSuccessToast() {
+            const toast = document.getElementById('delete-success-toast');
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
+
+        listenToMessages();
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes waveGlow {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(2.2); }
+        }
+        @keyframes dynamicIsland {
+            0% { opacity: 0; transform: scaleX(0.4) scaleY(0.3); border-radius: 50px; filter: blur(3px); }
+            50% { opacity: 1; transform: scaleX(1.05) scaleY(1.04); filter: blur(0); }
+            100% { opacity: 1; transform: scale(1); border-radius: 9999px; }
+        }
+        @keyframes dynamicIslandExpanded {
+            0% { opacity: 0; transform: scaleX(0.3) scaleY(0.2); border-radius: 9999px; filter: blur(5px); }
+            50% { opacity: 1; transform: scaleX(1.04) scaleY(1.04); filter: blur(0); }
+            100% { opacity: 1; transform: scale(1); border-radius: 24px; }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.22s cubic-bezier(0.215, 0.610, 0.355, 1) forwards; }
+        .animate-scale-up { animation: scaleUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-dynamic-island { animation: dynamicIsland 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; }
+        .animate-dynamic-island-expanded { animation: dynamicIslandExpanded 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards; }
+        
+        .wave-bar { animation: waveGlow 1s ease-in-out infinite; }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #202C33; border-radius: 99px; }
+    </style>
+</body>
+</html>
