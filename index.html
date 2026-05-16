@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Global En Vivo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#0B141A] text-zinc-100 font-sans min-h-screen h-screen flex flex-col justify-between select-none overflow-hidden antialiased w-full relative">
+
+    <div id="custom-name-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#222E35] border border-zinc-800/80 rounded-2xl w-full max-w-sm p-6 shadow-2xl animate-scale-up text-center">
+            <div class="w-14 h-14 bg-gradient-to-tr from-sky-500 via-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/20 rotate-3 hover:rotate-0 transition-transform duration-300">
+                <i data-lucide="user-plus" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-zinc-100 tracking-tight mb-2">Identificación Requerida</h3>
+            <p class="text-xs text-zinc-400 mb-6 px-2 leading-relaxed">Por favor, ingresa un nombre para poder ingresar y participar en el chat global de forma segura.</p>
+            <div class="relative mb-6">
+                <input type="text" id="modal-name-input" placeholder="Tu nombre o apodo..." autocomplete="off"
+                       class="w-full bg-[#111B21] border border-zinc-800 focus:border-sky-500/80 rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all placeholder-zinc-600 text-center font-semibold tracking-wide">
+                <p id="modal-name-error" class="text-red-400 text-[11px] mt-2 hidden animate-fade-in font-medium flex items-center justify-center gap-1"><span class="w-1 h-1 rounded-full bg-red-400"></span> El nombre ingresado no es válido.</p>
+            </div>
+            <button id="modal-name-btn" class="w-full bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-500 hover:to-blue-500 text-white text-sm font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-blue-600/10 active:scale-[0.98]">
+                Comenzar a chatear
+            </button>
+        </div>
+    </div>
+
+    <div id="custom-delete-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-[#222E35] border border-zinc-800/80 rounded-2xl w-full max-w-xs p-6 shadow-2xl animate-scale-up text-center">
+            <div class="w-12 h-12 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="alert-triangle" class="w-5 h-5 text-red-400"></i>
+            </div>
+            <h3 id="delete-modal-title" class="text-base font-bold text-zinc-100 tracking-tight mb-2">¿Eliminar mensaje?</h3>
+            <p id="delete-modal-desc" class="text-xs text-zinc-400 mb-6 leading-relaxed px-1">Esta acción borrará el elemento seleccionado de forma definitiva.</p>
+            <div class="flex space-x-3">
+                <button onclick="closeDeleteModal()" class="flex-1 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 text-xs font-bold py-3 rounded-xl transition-all active:scale-95 border border-zinc-700/30">
+                    Cancelar
+                </button>
+                <button id="confirm-delete-btn" class="flex-1 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-md active:scale-95">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[200] pointer-events-none flex flex-col items-center justify-start w-full px-4 gap-2">
+        
+        <div id="delete-success-toast" class="hidden pointer-events-auto bg-zinc-950/95 text-zinc-200 px-5 py-3 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-zinc-800/80 backdrop-blur-xl items-center space-x-3 animate-dynamic-island max-w-xs w-max justify-center overflow-hidden">
+            <div class="w-5 h-5 bg-red-500/20 border border-red-500/30 rounded-full flex items-center justify-center flex-shrink-0">
+                <i data-lucide="trash-2" class="w-3 h-3 text-red-400"></i>
+            </div>
+            <span class="text-xs font-bold tracking-wide whitespace-nowrap">Mensaje eliminado correctamente</span>
+        </div>
+
+        <div id="listening-audio-toast" class="hidden pointer-events-auto bg-zinc-950/95 text-zinc-200 px-5 py-3 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-zinc-800/80 backdrop-blur-xl items-center space-x-3 animate-dynamic-island max-w-xs w-max justify-center overflow-hidden">
+            <div class="w-5 h-5 bg-sky-500/20 border border-sky-500/30 rounded-full flex items-center justify-center flex-shrink-0">
+                <i data-lucide="headphones" class="w-3 h-3 text-sky-400"></i>
+            </div>
+            <span class="text-xs font-bold tracking-wide whitespace-nowrap">Escuchando audio...</span>
+        </div>
+
+        <div id="in-app-notification" class="hidden pointer-events-auto bg-zinc-950/95 text-white p-4 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.6)] items-center space-x-3.5 cursor-pointer hover:bg-black transition-all max-w-[360px] w-full animate-dynamic-island-expanded border border-zinc-800/60 backdrop-blur-xl overflow-hidden group">
+            <div id="notif-avatar" class="w-10 h-10 bg-gradient-to-tr from-purple-600 via-indigo-500 to-blue-500 rounded-full flex items-center justify-center font-bold text-xs text-white flex-shrink-0 uppercase tracking-wider shadow-inner">
+                U
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <div class="flex items-center justify-between gap-2">
+                    <h4 class="text-[13px] font-bold text-zinc-100 truncate" id="notif-user">Usuario</h4>
+                    <span class="text-[9px] text-sky-400 font-extrabold flex-shrink-0 uppercase tracking-widest bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">Privado</span>
+                </div>
+                <p class="text-[12px] text-zinc-400 truncate mt-0.5 group-hover:text-zinc-300 transition-colors" id="notif-text">Te envió un mensaje</p>
+            </div>
+            <div class="flex-shrink-0 pl-1">
+                <button class="bg-zinc-900 border border-zinc-800 text-white text-[11px] font-bold px-3.5 py-2 rounded-full hover:bg-zinc-800 transition-all shadow-md active:scale-95 group-hover:border-zinc-700">
+                    Abrir
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="sidebar-chats" class="fixed inset-y-0 left-0 w-full max-w-[340px] bg-[#111B21] border-r border-zinc-800/60 z-40 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col shadow-[10px_0_40px_rgba(0,0,0,0.3)]">
+        <div class="p-4 border-b border-zinc-800/60 flex items-center justify-between bg-[#111B21]">
+            <h2 class="font-extrabold text-lg tracking-tight text-zinc-100">Conversaciones</h2>
+            <button onclick="toggleSidebar(false)" class="text-zinc-400 hover:text-white p-1.5 hover:bg-zinc-800/60 rounded-full transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        
+        <div class="p-3 bg-[#111B21]">
+            <div class="flex items-center space-x-2 bg-[#202C33] px-3.5 py-2.5 rounded-xl border border-transparent focus-within:border-zinc-700/80 transition-all">
+                <button onclick="goToGlobalChat(); toggleSidebar(false);" class="text-zinc-400 hover:text-sky-400 transition-colors mr-1" title="Volver al Chat Global">
+                    <i data-lucide="globe" class="w-4 h-4"></i>
+                </button>
+                <i data-lucide="search" class="w-4 h-4 text-zinc-500"></i>
+                <input type="text" id="search-user-input" placeholder="Buscar usuario..." class="bg-transparent text-sm text-white focus:outline-none w-full placeholder-zinc-500 font-medium">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-2 space-y-1 bg-[#111B21] scrollbar-none" id="private-chats-list">
+            <p class="text-[12px] text-zinc-500 text-center py-4">No hay interacciones recientes</p>
+        </div>
+    </div>
+
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 hidden transition-opacity duration-300" onclick="toggleSidebar(false)"></div>
+
+    <header class="bg-[#111B21]/95 backdrop-blur-md border-b border-zinc-800/50 p-4 flex items-center justify-between sticky top-0 z-10 shadow-sm w-full">
+        <div class="flex items-center space-x-3.5 cursor-pointer group min-w-0" id="global-header-btn">
+            <div class="bg-gradient-to-tr from-sky-400 via-blue-500 to-indigo-600 p-[2px] rounded-full shadow-md active:scale-95 transition-transform flex-shrink-0">
+                <div class="bg-[#111B21] p-2 rounded-full text-white">
+                    <i data-lucide="globe" id="header-icon" class="w-5 h-5 text-sky-400"></i>
+                </div>
+            </div>
+            <div class="min-w-0">
+                <h1 class="font-bold text-base tracking-wide flex items-center space-x-1 text-zinc-100 group-hover:text-zinc-300 transition-colors">
+                    <span id="chat-title-text" class="font-extrabold tracking-tight truncate max-w-[140px] sm:max-w-xs">Chat Global</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 group-hover:text-zinc-300 transition-colors flex-shrink-0"></i>
+                </h1>
+                <p class="text-[11px] text-zinc-400 flex items-center mt-0.5 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block mr-1.5 animate-pulse shadow-sm shadow-emerald-500"></span>
+                    En vivo
+                </p>
+            </div>
+        </div>
+        
+        <div id="profile-container" class="flex items-center space-x-2.5 bg-[#202C33] p-1.5 pr-3 rounded-full border border-zinc-800/80 shadow-inner cursor-pointer hover:bg-[#2A3942] transition-all relative group/profile flex-shrink-0 max-w-[140px] sm:max-w-none" title="Ver / Editar Perfil">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-zinc-700 to-zinc-600 flex items-center justify-center text-zinc-200 border border-zinc-600/30 shadow-sm flex-shrink-0">
+                <i data-lucide="user" class="w-3.5 h-3.5"></i>
+            </div>
+            <div class="flex items-center space-x-1.5 min-w-0">
+                <input type="text" id="username-input" value="Usuario Anonimo" class="bg-transparent text-xs font-bold focus:outline-none w-16 sm:w-24 text-zinc-200 pointer-events-none select-none tracking-wide truncate" readonly>
+                <i data-lucide="pencil" id="edit-icon" class="w-3 h-3 text-zinc-400 group-hover/profile:text-zinc-200 transition-colors flex-shrink-0"></i>
+            </div>
+        </div>
+    </header>
+
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3 bg-[#0B141A] scrollbar-none pb-4 w-full h-full contenedor-mensajes">
+        <div class="mensaje">MARIA: .</div>
+        <div class="mensaje-winn">WWIN: ...</div>
+
+        <div style="height: 80px; width: 100%;"></div>
+    </main>
+
+    <div id="action-menu" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-all" onclick="closeActionMenu()">
+        <div class="bg-[#222E35] border border-zinc-800/80 rounded-2xl w-full max-w-xs overflow-hidden shadow-2xl animate-scale-up" onclick="event.stopPropagation()">
+            <div id="menu-options" class="flex flex-col p-1.5 bg-[#222E35]">
+                <button id="btn-menu-private-chat" class="flex items-center space-x-3 px-4 py-3.5 hover:bg-[#2A3942] text-left text-sm transition-colors rounded-xl hidden text-zinc-200 font-medium">
+                    <i data-lucide="message-square" class="w-4 h-4 text-sky-400"></i>
+                    <span id="text-menu-private-chat">Chatear</span>
+                </button>
+                <button id="btn-menu-edit" class="flex items-center space-x-3 px-4 py-3.5 hover:bg-[#2A3942] text-left text-sm transition-colors rounded-xl text-zinc-200 font-medium">
+                    <i data-lucide="pencil" class="w-4 h-4 text-zinc-400"></i>
+                    <span>Editar mensaje</span>
+                </button>
+                <button id="btn-menu-delete" class="flex items-center space-x-3 px-4 py-3.5 hover:bg-red-500/10 text-left text-sm text-red-400 font-semibold transition-colors rounded-xl">
+                    <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
+                    <span id="text-menu-delete">Eliminar para todos</span>
+                </button>
+                <button id="btn-menu-delete-for-me" class="flex items-center space-x-3 px-4 py-3.5 hover:bg-red-500/10 text-left text-sm text-red-400 font-semibold transition-colors rounded-xl hidden">
+                    <i data-lucide="trash" class="w-4 h-4 text-red-400"></i>
+                    <span>Eliminar para mí</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="p-3 bg-[#111B21] border-t border-zinc-800/40 sticky bottom-0 z-10 shadow-lg w-full">
+        <form id="chat-form" class="flex flex-col max-w-3xl mx-auto relative w-full">
+            
+            <div id="reply-preview-container" class="hidden flex items-center justify-between bg-[#202C33] border-l-4 border-sky-500 rounded-t-xl px-4 py-2.5 mb-0.5 animate-fade-in w-full shadow-inner select-none">
+                <div class="flex flex-col overflow-hidden pr-4">
+                    <span id="reply-preview-user" class="text-xs font-extrabold text-sky-400 uppercase tracking-wide">Usuario</span>
+                    <p id="reply-preview-text" class="text-xs text-zinc-400 truncate mt-0.5 max-w-md font-medium">Mensaje a responder</p>
+                </div>
+                <button type="button" id="cancel-reply-btn" class="text-zinc-400 hover:text-zinc-200 p-1.5 hover:bg-zinc-700/40 rounded-full transition-colors flex-shrink-0">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <div id="recording-waveform" class="hidden flex items-center justify-center space-x-1.5 py-3 mb-2 bg-[#202C33] border border-zinc-800/60 rounded-xl animate-fade-in shadow-inner w-full">
+                <span class="text-xs text-red-400 font-bold mr-3 flex items-center tracking-wide">
+                    <span class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse shadow-sm shadow-red-500"></span> GRABANDO AUDIO
+                </span>
+                <div class="w-1 h-4 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-6 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-3 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-5 bg-red-500 rounded-full wave-bar"></div>
+                <div class="w-1 h-2 bg-red-500 rounded-full wave-bar"></div>
+            </div>
+
+            <div class="flex items-center space-x-2 w-full relative">
+                <div class="relative flex items-center flex-shrink-0">
+                    <button type="button" id="plus-btn" class="bg-[#202C33] border border-transparent hover:border-zinc-700/60 hover:bg-[#2A3942] text-zinc-300 p-3 rounded-full transition-all active:scale-95 flex items-center justify-center shadow-md">
+                        <i data-lucide="plus" class="w-5 h-5"></i>
+                    </button>
+                    <div id="attachment-menu" class="absolute bottom-16 left-0 bg-[#222E35] border border-zinc-800 rounded-2xl hidden flex-col w-44 overflow-hidden shadow-2xl z-20 animate-scale-up p-1">
+                        <button type="button" id="opt-camera" class="flex items-center space-x-3 px-4 py-3 hover:bg-[#2A3942] text-left text-sm text-zinc-200 transition-colors rounded-xl border-b border-zinc-800/30">
+                            <i data-lucide="camera" class="w-4 h-4 text-zinc-400"></i>
+                            <span class="font-medium">Tomar foto</span>
+                        </button>
+                        <button type="button" id="opt-gallery" class="flex items-center space-x-3 px-4 py-3 hover:bg-[#2A3942] text-left text-sm text-zinc-200 transition-colors rounded-xl">
+                            <i data-lucide="image" class="w-4 h-4 text-zinc-400"></i>
+                            <span class="font-medium">Dispositivo</span>
+                        </button>
+                    </div>
+                    <input type="file" id="camera-input" accept="image/*" capture="camera" class="hidden">
+                    <input type="file" id="gallery-input" accept="image/*" class="hidden">
+                </div>
+
+                <button type="button" id="ai-btn" class="bg-gradient-to-tr from-purple-600 via-indigo-600 to-blue-500 hover:brightness-110 text-white p-3 rounded-full transition-all active:scale-95 flex items-center justify-center shadow-lg shadow-indigo-500/20 flex-shrink-0 relative group">
+                    <i data-lucide="sparkles" class="w-5 h-5 animate-pulse"></i>
+                    <span class="absolute -top-1 -right-1 flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-sky-300"></span>
+                    </span>
+                </button>
+
+                <div class="flex-1 relative flex items-center bg-[#202C33] border border-transparent rounded-2xl px-4 py-3 focus-within:border-zinc-700 transition-all shadow-inner min-w-0">
+                    <input type="text" id="message-input" autocomplete="off" placeholder="Escribe un mensaje aquí..." 
+                           class="w-full bg-transparent text-sm focus:outline-none text-zinc-100 placeholder-zinc-500 pr-14 select-text font-medium">
+                    <button type="submit" class="absolute right-4 text-sky-500 hover:text-sky-400 font-extrabold text-sm transition-all active:scale-95 tracking-wide uppercase flex-shrink-0">
+                        Enviar
+                    </button>
+                </div>
+                
+                <button type="button" id="mic-btn" class="bg-[#202C33] border border-transparent hover:border-zinc-700/60 hover:bg-[#2A3942] text-zinc-300 p-3 rounded-full transition-all active:scale-95 flex items-center justify-center relative shadow-md flex-shrink-0">
+                    <i data-lucide="mic" id="mic-icon" class="w-5 h-5"></i>
+                    <span id="mic-pulse" class="absolute inset-0 rounded-full bg-red-500/20 animate-ping hidden"></span>
+                </button>
+            </div>
+        </form>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpszIcvVtVhaNqUu9C2SicT5UbZOrXA8E",
+            authDomain: "chatglobal-c68a3.firebaseapp.com",
+            databaseURL: "https://chatglobal-c68a3-default-rtdb.firebaseio.com",
+            projectId: "chatglobal-c68a3",
+            storageBucket: "chatglobal-c68a3.firebasestorage.app",
+            messagingSenderId: "149154535708",
+            appId: "1:149154535708:web:276b94267ce1c4b5c3c2d9",
+            measurementId: "G-03PGJ4HNPK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let currentChatMode = 'global'; 
+        let privateChatId = null;
+        let currentActiveRef = ref(db, 'messages');
+        let unsubscribeCurrentListener = null;
+        let isNavigatingToPrivate = false;
+
+        // Variables de control para respuestas en cadena
+        let activeReplyData = null;
+
+        lucide.createIcons();
+
+        const chatBox = document.getElementById('chat-box');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const usernameInput = document.getElementById('username-input');
+        const micBtn = document.getElementById('mic-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const micPulse = document.getElementById('mic-pulse');
+        const recordingWaveform = document.getElementById('recording-waveform');
+        
+        const plusBtn = document.getElementById('plus-btn');
+        const attachmentMenu = document.getElementById('attachment-menu');
+        const optCamera = document.getElementById('opt-camera');
+        const optGallery = document.getElementById('opt-gallery');
+        const cameraInput = document.getElementById('camera-input');
+        const galleryInput = document.getElementById('gallery-input');
+
+        const actionMenu = document.getElementById('action-menu');
+        const menuOptions = document.getElementById('menu-options');
+        const btnMenuEdit = document.getElementById('btn-menu-edit');
+        const btnMenuDelete = document.getElementById('btn-menu-delete');
+        const btnMenuDeleteForMe = document.getElementById('btn-menu-delete-for-me');
+        const btnMenuPrivateChat = document.getElementById('btn-menu-private-chat');
+        const textMenuPrivateChat = document.getElementById('text-menu-private-chat');
+        const globalHeaderBtn = document.getElementById('global-header-btn');
+        const chatTitleText = document.getElementById('chat-title-text');
+        const headerIcon = document.getElementById('header-icon');
+
+        const replyPreviewContainer = document.getElementById('reply-preview-container');
+        const replyPreviewUser = document.getElementById('reply-preview-user');
+        const replyPreviewText = document.getElementById('reply-preview-text');
+        const cancelReplyBtn = document.getElementById('cancel-reply-btn');
+
+        // BOTÓN DE LA IA
+        const aiBtn = document.getElementById('ai-btn');
+
+        // Efectos de sonido integrados nativos en Base64
+        const sendSound = new Audio("data:audio/ogg;base64,GkXfo59ChoEBQveBAULygQRC64EIQoKEd2VibSXYZgL/QY9AbY9AZgH9EtOfAZ3AVfQFUAVkZg8UrYIsAI1fQOW7AG9X9AEdU8gA0+uBAImDQYyBAImCwIuCwI6CQI2CQI6CQI2CQA==");
+        const receiveSound = new Audio("data:audio/ogg;base64,GkXfo59ChoEBQveBAULygQRC64EIQoKEd2VibSXYZgL/QY9AbY9AZgH9EtOfAZ3AVfQFUAVkZg8UrYIsAI1fQOW7AG9X9AEdU8gA0+uBAImDQYyBAImCwIuCwI6CQI2CQI6CQI2CQA==");
+        const deleteSound = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
+        const notifySound = new Audio("data:audio/ogg;base64,GkXfo59ChoEBQveBAULygQRC64EIQoKEd2VibSXYZgL/QY9AbY9AZgH9EtOfAZ3AVfQFUAVkZg8UrYIsAI1fQOW7AG9X9AEdU8gA0+uBAImDQYyBAImCwIuCwI6CQI2CQI6CQI2CQA==");
+        
+        sendSound.volume = 0.6;
+        receiveSound.volume = 0.6;
+        deleteSound.volume = 0.4;
+        notifySound.volume = 0.5;
+
+        let globalUsersMap = {};
+        let privateInteractionsMap = JSON.parse(localStorage.getItem('chat_private_interactions') || '{}');
+
+        if (!localStorage.getItem('chat_user_id')) {
+            localStorage.setItem('chat_user_id', 'user_' + Math.random().toString(36).substr(2, 9));
+        }
+        const myUserId = localStorage.getItem('chat_user_id');
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        let selectedMessageId = null;
+
+        // --- LÓGICA DE NOMBRE OBLIGATORIO Y LÍMITE DE 37 DÍAS ---
+        let localName = localStorage.getItem('chat_username');
+        let localNameDate = localStorage.getItem('chat_username_change_date');
+
+        const customNameModal = document.getElementById('custom-name-modal');
+        const modalNameInput = document.getElementById('modal-name-input');
+        const modalNameBtn = document.getElementById('modal-name-btn');
+        const modalNameError = document.getElementById('modal-name-error');
+
+        if (!localName || localName === 'Usuario Anonimo' || localName.trim() === '') {
+            customNameModal.classList.remove('hidden');
+            customNameModal.classList.add('flex');
+            lucide.createIcons();
+
+            modalNameBtn.addEventListener('click', () => {
+                const forcedName = modalNameInput.value.trim();
+                if (!forcedName || forcedName === 'Usuario Anonimo' || forcedName.length < 2) {
+                    modalNameError.classList.remove('hidden');
+                } else {
+                    localName = forcedName;
+                    localNameDate = Date.now().toString();
+                    localStorage.setItem('chat_username', localName);
+                    localStorage.setItem('chat_username_change_date', localNameDate);
+                    usernameInput.value = localName;
+                    customNameModal.classList.remove('flex');
+                    customNameModal.classList.add('hidden');
+                    checkNameLock();
+                }
+            });
+        } else {
+            usernameInput.value = localName;
+        }
+
+        const msIn37Days = 37 * 24 * 60 * 60 * 1000; 
+        function checkNameLock() {
+            const currentChangeDate = localStorage.getItem('chat_username_change_date');
+            const profileContainer = document.getElementById('profile-container');
+            const editIcon = document.getElementById('edit-icon');
+            
+            if (currentChangeDate && (Date.now() - parseInt(currentChangeDate) < msIn37Days)) {
+                profileContainer.title = "No puedes cambiar tu nombre hasta cumplir el lapso de 37 días.";
+                profileContainer.classList.add('opacity-70');
+                if (editIcon) editIcon.classList.add('hidden');
+                return true;
+            } else {
+                profileContainer.title = "Presiona para editar tu nombre";
+                profileContainer.classList.remove('opacity-70');
+                if (editIcon) editIcon.classList.remove('hidden');
+                return false;
+            }
+        }
+
+        const isLocked = checkNameLock();
+
+        document.getElementById('profile-container').addEventListener('click', () => {
+            if (checkNameLock()) {
+                alert("No puedes cambiar tu nombre hasta cumplir el lapso de 37 días.");
+                return;
+            }
+            
+            const currentName = usernameInput.value;
+            const newName = prompt("Ingresa tu nuevo nombre o apodo:", currentName);
+            
+            if (newName !== null) {
+                const trimmedName = newName.trim();
+                if (trimmedName === '' || trimmedName === 'Usuario Anonimo' || trimmedName.length < 2) {
+                    alert("Por favor ingresa un nombre válido (mínimo 2 caracteres).");
+                } else if (trimmedName !== currentName) {
+                    localStorage.setItem('chat_username', trimmedName);
+                    localStorage.setItem('chat_username_change_date', Date.now().toString());
+                    usernameInput.value = trimmedName;
+                    checkNameLock();
+                    lucide.createIcons();
+                }
+            }
+        });
+
+        plusBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            attachmentMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', () => {
+            attachmentMenu.classList.add('hidden');
+        });
+
+        optCamera.addEventListener('click', () => cameraInput.click());
+        optGallery.addEventListener('click', () => galleryInput.click());
+
+        function handleImageUpload(inputElement) {
+            const file = inputElement.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = () => {
+                const base64Image = reader.result;
+                const username = usernameInput.value.trim() || 'Anónimo';
+
+                const newMessageRef = push(currentActiveRef);
+                const payload = {
+                    userId: myUserId,
+                    username: username,
+                    image: base64Image,
+                    type: 'image',
+                    timestamp: serverTimestamp()
+                };
+                if (activeReplyData) {
+                    payload.replyTo = activeReplyData;
+                }
+                if (currentChatMode === 'private') {
+                    payload.status = 'sent';
+                }
+                set(newMessageRef, payload).then(() => {
+                    sendSound.play().catch(()=>{});
+                    closeReplyPreview();
+                });
+            };
+            inputElement.value = '';
+        }
+
+        cameraInput.addEventListener('change', () => handleImageUpload(cameraInput));
+        galleryInput.addEventListener('change', () => handleImageUpload(galleryInput));
+
+        // --- FUNCIÓN ADICIONAL: CONEXIÓN EN TIEMPO REAL CON LA API DE GEMINI IA ---
+        async function fetchAIResponse(userPrompt) {
+            try {
+                const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+                const apiKey = "AIzaSyCpszIcvVtVhaNqUu9C2SicT5UbZOrXA8E";
+
+                const response = await fetch(`${url}?key=${apiKey}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: userPrompt }] }] })
+                });
+
+                if (!response.ok) {
+                    return "Lo siento, en este momento tengo problemas para procesar tu solicitud. Por favor, intenta de nuevo.";
+                }
+
+                const responseData = await response.json();
+                return responseData.candidates[0].content.parts[0].text;
+            } catch (err) {
+                return "Lo siento, en este momento tengo problemas para procesar tu solicitud. Por favor, intenta de nuevo.";
+            }
+        }
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            const username = usernameInput.value.trim() || 'Anónimo';
+
+            if (text === '') return;
+
+            const newMessageRef = push(currentActiveRef);
+            const payload = {
+                userId: myUserId,
+                username: username,
+                text: text,
+                type: 'text',
+                timestamp: serverTimestamp()
+            };
+            if (activeReplyData) {
+                payload.replyTo = activeReplyData;
+            }
+            if (currentChatMode === 'private') {
+                payload.status = 'sent';
+            }
+            set(newMessageRef, payload).then(() => {
+                sendSound.play().catch(()=>{});
+                closeReplyPreview();
+
+                // Si estamos en modo privado hablando con la IA, procesar la respuesta de la IA
+                if (currentChatMode === 'private' && privateChatId === 'chat_gemini_ai_user_' + myUserId) {
+                    setTimeout(async () => {
+                        const aiResponseText = await fetchAIResponse(text);
+                        const aiMessageRef = push(currentActiveRef);
+                        set(aiMessageRef, {
+                            userId: 'gemini_ai_user',
+                            username: 'Gemini IA',
+                            text: aiResponseText,
+                            type: 'text',
+                            status: 'read',
+                            timestamp: serverTimestamp()
+                        }).then(() => {
+                            receiveSound.play().catch(()=>{});
+                        });
+                    }, 1000);
+                }
+            });
+
+            messageInput.value = '';
+        });
+
+        micBtn.addEventListener('click', async () => {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            const base64Audio = reader.result;
+                            const username = usernameInput.value.trim() || 'Anónimo';
+                            
+                            const newMessageRef = push(currentActiveRef);
+                            const payload = {
+                                userId: myUserId,
+                                username: username,
+                                audio: base64Audio,
+                                type: 'audio',
+                                timestamp: serverTimestamp()
+                            };
+                            if (activeReplyData) {
+                                payload.replyTo = activeReplyData;
+                }
+                            if (currentChatMode === 'private') {
+                                payload.status = 'sent';
+                            }
+                            set(newMessageRef, payload).then(() => {
+                                sendSound.play().catch(()=>{});
+                                closeReplyPreview();
+                            });
+                        };
+
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    micBtn.classList.add('bg-red-600', 'border-red-500');
+                    micIcon.classList.add('text-white');
+                    micPulse.classList.remove('hidden');
+                    recordingWaveform.classList.remove('hidden');
+                    recordingWaveform.classList.add('flex');
+
+                } catch (err) {
+                    alert('No se pudo acceder al micrófono: ' + err.message);
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                micBtn.classList.remove('bg-red-600', 'border-red-500');
+                micIcon.classList.remove('text-white');
+                micPulse.classList.add('hidden');
+                recordingWaveform.classList.add('hidden');
+                recordingWaveform.classList.remove('flex');
+            }
+        });
+
+        // ACCIÓN CLIC BOTÓN IA PARA INICIAR CHAT PRIVADO CON LA IA
+        aiBtn.addEventListener('click', () => {
+            startPrivateChat('gemini_ai_user', 'Gemini IA');
+        });
+
+        function listenToMessages() {
+            if (unsubscribeCurrentListener) {
+                unsubscribeCurrentListener();
+            }
+
+            let initialLoad = true;
+
+            unsubscribeCurrentListener = onValue(currentActiveRef, (snapshot) => {
+                const isAtBottom = chatBox.scrollHeight - chatBox.clientHeight <= chatBox.scrollTop + 100;
+
+                const welcomeText = currentChatMode === 'global' 
+                    ? 'Conectado al canal global de forma segura. ¡Desliza un mensaje hacia la derecha o mantén presionado para responder!'
+                    : 'Estás en un chat privado seguro y cifrado. Presiona el título en la cabecera para regresar.';
+
+                while (chatBox.firstChild) {
+                    chatBox.removeChild(chatBox.firstChild);
+                }
+
+                const welcomeDiv = document.createElement('div');
+                welcomeDiv.className = "flex justify-center my-4";
+                welcomeDiv.innerHTML = `
+                    <span class="text-zinc-500 text-[11px] font-medium text-center px-4 max-w-xs bg-[#111B21]/60 py-2 rounded-xl border border-zinc-800/40 shadow-sm backdrop-blur-md leading-relaxed">
+                        🛡️ ${welcomeText}
+                    </span>
+                `;
+                chatBox.appendChild(welcomeDiv);
+                
+                let hasNewRemoteMessage = false;
+
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const messageId = childSnapshot.key;
+                        const data = childSnapshot.val();
+                        const isMe = data.userId === myUserId;
+                        
+                        if (currentChatMode === 'private' && !isMe && data.status !== 'read') {
+                            update(ref(db, `private_messages/${privateChatId}/${messageId}`), { status: 'read' });
+                            data.status = 'read';
+                        }
+
+                        if(!isMe && !initialLoad) {
+                            hasNewRemoteMessage = true;
+                        }
+                        
+                        appendMessage(messageId, data, isMe);
+                    });
+                }
+
+                if(hasNewRemoteMessage && !initialLoad) {
+                    receiveSound.play().catch(()=>{});
+                }
+
+                initialLoad = false;
+
+                if (isAtBottom) {
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        window.goToGlobalChat = function() {
+            currentChatMode = 'global';
+            chatTitleText.innerText = `Chat Global`;
+            headerIcon.setAttribute('data-lucide', 'globe');
+            currentActiveRef = ref(db, 'messages');
+            listenToMessages();
+            closeReplyPreview();
+            lucide.createIcons();
+        };
+
+        window.toggleSidebar = function(show) {
+            const sidebar = document.getElementById('sidebar-chats');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (show) {
+                renderInteractionsList();
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.hidden = true;
+                overlay.classList.add('hidden');
+            }
+        };
+
+        onValue(ref(db, 'messages'), (snapshot) => {
+            if(snapshot.exists()) {
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    if(data.userId && data.username && data.userId !== myUserId) {
+                        globalUsersMap[data.userId] = data.username;
+                    }
+                });
+            }
+        });
+
+        onValue(ref(db, 'private_messages'), (snapshot) => {
+            if(snapshot.exists()) {
+                snapshot.forEach((chatChild) => {
+                    const chatId = chatChild.key;
+                    if(chatId.includes(myUserId)) {
+                        let lastMsg = null;
+                        let lastMsgId = null;
+                        chatChild.forEach((msgChild) => { 
+                            lastMsg = msgChild.val(); 
+                            lastMsgId = msgChild.key;
+                        });
+                        
+                        if(lastMsg && lastMsg.userId !== myUserId) {
+                            if (lastMsg.status === 'sent') {
+                                update(ref(db, `private_messages/${chatId}/${lastMsgId}`), { status: 'delivered' });
+                                lastMsg.status = 'delivered';
+                            }
+                            
+                            if (lastMsg.timestamp && (Date.now() - lastMsg.timestamp < 6000)) {
+                                if (currentChatMode !== 'private' || privateChatId !== chatId) {
+                                    notifySound.play().catch(()=>{});
+                                    if (currentChatMode !== 'private' || privateChatId !== chatId) {
+                                        showInAppNotification(lastMsg, chatId);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        function showInAppNotification(msg, chatId) {
+            if (isNavigatingToPrivate) return;
+            const notifBox = document.getElementById('in-app-notification');
+            const notifUser = document.getElementById('notif-user');
+            const notifText = document.getElementById('notif-text');
+            const notifAvatar = document.getElementById('notif-avatar');
+            
+            notifUser.innerText = msg.username || "Usuario";
+            notifAvatar.innerText = (msg.username || "U").substring(0, 2);
+            
+            if(msg.type === 'image' || msg.image) {
+                notifText.innerText = "Te envió una Foto 📸";
+            } else if(msg.type === 'audio' || msg.audio) {
+                notifText.innerText = "Te envió un Audio 🎙️";
+            } else {
+                notifText.innerText = msg.text || "Te envió un mensaje";
+            }
+
+            notifBox.classList.remove('hidden');
+            notifBox.classList.add('flex');
+
+            notifBox.onclick = () => {
+                isNavigatingToPrivate = true;
+                notifBox.onclick = null;
+                notifBox.classList.add('hidden');
+                notifBox.classList.remove('flex');
+                currentChatMode = 'private';
+                privateChatId = chatId;
+                
+                saveInteraction(msg.userId, msg.username);
+                
+                chatTitleText.innerText = `Chat con ${msg.username}`;
+                headerIcon.setAttribute('data-lucide', 'message-square');
+                currentActiveRef = ref(db, `private_messages/${privateChatId}`);
+                listenToMessages();
+                closeReplyPreview();
+                lucide.createIcons();
+                setTimeout(() => { isNavigatingToPrivate = false; }, 800);
+            };
+
+            setTimeout(() => {
+                if (notifBox.onclick) {
+                    notifBox.classList.add('hidden');
+                    notifBox.classList.remove('flex');
+                }
+            }, 4500);
+        }
+
+        function saveInteraction(userId, username) {
+            privateInteractionsMap[userId] = username;
+            localStorage.setItem('chat_private_interactions', JSON.stringify(privateInteractionsMap));
+        }
+
+        function renderInteractionsList(filterText = '') {
+            const container = document.getElementById('private-chats-list');
+            container.innerHTML = '';
+
+            let displayMap = { ...privateInteractionsMap };
+            if (filterText.trim() !== '') {
+                displayMap = { ...globalUsersMap, ...privateInteractionsMap };
+            }
+
+            const keys = Object.keys(displayMap).filter(id => id !== myUserId);
+            let addedCount = 0;
+
+            keys.forEach((id) => {
+                const name = displayMap[id];
+                if (filterText !== '' && !name.toLowerCase().includes(filterText.toLowerCase())) return;
+                
+                addedCount++;
+                const itemHTML = `
+                    <div onclick="startPrivateChat('${id}', '${name}')" class="flex items-center space-x-3 p-3 hover:bg-[#202C33] rounded-xl cursor-pointer transition-all border border-transparent hover:border-zinc-800/40 m-1">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-zinc-700 to-zinc-800 border border-zinc-700/60 flex items-center justify-center font-bold text-xs text-zinc-300 shadow-sm uppercase tracking-wider">
+                            ${name.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div class="flex-1 overflow-hidden">
+                            <h3 class="text-xs font-bold text-zinc-200 truncate">${name}</h3>
+                            <p class="text-[11px] text-zinc-500 truncate mt-0.5 font-medium">Presiona para iniciar chat privado</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', itemHTML);
+            });
+
+            if(addedCount === 0) {
+                container.innerHTML = `<p class="text-[11px] text-zinc-600 text-center py-4 font-medium">No se encontraron resultados</p>`;
+            }
+        }
+
+        document.getElementById('search-user-input').addEventListener('input', (e) => {
+            renderInteractionsList(e.target.value);
+        });
+
+        globalHeaderBtn.addEventListener('click', () => {
+            toggleSidebar(true);
+        });
+
+        window.toggleAudioPlay = function(btn, audioId) {
+            const audioEl = document.getElementById(audioId);
+            const playIcon = btn.querySelector('.play-ic');
+            const pauseIcon = btn.querySelector('.pause-ic');
+            const progressEl = btn.closest('.audio-player-container').querySelector('.audio-progress');
+            const timeEl = btn.closest('.audio-player-container').querySelector('.audio-time');
+
+            if (audioEl.paused) {
+                showListeningAudioToast();
+                document.querySelectorAll('audio').forEach(a => {
+                    if (a.id !== audioId && !a.paused) {
+                        a.pause();
+                        const trackingBtn = a.closest('.message-bubble').querySelector('.audio-play-btn');
+                        if (trackingBtn) {
+                            trackingBtn.querySelector('.play-ic').classList.remove('hidden');
+                            trackingBtn.querySelector('.pause-ic').classList.add('hidden');
+                        }
+                    }
+                });
+
+                audioEl.play();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            } else {
+                audioEl.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            }
+
+            audioEl.ontimeupdate = () => {
+                const percentage = (audioEl.currentTime / audioEl.duration) * 100;
+                progressEl.style.width = `${percentage}%`;
+                
+                let mins = Math.floor(audioEl.currentTime / 60);
+                let secs = Math.floor(audioEl.currentTime % 60);
+                timeEl.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            };
+
+            audioEl.onended = () => {
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+                progressEl.style.width = '0%';
+                timeEl.innerText = '0:00';
+            };
+
+            audioEl.onloadedmetadata = () => {
+                let mins = Math.floor(audioEl.duration / 60);
+                let secs = Math.floor(audioEl.duration % 60);
+                if (!isNaN(audioEl.duration)) {
+                    timeEl.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                }
+            };
+        };
+
+        // Métodos de acción para inicializar la respuesta a un mensaje específico
+        window.initiateReplyMode = function(username, textContent, type) {
+            let parsedText = textContent;
+            if (type === 'image') parsedText = "📸 Foto";
+            if (type === 'audio') parsedText = "🎙️ Mensaje de voz";
+
+            activeReplyData = {
+                username: username,
+                text: parsedText
+            };
+
+            replyPreviewUser.innerText = username;
+            replyPreviewText.innerText = parsedText;
+            replyPreviewContainer.classList.remove('hidden');
+            messageInput.focus();
+        };
+
+        window.closeReplyPreview = function() {
+            activeReplyData = null;
+            replyPreviewContainer.classList.add('hidden');
+        };
+
+        cancelReplyBtn.addEventListener('click', closeReplyPreview);
+
+        function appendMessage(messageId, data, isMe) {
+            let timeString = "...";
+            if(data.timestamp) {
+                timeString = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            
+            const bubbleBg = isMe ? 'bg-[#005C4B]' : 'bg-[#202C33]';
+            const alignClass = isMe ? 'justify-end' : 'justify-start';
+            const roundedClass = isMe ? 'rounded-[10px] rounded-tr-none' : 'rounded-[10px] rounded-tl-none';
+
+            let statusTicks = '';
+            if (currentChatMode === 'private' && isMe) {
+                if (data.status === 'read') {
+                    statusTicks = `<span class="text-[#53bdeb] ml-1 text-[11px] font-bold">✓✓</span>`;
+                } else if (data.status === 'delivered') {
+                    statusTicks = `<span class="text-[#8696a0] ml-1 text-[11px] font-bold">✓✓</span>`;
+                } else {
+                    statusTicks = `<span class="text-[#8696a0] ml-1 text-[11px] font-bold">✓</span>`;
+                }
+            }
+
+            // Construcción del bloque de mensaje citado si responde a otro
+            let replyBlockHTML = '';
+            if (data.replyTo) {
+                replyBlockHTML = `
+                    <div class="bg-black/20 border-l-4 border-sky-400 px-2.5 py-1.5 rounded-r-md mb-1.5 max-w-full select-none text-left">
+                        <span class="text-[11px] font-extrabold text-sky-400 block tracking-wide uppercase">${data.replyTo.username}</span>
+                        <p class="text-[12px] text-zinc-400 truncate mt-0.5 font-medium">${data.replyTo.text}</p>
+                    </div>
+                `;
+            }
+
+            let contentHTML = '';
+            if (data.type === 'audio' || data.audio) {
+                const uniqueAudioId = `native-audio-${messageId}`;
+                contentHTML = `
+                    <div class="flex items-center space-x-3.5 py-1.5 min-w-[200px] sm:min-w-[250px] audio-player-container select-none" onclick="event.stopPropagation();">
+                        <audio id="${uniqueAudioId}" src="${data.audio}" class="hidden" preload="metadata"></audio>
+                        
+                        <button onclick="toggleAudioPlay(this, '${uniqueAudioId}')" class="audio-play-btn flex items-center justify-center w-11 h-11 bg-zinc-900/30 border border-zinc-700/20 rounded-full transition-all flex-shrink-0 active:scale-95 hover:bg-zinc-900/50">
+                            <i data-lucide="play" class="w-5 h-5 play-ic text-[#8696a0] fill-[#8696a0] ml-0.5"></i>
+                            <i data-lucide="pause" class="w-5 h-5 pause-ic text-[#8696a0] fill-[#8696a0] hidden"></i>
+                        </button>
+                        
+                        <div class="flex-1 flex flex-col justify-center space-y-1.5">
+                            <div class="relative w-full h-[3.5px] bg-[#374248] rounded-full overflow-hidden">
+                                <div class="audio-progress absolute top-0 left-0 h-full bg-[#00a884] rounded-full transition-all duration-100" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between items-center text-[11px] text-[#8696a0]">
+                                <span class="audio-time font-sans font-medium">0:00</span>
+                            </div>
+                        </div>
+                        <div class="relative flex-shrink-0 self-end mb-1">
+                            <i data-lucide="mic" class="w-4 h-4 text-[#53bdeb] fill-[#53bdeb]"></i>
+                        </div>
+                    </div>
+                `;
+            } else if (data.type === 'image' || data.image) {
+                contentHTML = `
+                    <div class="p-1 relative max-w-[240px] sm:max-w-[280px]">
+                        <img src="${data.image}" class="rounded-[6px] w-full object-cover shadow-md border border-zinc-700/10" onclick="event.stopPropagation();" alt="Imagen">
+                    </div>`;
+            } else {
+                contentHTML = `<div class="text-[14.5px] break-words text-[#e9edef] leading-relaxed select-text font-normal pr-12 pb-1.5 tracking-wide">${data.text || ''}</div>`;
+            }
+
+            const messageHTML = `
+                <div class="flex w-full max-w-3xl mx-auto ${alignClass} animate-fade-in relative group custom-msg-select px-2 swipe-container overflow-hidden"
+                     data-id="${messageId}" 
+                     data-me="${isMe}" 
+                     data-userid="${data.userId}"
+                     data-username="${btoa(encodeURIComponent(data.username || 'Anónimo'))}"
+                     data-type="${data.type || 'text'}" 
+                     data-text="${btoa(encodeURIComponent(data.text || ''))}"
+                     oncontextmenu="event.preventDefault();">
+                    
+                    <div class="swipe-reply-indicator absolute left-4 top-1/2 -translate-y-1/2 opacity-0 flex items-center justify-center w-8 h-8 rounded-full bg-zinc-800 text-sky-400 z-0 pointer-events-none transition-opacity duration-150">
+                        <i data-lucide="reply" class="w-4 h-4"></i>
+                    </div>
+
+                    <div class="flex flex-col max-w-[85%] relative swipe-target transition-transform duration-75 ease-out z-10">
+                        <div class="message-bubble ${bubbleBg} px-3 pt-2 pb-1.5 ${roundedClass} shadow-[0_1px_1px_rgba(0,0,0,0.18)] relative cursor-pointer hover:brightness-105 transition-all">
+                            
+                            ${!isMe ? `<span class="text-[12.5px] font-extrabold text-[#53bdeb] block mb-1 tracking-wide uppercase text-xs">${data.username}</span>` : ''}
+                            
+                            ${replyBlockHTML}
+                            ${contentHTML}
+                            
+                            <div class="absolute bottom-1 right-2 flex items-center space-x-1 select-none pointer-events-none mt-1">
+                                <span class="text-[9.5px] text-[#8696a0] font-sans font-medium">${timeString} ${data.edited ? '(editado)' : ''}</span>
+                                ${statusTicks}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            chatBox.insertAdjacentHTML('beforeend', messageHTML);
+            
+            const element = chatBox.lastElementChild;
+            setupLongPress(element);
+            setupSwipeToReply(element);
+            
+            lucide.createIcons();
+        }
+
+        // LÓGICA TÁCTIL Y DE RATÓN PARA DESLIZAR HACIA LA DERECHA (SWIPE TO REPLY)
+        function setupSwipeToReply(element) {
+            const target = element.querySelector('.swipe-target');
+            const indicator = element.querySelector('.swipe-reply-indicator');
+            if (!target || !indicator) return;
+
+            let startX = 0;
+            let currentX = 0;
+            let isSwiping = false;
+            const maxSwipe = 75; // Distancia máxima en píxeles
+            const threshold = 55; // Umbral requerido para activar la respuesta
+
+            // Eventos móviles (Touch)
+            element.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isSwiping = true;
+            }, { passive: true });
+
+            element.addEventListener('touchmove', (e) => {
+                if (!isSwiping) return;
+                currentX = e.touches[0].clientX - startX;
+
+                if (currentX > 0) { // Solo permitir deslizamiento a la derecha
+                    if (currentX > maxSwipe) currentX = maxSwipe;
+                    target.style.transform = `translateX(${currentX}px)`;
+                    
+                    // Mostrar indicador visual dinámicamente
+                    const opacity = Math.min(currentX / threshold, 1);
+                    indicator.style.opacity = opacity;
+                    if (currentX >= threshold) {
+                        indicator.style.transform = 'translateY(-50%) scale(1.15)';
+                    } else {
+                        indicator.style.transform = 'translateY(-50%) scale(1)';
+                    }
+                }
+            }, { passive: true });
+
+            element.addEventListener('touchend', () => {
+                if (!isSwiping) return;
+                isSwiping = false;
+
+                if (currentX >= threshold) {
+                    triggerSwipeAction(element);
+                }
+
+                // Resetear posiciones suavemente
+                target.style.transition = 'transform 0.2s ease';
+                target.style.transform = 'translateX(0px)';
+                indicator.style.opacity = '0';
+                
+                setTimeout(() => {
+                    target.style.transition = '';
+                }, 200);
+                currentX = 0;
+            }, { passive: true });
+
+            // Soporte para PC (Mouse Drag)
+            let isMouseDown = false;
+
+            element.addEventListener('mousedown', (e) => {
+                startX = e.clientX;
+                isMouseDown = true;
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                currentX = e.clientX - startX;
+
+                if (currentX > 0) {
+                    if (currentX > maxSwipe) currentX = maxSwipe;
+                    target.style.transform = `translateX(${currentX}px)`;
+                    
+                    const opacity = Math.min(currentX / threshold, 1);
+                    indicator.style.opacity = opacity;
+                    if (currentX >= threshold) {
+                        indicator.style.transform = 'translateY(-50%) scale(1.15)';
+                    } else {
+                        indicator.style.transform = 'translateY(-50%) scale(1)';
+                    }
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (!isMouseDown) return;
+                isMouseDown = false;
+
+                if (currentX >= threshold) {
+                    triggerSwipeAction(element);
+                }
+
+                target.style.transition = 'transform 0.2s ease';
+                target.style.transform = 'translateX(0px)';
+                indicator.style.opacity = '0';
+                
+                setTimeout(() => {
+                    target.style.transition = '';
+                }, 200);
+                currentX = 0;
+            });
+        }
+
+        function triggerSwipeAction(element) {
+            const username = decodeURIComponent(atob(element.getAttribute('data-username')));
+            const type = element.getAttribute('data-type');
+            const textContent = decodeURIComponent(atob(element.getAttribute('data-text')));
+            
+            if (navigator.vibrate) {
+                navigator.vibrate(25);
+            }
+            initiateReplyMode(username, textContent, type);
+        }
+
+        function setupLongPress(element) {
+            let pressTimer;
+            
+            const startPress = () => {
+                pressTimer = setTimeout(() => {
+                    openMessageMenu(element);
+                }, 1300); // Modificado exactamente a 1,30 segundos (1300 milisegundos)
+            };
+
+            const cancelPress = () => {
+                clearTimeout(pressTimer);
+            };
+
+            element.addEventListener('touchstart', startPress, { passive: true });
+            element.addEventListener('touchend', cancelPress, { passive: true });
+            element.addEventListener('touchmove', cancelPress, { passive: true });
+            element.addEventListener('mousedown', startPress);
+            element.addEventListener('mouseup', cancelPress);
+            element.addEventListener('mouseleave', cancelPress);
+        }
+
+        window.openMessageMenu = function(element) {
+            if (navigator.vibrate) {
+                navigator.vibrate(40);
+            }
+            selectedMessageId = element.getAttribute('data-id');
+            const isMe = element.getAttribute('data-me') === 'true';
+            const targetUserId = element.getAttribute('data-userid');
+            const targetUsername = decodeURIComponent(atob(element.getAttribute('data-username')));
+            const isAudio = element.getAttribute('data-type') === 'audio';
+            const isImage = element.getAttribute('data-type') === 'image';
+            const encodedText = element.getAttribute('data-text');
+
+            const textMenuDelete = document.getElementById('text-menu-delete');
+
+            // Limpieza previa e inserción del botón dinámico de responder en el menú de opciones contextual
+            const existingReplyBtn = document.getElementById('btn-menu-reply-context');
+            if (existingReplyBtn) existingReplyBtn.remove();
+
+            const replyBtnHTML = `
+                <button id="btn-menu-reply-context" class="flex items-center space-x-3 px-4 py-3.5 hover:bg-[#2A3942] text-left text-sm transition-colors rounded-xl text-zinc-200 font-medium">
+                    <i data-lucide="reply" class="w-4 h-4 text-sky-400"></i>
+                    <span>Responder</span>
+                </button>
+            `;
+            menuOptions.insertAdjacentHTML('afterbegin', replyBtnHTML);
+            document.getElementById('btn-menu-reply-context').onclick = () => {
+                closeActionMenu();
+                const decodedText = decodeURIComponent(atob(encodedText));
+                initiateReplyMode(targetUsername, decodedText, isAudio ? 'audio' : (isImage ? 'image' : 'text'));
+            };
+
+            if (isMe) {
+                // Mensaje propio: Editar mensaje, eliminar para todos, eliminar para mí
+                btnMenuPrivateChat.classList.add('hidden');
+                btnMenuDeleteForMe.classList.remove('hidden');
+                
+                if(isAudio || isImage) {
+                    btnMenuEdit.classList.add('hidden');
+                } else {
+                    btnMenuEdit.classList.remove('hidden');
+                    btnMenuEdit.onclick = () => { closeActionMenu(); triggerEdit(selectedMessageId, encodedText); };
+                }
+                
+                textMenuDelete.innerText = "Eliminar para todos";
+                btnMenuDelete.onclick = () => { closeActionMenu(); triggerDelete(selectedMessageId, true); };
+                btnMenuDeleteForMe.onclick = () => { closeActionMenu(); triggerDelete(selectedMessageId, false); };
+            } else {
+                // Mensaje de otra persona: eliminar para mí, Chatear en privado
+                btnMenuEdit.classList.add('hidden');
+                btnMenuDeleteForMe.classList.add('hidden');
+                
+                textMenuDelete.innerText = "Eliminar para mí";
+                btnMenuDelete.onclick = () => { closeActionMenu(); triggerDelete(selectedMessageId, false); };
+
+                if (currentChatMode === 'global') {
+                    btnMenuPrivateChat.classList.remove('hidden');
+                    textMenuPrivateChat.innerText = `Chatear al privado`;
+                    btnMenuPrivateChat.onclick = () => {
+                        closeActionMenu();
+                        startPrivateChat(targetUserId, targetUsername);
+                    };
+                } else {
+                    btnMenuPrivateChat.classList.add('hidden');
+                }
+            }
+
+            actionMenu.classList.remove('hidden');
+            actionMenu.classList.add('flex');
+            lucide.createIcons();
+        };
+
+        window.startPrivateChat = function(targetUserId, targetUsername) {
+            currentChatMode = 'private';
+            saveInteraction(targetUserId, targetUsername);
+            
+            const sortedIds = [myUserId, targetUserId].sort();
+            privateChatId = `chat_${sortedIds[0]}_${sortedIds[1]}`;
+            
+            chatTitleText.innerText = `Chat con ${targetUsername}`;
+            headerIcon.setAttribute('data-lucide', 'message-square');
+            
+            currentActiveRef = ref(db, `private_messages/${privateChatId}`);
+            listenToMessages();
+            closeReplyPreview();
+            lucide.createIcons();
+        }
+
+        window.closeActionMenu = function() {
+            actionMenu.classList.remove('flex');
+            actionMenu.classList.add('hidden');
+        };
+
+        function triggerEdit(messageId, encodedText) {
+            const currentText = decodeURIComponent(atob(encodedText));
+            const newText = prompt('Edita tu mensaje:', currentText);
+            
+            if (newText !== null && newText.trim() !== '' && newText.trim() !== currentText) {
+                const messageRef = ref(db, `${currentChatMode === 'global' ? 'messages' : 'private_messages/' + privateChatId}/${messageId}`);
+                update(messageRef, {
+                    text: newText.trim(),
+                    edited: true
+                }).catch((error) => alert('Error al editár: ' + error.message));
+            }
+        }
+
+        window.closeDeleteModal = function() {
+            document.getElementById('custom-delete-modal').classList.add('hidden');
+            document.getElementById('custom-delete-modal').classList.remove('flex');
+        };
+
+        function triggerDelete(messageId, isForEveryone) {
+            const deleteModal = document.getElementById('custom-delete-modal');
+            const confirmBtn = document.getElementById('confirm-delete-btn');
+            const modalTitle = document.getElementById('delete-modal-title');
+            const modalDesc = document.getElementById('delete-modal-desc');
+
+            if(isForEveryone) {
+                modalTitle.innerText = "¿Eliminar para todos?";
+                modalDesc.innerText = "El mensaje seleccionado se eliminará de forma irreversible para todos los usuarios en el canal.";
+            } else {
+                modalTitle.innerText = "¿Eliminar para mí?";
+                modalDesc.innerText = "Este mensaje desaparecerá de tu vista local pero seguirá visible para el resto de miembros.";
+            }
+
+            deleteModal.classList.remove('hidden');
+            deleteModal.classList.add('flex');
+            lucide.createIcons();
+
+            confirmBtn.onclick = () => {
+                if(isForEveryone) {
+                    const messageRef = ref(db, `${currentChatMode === 'global' ? 'messages' : 'private_messages/' + privateChatId}/${messageId}`);
+                    remove(messageRef).then(() => {
+                        showDeleteSuccessToast();
+                    }).catch((error) => alert('Error al eliminar: ' + error.message));
+                } else {
+                    const targetBubble = document.querySelector(`[data-id="${messageId}"]`);
+                    if(targetBubble) targetBubble.remove();
+                    showDeleteSuccessToast();
+                }
+                closeDeleteModal();
+            };
+        }
+
+        function showDeleteSuccessToast() {
+            deleteSound.play().catch(()=>{});
+            const toast = document.getElementById('delete-success-toast');
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
+
+        function showListeningAudioToast() {
+            const toast = document.getElementById('listening-audio-toast');
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            lucide.createIcons();
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 3000);
+        }
+
+        listenToMessages();
+    </script>
+
+    <style>
+        .contenedor-mensajes {
+            padding-bottom: 80px;
+        }
+
+        .contenedor-mensajes {
+            padding-bottom: calc(70px + env(safe-area-inset-bottom));
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.96); filter: blur(2px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+        @keyframes waveGlow {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(2.2); }
+        }
+        
+        @keyframes dynamicIsland {
+            0% { opacity: 0; transform: scaleX(0.3) scaleY(0.2); border-radius: 50px; filter: blur(4px); }
+            40% { opacity: 1; transform: scaleX(1.06) scaleY(1.04); filter: blur(0); }
+            70% { transform: scaleX(0.98) scaleY(0.98); }
+            100% { opacity: 1; transform: scale(1); border-radius: 9999px; }
+        }
+        @keyframes dynamicIslandExpanded {
+            0% { opacity: 0; transform: scaleX(0.2) scaleY(0.1); border-radius: 9999px; filter: blur(6px); }
+            50% { opacity: 1; transform: scaleX(1.04) scaleY(1.05); filter: blur(0); }
+            75% { transform: scaleX(0.99) scaleY(0.98); }
+            100% { opacity: 1; transform: scale(1); border-radius: 24px; }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.2s cubic-bezier(0.215, 0.610, 0.355, 1) forwards; }
+        .animate-scale-up { animation: scaleUp 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-dynamic-island { animation: dynamicIsland 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-dynamic-island-expanded { animation: dynamicIslandExpanded 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .wave-bar { animation: waveGlow 1.2s ease-in-out infinite; }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</body>
+</html>
