@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Global En Vivo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-black text-white font-sans h-screen flex flex-col justify-between select-none">
+
+    <!-- CABECERA (Estilo Instagram Dark) -->
+    <header class="bg-black border-b border-zinc-800 p-4 flex items-center justify-between sticky top-0 z-10">
+        <div class="flex items-center space-x-3">
+            <div class="bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 p-0.5 rounded-full">
+                <div class="bg-black p-1.5 rounded-full text-white">
+                    <i data-lucide="globe" class="w-5 h-5"></i>
+                </div>
+            </div>
+            <div>
+                <h1 class="font-bold text-base tracking-wide flex items-center space-x-1">
+                    <span>Chat Global</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-400"></i>
+                </h1>
+                <p class="text-[11px] text-zinc-400 flex items-center">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 inline-block mr-1"></span>
+                    En vivo
+                </p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2 bg-zinc-900 px-3 py-1.5 rounded-full border border-zinc-800">
+            <i data-lucide="user" class="w-3.5 h-3.5 text-zinc-400"></i>
+            <input type="text" id="username-input" value="Usuario Anonimo" class="bg-transparent text-xs font-medium focus:outline-none w-24 text-zinc-200" title="Cambiar nombre de usuario">
+        </div>
+    </header>
+
+    <!-- CONTENEDOR DE MENSAJES -->
+    <main id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4 bg-black scrollbar-none pb-12">
+        <!-- Los mensajes se limpian y renderizan dinámicamente aquí en tiempo real -->
+    </main>
+
+    <!-- MENÚ CONTEXTUAL / FLOTANTE DE REACCIONES Y OPCIONES -->
+    <div id="action-menu" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4" onclick="closeActionMenu()">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-xs overflow-hidden shadow-2xl animate-scale-up" onclick="event.stopPropagation()">
+            <!-- Barra de Reacciones tipo WhatsApp -->
+            <div class="flex justify-around p-3 border-b border-zinc-800 bg-zinc-950/50 text-2xl">
+                <button onclick="reactToMessage('👍')" class="hover:scale-125 active:scale-95 transition-transform">👍</button>
+                <button onclick="reactToMessage('❤️')" class="hover:scale-125 active:scale-95 transition-transform">❤️</button>
+                <button onclick="reactToMessage('😂')" class="hover:scale-125 active:scale-95 transition-transform">😂</button>
+                <button onclick="reactToMessage('😮')" class="hover:scale-125 active:scale-95 transition-transform">😮</button>
+                <button onclick="reactToMessage('😢')" class="hover:scale-125 active:scale-95 transition-transform">😢</button>
+                <button onclick="reactToMessage('🙏')" class="hover:scale-125 active:scale-95 transition-transform">🙏</button>
+            </div>
+            <!-- Opciones del Mensaje -->
+            <div id="menu-options" class="flex flex-col">
+                <button id="btn-menu-edit" class="flex items-center space-x-3 px-4 py-3 hover:bg-zinc-800 text-left text-sm transition-colors border-b border-zinc-800/50">
+                    <i data-lucide="pencil" class="w-4 h-4 text-zinc-400"></i>
+                    <span>Editar mensaje</span>
+                </button>
+                <button id="btn-menu-delete" class="flex items-center space-x-3 px-4 py-3 hover:bg-zinc-800 text-left text-sm text-red-400 transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i>
+                    <span>Eliminar para todos</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÁREA DE ENTRADA (Estilo Instagram Direct con botón de Audio) -->
+    <footer class="p-4 bg-black border-t border-zinc-900">
+        <form id="chat-form" class="flex items-center max-w-3xl mx-auto space-x-2">
+            <div class="flex-1 relative flex items-center bg-zinc-900 border border-zinc-800 rounded-full px-4 py-2.5 focus-within:border-zinc-700 transition-all">
+                <input type="text" id="message-input" autocomplete="off" placeholder="Escribe un mensaje aquí..." 
+                       class="w-full bg-transparent text-sm focus:outline-none text-white placeholder-zinc-500 pr-14 select-text">
+                <button type="submit" class="absolute right-4 text-sky-500 hover:text-sky-400 font-semibold text-sm transition-all active:scale-95">
+                    Enviar
+                </button>
+            </div>
+            <!-- Botón de Micrófono para Grabar -->
+            <button type="button" id="mic-btn" class="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-white p-2.5 rounded-full transition-all active:scale-95 flex items-center justify-center relative">
+                <i data-lucide="mic" id="mic-icon" class="w-5 h-5"></i>
+                <span id="mic-pulse" class="absolute inset-0 rounded-full bg-red-500/20 animate-ping hidden"></span>
+            </button>
+        </form>
+    </footer>
+
+    <!-- Firebase App y Realtime Database SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, set, onValue, update, remove, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Tu configuración oficial de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpszIcvVtVhaNqUu9C2SicT5UbZOrXA8E",
+            authDomain: "chatglobal-c68a3.firebaseapp.com",
+            databaseURL: "https://chatglobal-c68a3-default-rtdb.firebaseio.com",
+            projectId: "chatglobal-c68a3",
+            storageBucket: "chatglobal-c68a3.firebasestorage.app",
+            messagingSenderId: "149154535708",
+            appId: "1:149154535708:web:276b94267ce1c4b5c3c2d9",
+            measurementId: "G-03PGJ4HNPK"
+        };
+
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const messagesRef = ref(db, 'messages');
+
+        // Inicializar iconos
+        lucide.createIcons();
+
+        const chatBox = document.getElementById('chat-box');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const usernameInput = document.getElementById('username-input');
+        const micBtn = document.getElementById('mic-btn');
+        const micIcon = document.getElementById('mic-icon');
+        const micPulse = document.getElementById('mic-pulse');
+        
+        const actionMenu = document.getElementById('action-menu');
+        const menuOptions = document.getElementById('menu-options');
+        const btnMenuEdit = document.getElementById('btn-menu-edit');
+        const btnMenuDelete = document.getElementById('btn-menu-delete');
+
+        // Generar un ID aleatorio por sesión para identificar los mensajes propios
+        const myUserId = 'user_' + Math.random().toString(36).substr(2, 9);
+
+        // Variables para la grabación de Audio
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        // ID del mensaje activo seleccionado para el menú contextual
+        let selectedMessageId = null;
+
+        // Guardar el nombre de usuario localmente si se edita
+        if(localStorage.getItem('chat_username')) {
+            usernameInput.value = localStorage.getItem('chat_username');
+        }
+        usernameInput.addEventListener('input', () => {
+            localStorage.setItem('chat_username', usernameInput.value.trim() || 'Anónimo');
+        });
+
+        // ENVIAR MENSAJE A FIREBASE
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            const username = usernameInput.value.trim() || 'Anónimo';
+
+            if (text === '') return;
+
+            const newMessageRef = push(messagesRef);
+            set(newMessageRef, {
+                userId: myUserId,
+                username: username,
+                text: text,
+                type: 'text',
+                timestamp: serverTimestamp()
+            });
+
+            messageInput.value = '';
+        });
+
+        // LÓGICA DE GRABACIÓN DE AUDIO
+        micBtn.addEventListener('click', async () => {
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        
+                        // Convertir Blob a Base64 string para mandarlo por Realtime Database
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            const base64Audio = reader.result;
+                            const username = usernameInput.value.trim() || 'Anónimo';
+                            
+                            const newMessageRef = push(messagesRef);
+                            set(newMessageRef, {
+                                userId: myUserId,
+                                username: username,
+                                audio: base64Audio,
+                                type: 'audio',
+                                timestamp: serverTimestamp()
+                            });
+                        };
+
+                        // Apagar los tracks del micrófono de forma limpia
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    micBtn.classList.add('bg-red-600', 'border-red-500');
+                    micIcon.classList.add('text-white');
+                    micPulse.classList.remove('hidden');
+
+                } catch (err) {
+                    alert('No se pudo acceder al micrófono: ' + err.message);
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                micBtn.classList.remove('bg-red-600', 'border-red-500');
+                micIcon.classList.remove('text-white');
+                micPulse.classList.add('hidden');
+            }
+        });
+
+        // ESCUCHAR MENSAJES EN TIEMPO REAL (Renderizado de canal completo reactivo)
+        onValue(messagesRef, (snapshot) => {
+            chatBox.innerHTML = `
+                <div class="flex justify-center my-4">
+                    <span class="text-zinc-500 text-xs text-center px-4">
+                        Conectado al canal global de forma segura. ¡Mantén presionado un mensaje para reaccionar o ver opciones!
+                    </span>
+                </div>
+            `;
+            
+            if (snapshot.exists()) {
+                snapshot.forEach((childSnapshot) => {
+                    const messageId = childSnapshot.key;
+                    const data = childSnapshot.val();
+                    const isMe = data.userId === myUserId;
+                    appendMessage(messageId, data, isMe);
+                });
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        function appendMessage(messageId, data, isMe) {
+            let timeString = "...";
+            if(data.timestamp) {
+                timeString = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            const initials = data.username.substring(0, 2).toUpperCase();
+            
+            // Estilos burbujas
+            const avatarBg = isMe ? 'hidden' : 'bg-zinc-800 border border-zinc-700';
+            const bubbleBg = isMe ? 'bg-gradient-to-r from-purple-600 to-blue-500 text-white' : 'bg-zinc-950 border border-zinc-800 text-zinc-100';
+            const alignClass = isMe ? 'justify-end' : 'justify-start';
+            const roundedClass = isMe ? 'rounded-[20px] rounded-br-[4px]' : 'rounded-[20px] rounded-bl-[4px]';
+
+            // Contenido Texto o Audio
+            let contentHTML = '';
+            if (data.type === 'audio' || data.audio) {
+                contentHTML = `
+                    <div class="flex items-center space-x-2 py-1 min-w-[200px]">
+                        <audio src="${data.audio}" controls class="h-8 max-w-full invert opacity-90 brightness-200 contrast-75"></audio>
+                    </div>
+                `;
+            } else {
+                contentHTML = `<div class="text-[14px] break-words leading-snug select-text">${data.text || ''}</div>`;
+            }
+
+            // Renderizar Reacciones acumuladas
+            let reactionsHTML = '';
+            if (data.reactions) {
+                const summary = {};
+                Object.values(data.reactions).forEach(r => { summary[r] = (summary[r] || 0) + 1; });
+                const emojiString = Object.keys(summary).join(' ');
+                reactionsHTML = `
+                    <div class="absolute -bottom-2.5 ${isMe ? 'left-3' : 'right-3'} bg-zinc-800 border border-zinc-700 text-[11px] px-1.5 py-0.5 rounded-full shadow-md flex items-center space-x-1 z-10 animate-scale-up">
+                        <span>${emojiString}</span>
+                        ${Object.values(summary).reduce((a,b)=>a+b, 0) > 1 ? `<span class="text-zinc-400 text-[9px] font-bold">${Object.values(summary).reduce((a,b)=>a+b, 0)}</span>` : ''}
+                    </div>
+                `;
+            }
+
+            const messageHTML = `
+                <div class="flex items-end space-x-2 w-full max-w-2xl mx-auto ${alignClass} animate-fade-in relative group touch-none"
+                     data-id="${messageId}" 
+                     data-me="${isMe}" 
+                     data-type="${data.type || 'text'}" 
+                     data-text="${btoa(encodeURIComponent(data.text || ''))}"
+                     oncontextmenu="event.preventDefault(); openMessageMenu(this);"
+                     onload="setupLongPress(this)">
+                    
+                    ${!isMe ? `
+                    <div class="w-7 h-7 rounded-full ${avatarBg} flex items-center justify-center font-bold text-[10px] text-zinc-300 flex-shrink-0 shadow-sm">
+                        ${initials}
+                    </div>` : ''}
+                    
+                    <div class="flex flex-col max-w-[70%] ${isMe ? 'items-end' : 'items-start'} relative pb-1">
+                        ${!isMe ? `<span class="text-[10px] font-medium text-zinc-500 mb-0.5 ml-2">${data.username}</span>` : ''}
+                        <div class="message-bubble ${bubbleBg} px-4 py-2.5 ${roundedClass} shadow-sm relative cursor-pointer active:opacity-80 transition-opacity" onclick="openMessageMenu(this.closest('[data-id]'))">
+                            ${contentHTML}
+                            ${reactionsHTML}
+                        </div>
+                        <span class="text-[9px] text-zinc-600 mt-1 px-1">${timeString} ${data.edited ? '(editado)' : ''}</span>
+                    </div>
+                </div>
+            `;
+
+            chatBox.insertAdjacentHTML('beforeend', messageHTML);
+            
+            // Asignar los eventos Touch para móviles inmediatamente al insertar en el DOM
+            const element = chatBox.lastElementChild;
+            setupLongPress(element);
+            
+            lucide.createIcons();
+        }
+
+        // CONTROLADOR LONG-PRESS (Para móviles y tablets)
+        function setupLongPress(element) {
+            let pressTimer;
+            
+            const startPress = () => {
+                pressTimer = setTimeout(() => {
+                    openMessageMenu(element);
+                }, 500); // 500ms para considerarse pulsación larga
+            };
+
+            const cancelPress = () => {
+                clearTimeout(pressTimer);
+            };
+
+            element.addEventListener('touchstart', startPress, { passive: true });
+            element.addEventListener('touchend', cancelPress, { passive: true });
+            element.addEventListener('touchmove', cancelPress, { passive: true });
+            element.addEventListener('mousedown', startPress);
+            element.addEventListener('mouseup', cancelPress);
+            element.addEventListener('mouseleave', cancelPress);
+        }
+
+        // DESPLEGAR EL MENÚ FLOTANTE NATIVO
+        window.openMessageMenu = function(element) {
+            selectedMessageId = element.getAttribute('data-id');
+            const isMe = element.getAttribute('data-me') === 'true';
+            const isAudio = element.getAttribute('data-type') === 'audio';
+            const encodedText = element.getAttribute('data-text');
+
+            // Mostrar u ocultar opciones de edición/borrado dependiendo del autor
+            if (isMe) {
+                menuOptions.classList.remove('hidden');
+                if(isAudio) {
+                    btnMenuEdit.classList.add('hidden');
+                } else {
+                    btnMenuEdit.classList.remove('hidden');
+                    btnMenuEdit.onclick = () => { closeActionMenu(); triggerEdit(selectedMessageId, encodedText); };
+                }
+                btnMenuDelete.onclick = () => { closeActionMenu(); triggerDelete(selectedMessageId); };
+            } else {
+                menuOptions.classList.add('hidden');
+            }
+
+            actionMenu.classList.remove('hidden');
+            actionMenu.classList.flex();
+        };
+
+        window.closeActionMenu = function() {
+            actionMenu.classList.add('hidden');
+        };
+
+        // ACCIÓN: REACCIONAR (Estilo WhatsApp)
+        window.reactToMessage = function(emoji) {
+            if (!selectedMessageId) return;
+            // Guardamos la reacción usando el id único de sesión por usuario
+            const reactionRef = ref(db, `messages/${selectedMessageId}/reactions/${myUserId}`);
+            set(reactionRef, emoji)
+                .then(() => closeActionMenu())
+                .catch((err) => alert('Error: ' + err.message));
+        };
+
+        // ACCIÓN: EDITAR
+        function triggerEdit(messageId, encodedText) {
+            const currentText = decodeURIComponent(atob(encodedText));
+            const newText = prompt('Edita tu mensaje:', currentText);
+            
+            if (newText !== null && newText.trim() !== '' && newText.trim() !== currentText) {
+                const messageRef = ref(db, `messages/${messageId}`);
+                update(messageRef, {
+                    text: newText.trim(),
+                    edited: true
+                }).catch((error) => alert('Error al editar: ' + error.message));
+            }
+        }
+
+        // ACCIÓN: ELIMINAR
+        function triggerDelete(messageId) {
+            if (confirm('¿Seguro que deseas eliminar este mensaje para todos?')) {
+                const messageRef = ref(db, `messages/${messageId}`);
+                remove(messageRef).catch((error) => alert('Error al eliminar: ' + error.message));
+            }
+        }
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleUp {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in { animation: fadeIn 0.1s ease-out forwards; }
+        .animate-scale-up { animation: scaleUp 0.12s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        
+        /* Ocultar barra de scroll estéticamente */
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Evita selección de texto molesta al mantener presionado en dispositivos móviles */
+        .touch-none {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+    </style>
+</body>
+</html>
