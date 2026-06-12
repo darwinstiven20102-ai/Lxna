@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🫧 Moon Shop 🫧 Premium Item Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Paleta Ultra-Frutiger Aero */
+            --bg-main: linear-gradient(135deg, #0072ff 0%, #00c6ff 50%, #00ff87 100%); 
+            
+            /* Efecto Cristal / Glossy Glassmorphism */
+            --panel-bg: rgba(255, 255, 255, 0.45); 
+            --panel-border: rgba(255, 255, 255, 0.6); 
+            --panel-border-glow: rgba(0, 242, 254, 0.4); 
+            
+            /* Tipografía */
+            --text-main: #062f4f; 
+            --text-sub: #0b5382; 
+            --text-muted: #4ba3e3; 
+            
+            /* Acentos Glossy */
+            --accent-primary: linear-gradient(to bottom, #00b4db, #0083b0); 
+            
+            /* Bordes Redondeados y Sombras Líquidas */
+            --radius-lg: 24px; 
+            --radius-md: 16px;
+            --radius-sm: 8px;
+            --shadow-card: 0 8px 32px 0 rgba(0, 80, 150, 0.25), 
+                           inset 0 2px 4px rgba(255, 255, 255, 0.6); 
+        }
+
+        /* --- NUEVO SISTEMA DE "EMOJIS" PROPIOS (AERO ICONS) --- */
+        .aero-emoji {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 0%, #00c6ff 50%, #0072ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 4px rgba(0, 114, 255, 0.3)) drop-shadow(0 1px 0px rgba(255,255,255,0.8));
+            animation: aeroFloat 3s ease-in-out infinite alternate;
+            margin: 0 4px;
+        }
+
+        .aero-emoji.green {
+            background: linear-gradient(135deg, #ffffff 0%, #38ef7d 50%, #11998e 100%);
+            -webkit-background-clip: text;
+        }
+
+        .aero-emoji.orange {
+            background: linear-gradient(135deg, #ffffff 0%, #ff9966 50%, #ff5e62 100%);
+            -webkit-background-clip: text;
+        }
+
+        /* Variación estática para textos pequeños o botones */
+        .aero-emoji-static {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffffff 0%, #00c6ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+            font-weight: 900;
+        }
+
+        /* Animación de flotación orgánica para los emojis de la app */
+        @keyframes aeroFloat {
+            0% { transform: translateY(0px) scale(1); filter: brightness(1) drop-shadow(0 2px 4px rgba(0, 114, 255, 0.3)); }
+            100% { transform: translateY(-3px) scale(1.05); filter: brightness(1.2) drop-shadow(0 4px 8px rgba(0, 198, 255, 0.5)); }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Ubuntu', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Scrollbar estilo agua */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.3); }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(#00c6ff, #0072ff); border-radius: 10px; }
+
+        body {
+            background: var(--bg-main);
+            background-attachment: fixed;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            width: 100vw;
+            padding: 20px 16px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Burbujas decorativas de fondo Frutiger Aero */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%);
+            box-shadow: inset -5px -5px 15px rgba(0,150,255,0.2), 0 10px 20px rgba(0,0,0,0.05);
+            pointer-events: none;
+            z-index: -1;
+        }
+        body::before { width: 150px; height: 150px; top: 10%; left: 10%; }
+        body::after { width: 250px; height: 250px; bottom: 10%; right: 5%; }
+
+        .admin-hidden-trigger {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid var(--panel-border);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Contenedor Esférico de Cristal */
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            padding: 30px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--panel-border);
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hidden { display: none !important; }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+            color: #03396c;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-sub);
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            position: relative;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #03396c;
+            font-size: 12px;
+            font-weight: 700;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i.main-icon {
+            position: absolute;
+            left: 14px;
+            color: #0072ff;
+            font-size: 15px;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"], textarea {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            background: rgba(255, 255, 255, 0.7); 
+            border: 1px solid rgba(0, 114, 255, 0.3);
+            border-radius: var(--radius-md);
+            color: #03396c;
+            font-size: 14px;
+            font-weight: 500;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        textarea { padding-left: 14px; padding-top: 12px; resize: none; }
+
+        input:focus, textarea:focus {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #0072ff;
+            box-shadow: 0 0 10px rgba(0, 198, 255, 0.5), inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .file-upload-zone {
+            position: relative;
+            width: 100%;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px dashed #00c6ff;
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .file-upload-zone:hover { background: rgba(255,255,255,0.7); }
+        .file-upload-zone input[type="file"] {
+            position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;
+        }
+        .file-upload-zone i { font-size: 26px; color: #0072ff; margin-bottom: 6px; }
+        .file-upload-zone p { font-size: 12px; color: var(--text-sub); font-weight: 500; }
+
+        .toggle-password {
+            position: absolute; right: 14px; background: none; border: none;
+            cursor: pointer; color: #0072ff; font-size: 15px;
+        }
+
+        /* Botones Gelatina de Alto Brillo */
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(to bottom, #56ccf2, #2f80ed);
+            border: 1px solid #2f80ed;
+            border-radius: var(--radius-md);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(47, 128, 237, 0.4), inset 0 2px 0 rgba(255,255,255,0.5);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: transform 0.1s ease, box-shadow 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 5px rgba(47, 128, 237, 0.4);
+        }
+
+        /* DISEÑO PROPIO EXCLUSIVO PARA EL BOTÓN DE ENVIAR ITEM */
+        .btn-submit-item {
+            background: linear-gradient(180deg, #00ff87 0%, #00c6ff 50%, #0072ff 100%);
+            border: 1px solid #00c6ff;
+            box-shadow: 0 6px 20px rgba(0, 230, 180, 0.45), 
+                        inset 0 3px 6px rgba(255, 255, 255, 0.8),
+                        0 0 15px rgba(0, 255, 135, 0.3);
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            overflow: hidden;
+        }
+        .btn-submit-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+        .btn-submit-item:active {
+            transform: scale(0.96);
+            box-shadow: 0 3px 10px rgba(0, 198, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to bottom, #ffffff, #e6f7ff);
+            border: 1px solid #b3e5fc;
+            color: #0072ff;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05), inset 0 2px 0 #fff;
+            text-shadow: none;
+        }
+
+        .btn-action {
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(to bottom, #ffffff, #e0f2fe);
+            color: #0072ff;
+            border: 1px solid #93c5fd;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- DESLIZADORES FRUTIGER AERO & LIQUID GLASS --- */
+        .grid-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .aero-slider-container {
+            position: relative;
+            width: 100%;
+            height: 64px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(240,250,255,0.2));
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: inset 0 3px 6px rgba(0,100,200,0.1), 0 4px 10px rgba(0,0,0,0.05);
+            border-radius: 32px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            user-select: none;
+        }
+
+        .aero-slider-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            left: 0;
+            font-size: 13px;
+            font-weight: 700;
+            color: #04447c;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+            pointer-events: none;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            line-height: 1.2;
+        }
+        .aero-slider-text span {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-sub);
+        }
+
+        .aero-slider-handle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9) 0%, rgba(0,198,255,0.8) 50%, rgba(0,114,255,1) 100%);
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 10px rgba(0,114,255,0.4), inset -3px -3px 8px rgba(0,0,0,0.2);
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            z-index: 2;
+            position: absolute;
+            left: 4px;
+            transition: transform 0.05s linear;
+        }
+        .aero-slider-handle:active { cursor: grabbing; }
+
+        .liquid-flash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,255,135,0.8) 0%, rgba(0,198,255,0.5) 40%, rgba(255,255,255,0) 70%);
+            border-radius: 32px;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+            transform: scale(0.2);
+        }
+
+        @keyframes liquidExplosion {
+            0% { opacity: 1; transform: scale(0.3); filter: blur(0px); }
+            50% { opacity: 0.8; filter: blur(3px); }
+            100% { opacity: 0; transform: scale(2.5); filter: blur(10px); }
+        }
+
+        .animate-liquid {
+            animation: liquidExplosion 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        /* Bandeja de Tickets Estilo Cristal */
+        .mailbox {
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: var(--radius-md);
+            padding: 6px;
+            border: 1px solid rgba(255,255,255,0.5);
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .mail-item {
+            padding: 12px;
+            border-bottom: 1px solid rgba(0,114,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .mail-item:last-child { border: none; }
+        .mail-item strong { color: #03396c; }
+
+        /* Caja de Bienvenida */
+        .welcome-box { text-align: center; padding: 20px 0; }
+        .welcome-avatar {
+            width: 70px; height: 70px; 
+            background: linear-gradient(135deg, #00ff87 0%, #60efff 100%);
+            border-radius: 50%; margin: 0 auto 16px auto;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,255,135,0.4), inset 0 2px 3px #fff;
+        }
+        .welcome-avatar i { font-size: 32px; color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+        /* Chat */
+        .chat-header-info { display: flex; align-items: center; gap: 12px; }
+        .chat-avatar-status {
+            width: 38px; height: 38px; 
+            background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+            color: #ffffff; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+            box-shadow: 0 3px 8px rgba(17,153,142,0.3);
+        }
+
+        .chat-messages-area {
+            flex: 1; min-height: 250px; max-height: 320px; overflow-y: auto;
+            background: rgba(255, 255, 255, 0.6); border-radius: var(--radius-md);
+            padding: 14px; display: flex; flex-direction: column; gap: 10px;
+            border: 1px solid rgba(255,255,255,0.6); margin-bottom: 14px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .msg-bubble {
+            max-width: 85%; padding: 10px 14px; border-radius: var(--radius-md);
+            font-size: 13px; line-height: 1.4; word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .msg-bubble.admin {
+            align-self: flex-start; 
+            background: linear-gradient(135deg, #ffffff 0%, #edf7ff 100%);
+            color: #03396c; border: 1px solid rgba(0,114,255,0.15);
+            border-top-left-radius: 4px;
+        }
+        
+        /* --- NUEVOS ESTILOS STATUS INTERACTIVOS DEL SISTEMA --- */
+        .msg-bubble.system-delivery, .msg-bubble.system-rejected {
+            align-self: center !important;
+            width: 95%;
+            max-width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-md);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08), inset 0 2px 4px rgba(255,255,255,0.6);
+            backdrop-filter: blur(8px);
+            text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+            border: 1px solid;
+        }
+
+        .msg-bubble.system-delivery {
+            background: linear-gradient(135deg, rgba(212, 252, 221, 0.95) 0%, rgba(168, 243, 191, 0.95) 100%);
+            border-color: #38ef7d;
+            color: #0e4b24;
+        }
+
+        .msg-bubble.system-rejected {
+            background: linear-gradient(135deg, rgba(255, 220, 220, 0.95) 0%, rgba(255, 185, 185, 0.95) 100%);
+            border-color: #ff5e62;
+            color: #611517;
+        }
+
+        .system-status-title {
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .system-status-body {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .btn-status-accept {
+            width: 100%;
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 1px solid;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08), inset 0 1px 1px rgba(255,255,255,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: transform 0.1s;
+        }
+        .btn-status-accept:active { transform: scale(0.98); }
+
+        .system-delivery .btn-status-accept {
+            background: linear-gradient(to bottom, #38ef7d, #11998e);
+            color: white;
+            border-color: #11998e;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .system-rejected .btn-status-accept {
+            background: linear-gradient(to bottom, #ff9966, #ff5e62);
+            color: white;
+            border-color: #ff5e62;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .msg-bubble.user {
+            align-self: flex-end; 
+            background: linear-gradient(135deg, #4facfe 0%, #00b4db 100%);
+            color: #ffffff;
+            border-top-right-radius: 4px;
+            box-shadow: 0 3px 10px rgba(79,172,254,0.3);
+        }
+
+        /* Pop-up Alertas Estilo Aqua Aero */
+        .notification-popup {
+            position: fixed; top: 20px; right: 20px;
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(8px);
+            border: 2px solid #00c6ff;
+            padding: 14px 18px; border-radius: var(--radius-md); z-index: 11000;
+            max-width: 320px; display: flex; gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,114,255,0.2);
+        }
+
+        /* Consola de Administración */
+        .admin-fullscreen-panel {
+            width: 100%; max-width: 1200px; 
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255,255,255,0.8); 
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 15px 40px rgba(0,80,150,0.3);
+        }
+
+        .admin-top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid rgba(0,114,255,0.15);
+        }
+
+        .admin-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; color: #03396c; }
+
+        .table-wrapper { overflow-x: auto; border-radius: var(--radius-md); background: rgba(255,255,255,0.8); border: 1px solid rgba(0,114,255,0.15); }
+        table { width: 100%; border-collapse: collapse; min-width: 950px; }
+        th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid rgba(0,114,255,0.1); font-size: 13px; }
+        th { background: linear-gradient(to bottom, #f0f9ff, #e0f2fe); color: #03396c; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { color: #062f4f; font-weight: 500; }
+        
+        .img-preview { width: 45px; height: 45px; border-radius: var(--radius-sm); object-fit: cover; border: 2px solid #00c6ff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; background: #e0f2fe; color: #03396c; border: 1px solid #93c5fd; }
+
+        /* Modales */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(3, 57, 108, 0.3); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 10000;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255,255,255,0.8);
+            padding: 24px; border-radius: var(--radius-lg); width: 92%; max-width: 400px;
+            box-shadow: 0 15px 35px rgba(0,50,100,0.2);
+        }
+
+        /* Estructuras de Mensajería Global Aero */
+        .insta-chat-container { display: flex; flex-direction: column; background: rgba(255,255,255,0.6); border-radius: var(--radius-lg); height: 500px; border: 1px solid rgba(0,114,255,0.15); overflow: hidden; box-shadow: inset 0 2px 4px rgba(255,255,255,0.5); }
+        .insta-chat-header { background: linear-gradient(to bottom, #ffffff, #f0f9ff); padding: 14px 20px; border-bottom: 1px solid rgba(0,114,255,0.15); display: flex; align-items: center; gap: 12px; }
+        .insta-messages-zone { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.3); }
+        .insta-input-bar { padding: 14px; background: rgba(255,255,255,0.8); border-top: 1px solid rgba(0,114,255,0.15); display: flex; gap: 12px; }
+        .insta-input-bar input { flex: 1; padding: 12px 14px; background: #ffffff; border-radius: var(--radius-md); border: 1px solid #93c5fd; color: #03396c; outline: none; font-size: 14px; }
+
+        .global-chat-container {
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            border-radius: var(--radius-lg);
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .global-chat-header {
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(240,249,255,0.95));
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0,114,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 5;
+        }
+
+        .global-chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .global-msg {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+        }
+
+        .global-msg.others { align-self: flex-start; }
+        .global-msg.me { align-self: flex-end; align-items: flex-end; }
+
+        .global-msg-info {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            padding-left: 6px;
+            font-weight: 700;
+        }
+
+        .global-msg-bubble {
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            box-shadow: 0 2px 6px rgba(0,60,120,0.08);
+        }
+
+        .global-msg.others .global-msg-bubble {
+            background: linear-gradient(135deg, #ffffff 0%, #edf7ff 100%);
+            color: #03396c;
+            border: 1px solid rgba(0,114,255,0.15);
+            border-top-left-radius: 4px;
+        }
+
+        .global-msg.me .global-msg-bubble {
+            background: linear-gradient(135deg, #00ff87 0%, #00b4db 100%);
+            color: #ffffff;
+            border-top-right-radius: 4px;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .global-chat-input-area {
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-top: 1px solid rgba(0,114,255,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .global-chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            border: 1px solid #93c5fd;
+            color: #03396c;
+            outline: none;
+            font-size: 14px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .global-chat-send-btn {
+            background: linear-gradient(to bottom, #56ccf2, #2f80ed);
+            color: #ffffff;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(47,128,237,0.3), inset 0 1px 2px #fff;
+        }
+
+        /* --- BURBUJA SUTIL "COMUNÍCATE CON NOSOTROS" --- */
+        .floating-support-bubble {
+            position: fixed;
+            top: 20px;
+            right: 60px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9) 0%, rgba(0,198,255,0.6) 60%, rgba(0,114,255,0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.2), inset 0 2px 4px rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .floating-support-bubble:hover {
+            transform: scale(1.05);
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,1) 0%, rgba(0,198,255,0.8) 50%, rgba(0,114,255,1) 100%);
+            box-shadow: 0 6px 20px rgba(0, 198, 255, 0.4);
+        }
+        .floating-support-bubble i {
+            color: #ffffff;
+            font-size: 18px;
+            text-shadow: 0 1px 2px rgba(0,80,150,0.4);
+        }
+        .floating-support-bubble::after {
+            content: 'Comunícate con Nosotros';
+            position: absolute;
+            right: 55px;
+            top: 50%;
+            transform: translateY(-50%) translateX(10px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0,114,255,0.2);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #03396c;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .floating-support-bubble:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0px);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 12px 8px; }
+            .container { max-width: 100vw; padding: 20px; border-radius: var(--radius-md); }
+            h2 { font-size: 20px; }
+            .subtitle { font-size: 12px; margin-bottom: 16px; }
+            input[type="text"], input[type="email"], input[type="password"], textarea { font-size: 13px; padding: 10px 12px 10px 36px; }
+            textarea { padding-left: 14px; }
+            .input-wrapper i.main-icon { font-size: 14px; left: 14px; }
+            .btn { font-size: 13px; padding: 12px 16px; }
+            .admin-fullscreen-panel { padding: 16px; }
+            .admin-top-bar { flex-direction: column; gap: 10px; align-items: flex-start; }
+            .admin-top-bar button { width: 100%; }
+            th, td { padding: 10px; font-size: 12px; }
+            #view-global-chat { padding: 0 !important; min-height: 600px !important; max-width: 440px !important; }
+            .floating-support-bubble { top: 12px; right: 50px; width: 38px; height: 38px; }
+            .floating-support-bubble i { font-size: 15px; }
+            .floating-support-bubble::after { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div id="floating-support" class="floating-support-bubble hidden" onclick="openDirectSupportChat()">
+        <i class="fa-solid fa-headset"></i>
+    </div>
+
+    <button id="hidden-admin-btn" class="admin-hidden-trigger" onclick="openAdminAuthModal()"></button>
+
+    <div id="admin-auth-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 360px; text-align: center;">
+            <div class="welcome-avatar" style="background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%); width: 55px; height: 55px; margin-bottom: 12px;">
+                <i class="fa-solid fa-lock" style="font-size: 22px;"></i>
+            </div>
+            <h3 style="margin-bottom: 6px; font-size: 18px; color: #03396c; font-weight: 700;">Consola Restringida</h3>
+            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 20px;">Firma digital requerida para el acceso del Staff.</p>
+            
+            <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                <label>🗝️ Llave Maestra de Seguridad</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-key main-icon"></i>
+                    <input type="password" id="admin-auth-key-input" placeholder="••••••••" style="padding-left: 40px;">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; width: 100%;">
+                <button class="btn" onclick="validateAdminKey()" style="margin-top: 0; flex: 1;">Acceder <span class="aero-emoji-static" style="color:white; -webkit-text-fill-color:white;">&#xf0e7;</span></button>
+                <button class="btn btn-secondary" onclick="closeAdminAuthModal()" style="margin-top: 0; width: auto; padding: 10px 14px;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="live-notification" class="notification-popup hidden">
+        <span class="aero-emoji-static">&#xf0a2;</span>
+        <div>
+            <strong style="font-size:13px; color:#03396c; display:block; margin-bottom:2px; font-weight:700;">Aviso de Conexión</strong>
+            <p id="notification-msg" style="font-size:12px; color:var(--text-sub); line-height:1.4; font-weight:500;"></p>
+        </div>
+    </div>
+
+    <div id="user-zone" style="display: flex; width:100%; justify-content:center; align-items:center;">
+        
+        <div id="view-user-ticket-chat" class="container hidden">
+            <div id="user-ticket-header" style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(0,114,255,0.15); padding-bottom:12px; margin-bottom:16px; width:100%;">
+                <div class="chat-header-info">
+                    <div class="chat-avatar-status"><i class="fa-solid fa-receipt"></i></div>
+                    <div>
+                        <strong id="user-ticket-title" style="font-size:15px; display:block; color:#03396c; font-weight:700;">Ticket #0000</strong>
+                        <span id="user-ticket-subtitle" style="font-size:12px; color:var(--text-sub); font-weight:500;">Cargando canal...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="user-ticket-messages" class="chat-messages-area"></div>
+            
+            <div class="form-group" style="margin-bottom:12px;">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-paper-plane main-icon" style="left:14px;"></i>
+                    <input type="text" id="user-ticket-input" placeholder="Escribe un mensaje privado...">
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; width:100%;">
+                <button class="btn" onclick="sendUserTicketMessage()">Enviar Mensaje <span class="aero-emoji-static">&#xf0e0;</span></button>
+                <button class="btn btn-secondary" onclick="goBack('view-menu')" style="margin-top:0; width:auto; padding:10px 14px;"><span class="aero-emoji-static">&#xf015;</span></button>
+            </div>
+        </div>
+
+        <div id="view-global-chat" class="container hidden" style="padding: 0; min-height: 750px; max-width: 440px; height: 85vh;">
+            <div class="global-chat-container">
+                <div class="global-chat-header">
+                    <div class="chat-header-info">
+                        <div class="chat-avatar-status"><span class="aero-emoji-static">&#xf0ac;</span></div>
+                        <div>
+                            <strong style="font-size:16px; display:block; color:#03396c; font-weight:700;">Chat Global</strong>
+                            <span id="global-chat-status" style="font-size:12px; color:var(--text-sub); font-weight:500;">Conectando...</span>
+                        </div>
+                    </div>
+                    <button class="btn-action" style="padding: 10px 14px; font-size:13px;" onclick="exitGlobalChat()"><span class="aero-emoji-static">&#xf2f5;</span> Salir</button>
+                </div>
+                
+                <div id="global-chat-messages" class="global-chat-messages">
+                    <p style="text-align: center; color: var(--text-sub); font-size: 13px; font-style: italic; margin-top: 40px;">Conectando a la red global... <span class="aero-emoji-static">&#xf471;</span></p>
+                </div>
+                
+                <div class="global-chat-input-area">
+                    <input type="text" id="global-chat-input" class="global-chat-input" placeholder="Escribe un mensaje global...">
+                    <button class="global-chat-send-btn" onclick="sendGlobalChatMessage()"><span class="aero-emoji-static" style="color:white; -webkit-text-fill-color:white;">&#xf1d8;</span></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-login" class="container">
+            <h2><span class="aero-emoji">&#xf005;</span> Moon Shop <span class="aero-emoji">&#xf005;</span></h2>
+            <p class="subtitle">Inicializa tu sesión comercial en la red <span class="aero-emoji-static" style="font-size:14px;">&#xf5d4;</span></p>
+            
+            <div class="form-group">
+                <label>👤 Nombre de Usuario</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user main-icon"></i>
+                    <input type="text" id="user-name" placeholder="Tu alias o ID de jugador" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>✉️ Correo Electrónico</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope main-icon"></i>
+                    <input type="email" id="user-email" placeholder="nombre@correo.com" required>
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-bottom:24px;">
+                <label>🔒 Contraseña Operativa</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-shield-halved main-icon"></i>
+                    <input type="password" id="user-password" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()"><i class="fa-solid fa-eye" id="eye-icon"></i></button>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="login()">
+                <span>Ingresar al Sistema <span class="aero-emoji-static" style="color:white; -webkit-text-fill-color:white;">&#xf135;</span></span> 
+            </button>
+        </div>
+
+        <div id="view-welcome" class="container hidden">
+            <div class="welcome-box">
+                <div class="welcome-avatar"><span class="aero-emoji-static" style="color:white; -webkit-text-fill-color:white; font-size:28px;">&#xf3ed;</span></div>
+                <h2 id="welcome-message" style="margin-bottom:12px; font-weight:700;"><span class="aero-emoji">&#xf471;</span> Acceso Concedido <span class="aero-emoji">&#xf471;</span></h2>
+                <p style="color: var(--text-sub); font-size: 14px; font-weight:500;">Estableciendo conexión líquida... <span class="aero-emoji-static">&#xf0c2;</span></p>
+            </div>
+        </div>
+
+        <div id="view-menu" class="container hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h2><span class="aero-emoji green">&#xf06c;</span> Operaciones <span class="aero-emoji green">&#xf06c;</span></h2>
+                <button class="btn-action" onclick="logout()"><span class="aero-emoji-static">&#xf011;</span> Salir</button>
+            </div>
+            <p class="subtitle">Desliza el control aqua para activar las opciones</p>
+            
+            <div class="grid-options">
+                <div class="aero-slider-container" data-action="showGameSelection">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text">
+                        <strong><span class="aero-emoji-static">&#xf3a5;</span> Adquirir un Item <span class="aero-emoji-static">&#xf3a5;</span></strong>
+                        <span>Solicita tus piezas especiales</span>
+                    </div>
+                    <div class="aero-slider-handle"><i class="fa-solid fa-angles-right"></i></div>
+                </div>
+
+                <div class="aero-slider-container" data-action="enterGlobalChat">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text">
+                        <strong><span class="aero-emoji-static">&#xf0ac;</span> Chat Global <span class="aero-emoji-static">&#xf0ac;</span></strong>
+                        <span>Habla con usuarios del mundo</span>
+                    </div>
+                    <div class="aero-slider-handle"><i class="fa-solid fa-angles-right"></i></div>
+                </div>
+                
+                <div class="aero-slider-container" data-action="showDudas">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text">
+                        <strong><span class="aero-emoji-static">&#xf4d8;</span> Soporte Técnico <span class="aero-emoji-static">&#xf4d8;</span></strong>
+                        <span>Dudas o inconvenientes</span>
+                    </div>
+                    <div class="aero-slider-handle"><i class="fa-solid fa-angles-right"></i></div>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 24px; margin-bottom:10px; font-size: 12px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; color: #03396c; display:flex; align-items:center; gap:8px;"><span class="aero-emoji-static">&#xf07c;</span> Canales Abiertos</h3>
+            <div class="mailbox" id="user-tickets-list">
+                <p style="font-style: italic; color: var(--text-muted); font-size: 12px; text-align: center; padding: 14px 0;">No registras transacciones previas.</p>
+            </div>
+        </div>
+
+        <div id="view-games" class="container hidden">
+            <h2><span class="aero-emoji">&#xf11b;</span> Servidores <span class="aero-emoji">&#xf11b;</span></h2>
+            <p class="subtitle">Desliza la burbuja para seleccionar</p>
+            
+            <div class="grid-options">
+                <div class="aero-slider-container" data-action="openItemForm" data-param="MM2">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text"><strong>Murder Mystery 2 <span class="aero-emoji-static">&#xf6bb;</span></strong></div>
+                    <div class="aero-slider-handle" style="background: radial-gradient(circle at 35% 35%, #ff7b93 0%, #ff416c 60%, #ff4b2b 100%);"><i class="fa-solid fa-crosshairs"></i></div>
+                </div>
+                
+                <div class="aero-slider-container" data-action="openItemForm" data-param="Adopt Me">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text"><strong>Adopt Me <span class="aero-emoji-static">&#xf1b0;</span></strong></div>
+                    <div class="aero-slider-handle" style="background: radial-gradient(circle at 35% 35%, #ffb38a 0%, #ff9966 60%, #ff5e62 100%);"><i class="fa-solid fa-egg"></i></div>
+                </div>
+                
+                <div class="aero-slider-container" data-action="openItemForm" data-param="Brainrot">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text"><strong>Steal a Brainrot <span class="aero-emoji-static">&#xf5dc;</span></strong></div>
+                    <div class="aero-slider-handle" style="background: radial-gradient(circle at 35% 35%, #c2ffd8 0%, #a8ff78 60%, #78ffd6 100%); color:#03396c;"><i class="fa-solid fa-brain"></i></div>
+                </div>
+                
+                <div class="aero-slider-container" data-action="openItemForm" data-param="Garden">
+                    <div class="liquid-flash"></div>
+                    <div class="aero-slider-text"><strong>Grow a Garden <span class="aero-emoji-static">&#xf4d8;</span></strong></div>
+                    <div class="aero-slider-handle" style="background: radial-gradient(circle at 35% 35%, #a8ffef 0%, #38ef7d 60%, #11998e 100%);"><i class="fa-solid fa-seedling"></i></div>
+                </div>
+            </div>
+            <button class="btn btn-secondary" onclick="goBack('view-menu')"><span class="aero-emoji-static">&#xf3e5;</span> Volver al Menú</button>
+        </div>
+
+        <div id="view-item-form" class="container hidden">
+            <h2 id="form-game-title">📦 Detalles del Pedido</h2>
+            <p class="subtitle">Llena las características de la pieza</p>
+            
+            <div class="form-group">
+                <label>🔮 Nombre del Objeto</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-signature main-icon"></i>
+                    <input type="text" id="item-name" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🏷️ Rareza / Tipo de Objeto</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-gem main-icon"></i>
+                    <input type="text" id="item-rarity" placeholder="">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>📸 Comprobante o Imagen de Referencia</label>
+                <div class="file-upload-zone">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p id="file-upload-label">Arrastra o haz clic aquí para adjuntar</p>
+                    <input type="file" id="item-img" accept="image/*" onchange="handleFileSelected(this)">
+                </div>
+            </div>
+            
+            <button class="btn btn-submit-item" onclick="submitItem()"><span>Procesar Transacción <span class="aero-emoji-static" style="color:white; -webkit-text-fill-color:white;">&#xf0e7;</span></span></button>
+            <button class="btn btn-secondary" onclick="goBack('view-games')">Atrás</button>
+        </div>
+
+        <div id="view-dudas" class="container hidden">
+            <h2><span class="aero-emoji green">&#xf4d8;</span> Mesa de Ayuda <span class="aero-emoji green">&#xf4d8;</span></h2>
+            <p class="subtitle">Describe detalladamente tu requerimiento</p>
+            
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>💬 Mensaje / Consulta Técnica</label>
+                <textarea id="duda-text" rows="4" placeholder="Escribe tu inconveniente aquí..."></textarea>
+            </div>
+            
+            <button class="btn" onclick="submitDuda()"><span>Abrir Ticket Técnico <span class="aero-emoji-static" style="color:white; -webkit-text-fill-color:white;">&#xf471;</span></span></button>
+            <button class="btn btn-secondary" onclick="goBack('view-menu')">Volver</button>
+        </div>
+    </div>
+
+    <div id="admin-fullscreen-view" class="admin-fullscreen-panel hidden">
+        <div class="admin-top-bar">
+            <div class="admin-title"><i class="fa-solid fa-terminal" style="color:#0072ff;"></i> <span>Monitor Central de Operaciones 🔮</span></div>
+            <button class="btn btn-secondary" style="width:auto; margin-top:0; padding:8px 16px; font-size:12px; font-weight:700;" onclick="exitAdminPanel()">❌ Cerrar Consola</button>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID de Canal</th>
+                        <th>Operador / Comprador</th>
+                        <th>Clave Acceso</th>
+                        <th>Categoría</th>
+                        <th>Detalles del Envío</th>
+                        <th>Media</th>
+                        <th>Comandos</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="admin-chat-view" class="admin-fullscreen-panel hidden">
+        <div class="admin-top-bar" style="margin-bottom:20px;">
+            <div class="admin-title"><i class="fa-solid fa-comments" style="color:#00c6ff;"></i> <span id="admin-chat-target-title">Chat de Ticket Encriptado</span></div>
+            <button class="btn btn-secondary" style="width:auto; margin-top:0; padding:8px 16px; font-size:12px; font-weight:700;" onclick="closeAdminChat()">↩️ Volver al Terminal</button>
+        </div>
+        <div class="insta-chat-container">
+            <div class="insta-chat-header">
+                <div class="chat-avatar-status"><i class="fa-solid fa-user-shield"></i></div>
+                <div><strong id="insta-header-username" style="font-size:14px; color:#03396c; font-weight:700;">Canal de Soporte</strong><span style="font-size:11px; color:var(--text-sub;); display:block;">Interconexion remota directa</span></div>
+            </div>
+            <div class="insta-messages-zone" id="admin-chat-messages-zone"></div>
+            <div class="insta-input-bar">
+                <input type="text" id="admin-chat-input-field" placeholder="Escribe una respuesta administrativa oficial o comandos (;Entregado o /Pedido Rechazado)...">
+                <button class="btn" onclick="sendAdminChatMessage()" style="width:auto; padding:10px 20px; margin-top:0;">Enviar 🧪</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="response-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 12px; font-size:16px; color: #03396c; font-weight:700;" id="modal-target-title">Notificar Respuesta</h3>
+            <p style="font-size:12px; color:var(--text-sub); margin-bottom:16px;">El usuario recibirá un pop-up flotante inmediato en su pantalla.</p>
+            <textarea id="modal-reply-text" rows="3" placeholder="Escribe el aviso oficial del staff..." style="padding: 10px; margin-bottom: 16px;"></textarea>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" onclick="sendAdminNotification()" style="margin-top:0; flex:1;">Enviar Alerta 🔔</button>
+                <button class="btn btn-secondary" onclick="closeModal()" style="margin-top:0;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, off } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpszIcvVtVhaNqUu9C2SicT5UbZOrXA8E",
+            authDomain: "chatglobal-c68a3.firebaseapp.com",
+            databaseURL: "https://chatglobal-c68a3-default-rtdb.firebaseio.com",
+            projectId: "chatglobal-c68a3",
+            storageBucket: "chatglobal-c68a3.firebasestorage.app",
+            messagingSenderId: "149154535708",
+            appId: "1:149154535708:web:276b94267ce1c4b5c3c2d9",
+            measurementId: "G-03PGJ4HNPK"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.firebaseDB = db;
+        window.dbRef = ref;
+        window.dbSet = set;
+        window.dbPush = push;
+        window.dbOnValue = onValue;
+        window.dbOff = off;
+
+        setTimeout(checkPersistentSession, 500);
+    </script>
+
+    <script>
+        const ADMIN_PASSWORD = "admin1234"; 
+        let memoryRecords = []; 
+        let currentUsername = ""; let currentEmail = ""; let currentPass = "";
+        let selectedGame = ""; let activeReplyIndex = null; let activeTicketCode = "";
+        let base64ImageBuffer = null;
+
+        let globalDatabaseListenerRef = null;
+        let activeUserTicketListener = null;
+        let activeAdminTicketListener = null;
+        let userTicketsHistoryListener = null;
+        let liveNotificationListener = null;
+        let globalChatListenerRef = null;
+
+        const STORAGE_KEY = 'nexus_user_session';
+
+        // --- SISTEMA INTERACTIVO SLIDER DE ARRASTRE ---
+        document.addEventListener("DOMContentLoaded", () => {
+            initAeroSliders();
+            
+            document.getElementById('admin-auth-key-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') validateAdminKey();
+            });
+            document.getElementById('admin-chat-input-field').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendAdminChatMessage();
+            });
+        });
+
+        function initAeroSliders() {
+            const sliders = document.querySelectorAll('.aero-slider-container');
+            
+            sliders.forEach(slider => {
+                const handle = slider.querySelector('.aero-slider-handle');
+                const flash = slider.querySelector('.liquid-flash');
+                let isDragging = false;
+                let startX = 0;
+                let maxTranslate = 0;
+
+                const startDrag = (e) => {
+                    isDragging = true;
+                    startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                    maxTranslate = slider.clientWidth - handle.clientWidth - 8; 
+                    handle.style.transition = 'none';
+                };
+
+                const moveDrag = (e) => {
+                    if (!isDragging) return;
+                    const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                    let diffX = currentX - startX;
+
+                    if (diffX < 0) diffX = 0;
+                    if (diffX > maxTranslate) diffX = maxTranslate;
+
+                    handle.style.transform = `translateX(${diffX}px)`;
+
+                    if (diffX >= maxTranslate) {
+                        isDragging = false;
+                        triggerLiquidGlassActivation(slider, handle, flash);
+                    }
+                };
+
+                const endDrag = () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    handle.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                    handle.style.transform = 'translateX(0px)';
+                };
+
+                handle.addEventListener('mousedown', startDrag);
+                window.addEventListener('mousemove', moveDrag);
+                window.addEventListener('mouseup', endDrag);
+
+                handle.addEventListener('touchstart', startDrag, { passive: true });
+                window.addEventListener('touchmove', moveDrag, { passive: false });
+                window.addEventListener('touchend', endDrag);
+            });
+        }
+
+        function triggerLiquidGlassActivation(slider, handle, flash) {
+            flash.classList.add('animate-liquid');
+
+            setTimeout(() => {
+                const action = slider.getAttribute('data-action');
+                const param = slider.getAttribute('data-param');
+
+                handle.style.transition = 'none';
+                handle.style.transform = 'translateX(0px)';
+                flash.classList.remove('animate-liquid');
+
+                if (action === "showGameSelection") { showGameSelection(); }
+                else if (action === "enterGlobalChat") { enterGlobalChat(); }
+                else if (action === "showDudas") { showDudas(); }
+                else if (action === "openItemForm") { openItemForm(param); }
+
+            }, 550);
+        }
+
+        function resetMenuSliders() {
+            setTimeout(initAeroSliders, 50);
+        }
+
+        function showGameSelection() { switchView('view-menu', 'view-games'); resetMenuSliders(); }
+        function showDudas() { switchView('view-menu', 'view-dudas'); }
+        function openItemForm(game) {
+            selectedGame = game;
+            document.getElementById('form-game-title').innerHTML = `📦 Pedido: ${game}`;
+            base64ImageBuffer = null;
+            document.getElementById('file-upload-label').innerText = "Arrastra o haz clic aquí para adjuntar";
+            switchView('view-games', 'view-item-form');
+        }
+
+        function generateRandomTicketCode(prefix) {
+            const chars = 'ABCDEF0123456789';
+            let code = '';
+            for (let i = 0; i < 4; i++) { code += chars.charAt(Math.floor(Math.random() * chars.length)); }
+            const cleanPrefix = prefix.replace(/\s+/g, '').toUpperCase().slice(0, 4);
+            return `#${cleanPrefix}-${code}`;
+        }
+
+        function togglePasswordVisibility() {
+            const passInput = document.getElementById('user-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passInput.type === 'password') { passInput.type = 'text'; eyeIcon.className = "fa-solid fa-eye-slash"; }
+            else { passInput.type = 'password'; eyeIcon.className = "fa-solid fa-eye"; }
+        }
+
+        function handleFileSelected(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    base64ImageBuffer = e.target.result;
+                    document.getElementById('file-upload-label').innerText = `✓ Imagen cargada (${input.files[0].name.slice(0,15)}...)`;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function openAdminAuthModal() {
+            document.getElementById('admin-auth-key-input').value = "";
+            document.getElementById('admin-auth-modal').classList.remove('hidden');
+            setTimeout(() => { document.getElementById('admin-auth-key-input').focus(); }, 150);
+        }
+
+        function closeAdminAuthModal() {
+            document.getElementById('admin-auth-modal').classList.add('hidden');
+        }
+
+        function validateAdminKey() {
+            const passwordInput = document.getElementById('admin-auth-key-input').value;
+            if (passwordInput === ADMIN_PASSWORD) {
+                closeAdminAuthModal();
+                if (window.firebaseDB && userTicketsHistoryListener) window.dbOff(window.dbRef(window.firebaseDB, 'records'));
+                
+                const userZone = document.getElementById('user-zone');
+                const views = ['view-login', 'view-menu', 'view-games', 'view-item-form', 'view-dudas', 'view-welcome', 'view-user-ticket-chat', 'view-global-chat'];
+                views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+                userZone.classList.add('hidden');
+                
+                document.getElementById('hidden-admin-btn').classList.add('hidden');
+                document.getElementById('floating-support').classList.add('hidden');
+                document.getElementById('admin-fullscreen-view').classList.remove('hidden');
+                initAdminGlobalListener();
+            } else { 
+                alert("Acceso restringido. Firma digital incorrecta."); 
+                document.getElementById('admin-auth-key-input').value = "";
+                document.getElementById('admin-auth-key-input').focus();
+            }
+        }
+
+        function exitAdminPanel() {
+            if(window.firebaseDB && globalDatabaseListenerRef) {
+                window.dbOff(window.dbRef(window.firebaseDB, 'records'));
+            }
+            document.getElementById('admin-fullscreen-view').classList.add('hidden');
+            document.getElementById('admin-chat-view').classList.add('hidden');
+            document.getElementById('user-zone').classList.remove('hidden');
+            document.getElementById('hidden-admin-btn').classList.remove('hidden');
+            
+            if (currentUsername !== "") {
+                document.getElementById('floating-support').classList.remove('hidden');
+                document.getElementById('view-menu').classList.remove('hidden');
+                loadUserTicketsList();
+                resetMenuSliders();
+            } else {
+                document.getElementById('view-login').classList.remove('hidden');
+            }
+        }
+
+        function switchView(currentViewId, nextViewId) {
+            const currentElement = document.getElementById(currentViewId);
+            const nextElement = document.getElementById(nextViewId);
+            if (currentElement) currentElement.classList.add('hidden');
+            if (nextElement) nextElement.classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function goBack(targetViewId) {
+            const views = ['view-login', 'view-menu', 'view-games', 'view-item-form', 'view-dudas', 'view-welcome', 'view-user-ticket-chat', 'view-global-chat'];
+            views.forEach(v => { 
+                const el = document.getElementById(v);
+                if (el && !el.classList.contains('hidden')) { switchView(v, targetViewId); }
+            });
+            resetMenuSliders();
+        }
+
+        function login() {
+            const nameInp = document.getElementById('user-name').value.trim();
+            const emailInp = document.getElementById('user-email').value.trim();
+            const passInp = document.getElementById('user-password').value.trim();
+
+            if (nameInp === "" || emailInp === "" || passInp === "") { alert("Por favor complete todos los campos de autenticación."); return; }
+
+            currentUsername = nameInp; currentEmail = emailInp; currentPass = passInp;
+            
+            const sessionData = { name: nameInp, email: emailInp, pass: passInp };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sessionData));
+
+            switchView('view-login', 'view-welcome');
+            
+            setTimeout(() => {
+                switchView('view-welcome', 'view-menu');
+                document.getElementById('floating-support').classList.remove('hidden');
+                loadUserTicketsList();
+                listenToLiveNotifications();
+                resetMenuSliders();
+            }, 2000);
+        }
+
+        function checkPersistentSession() {
+            const savedSession = localStorage.getItem(STORAGE_KEY);
+            if (savedSession && window.firebaseDB) {
+                try {
+                    const sessionData = JSON.parse(savedSession);
+                    currentUsername = sessionData.name;
+                    currentEmail = sessionData.email;
+                    currentPass = sessionData.pass;
+                    
+                    document.getElementById('view-login').classList.add('hidden');
+                    document.getElementById('view-menu').classList.remove('hidden');
+                    document.getElementById('floating-support').classList.remove('hidden');
+                    
+                    loadUserTicketsList();
+                    listenToLiveNotifications();
+                    resetMenuSliders();
+                } catch (e) {
+                    localStorage.removeItem(STORAGE_KEY);
+                }
+            }
+        }
+
+        function logout() {
+            if(!confirm("¿Estás seguro de que deseas cerrar tu sesión comercial?")) return;
+            localStorage.removeItem(STORAGE_KEY);
+            
+            if(window.firebaseDB) {
+                if(activeUserTicketListener) window.dbOff(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`));
+                if(userTicketsHistoryListener) window.dbOff(window.dbRef(window.firebaseDB, 'records'));
+                if(liveNotificationListener) window.dbOff(window.dbRef(window.firebaseDB, `notifications/${currentUsername}`));
+                if(globalChatListenerRef) window.dbOff(window.dbRef(window.firebaseDB, 'global_chat'));
+            }
+            
+            currentUsername = ""; currentEmail = ""; currentPass = ""; activeTicketCode = "";
+            document.getElementById('user-name').value = "";
+            document.getElementById('user-email').value = "";
+            document.getElementById('user-password').value = "";
+            document.getElementById('user-ticket-messages').innerHTML = "";
+            document.getElementById('global-chat-messages').innerHTML = "";
+            document.getElementById('floating-support').classList.add('hidden');
+            
+            goBack('view-login');
+        }
+
+        function enterGlobalChat() {
+            if (window.firebaseDB && userTicketsHistoryListener) window.dbOff(window.dbRef(window.firebaseDB, 'records'));
+            switchView('view-menu', 'view-global-chat');
+            initGlobalChatListener();
+        }
+
+        function exitGlobalChat() {
+            if(window.firebaseDB && globalChatListenerRef) {
+                window.dbOff(window.dbRef(window.firebaseDB, 'global_chat'));
+                globalChatListenerRef = null;
+            }
+            document.getElementById('global-chat-messages').innerHTML = "";
+            goBack('view-menu');
+            if (currentUsername !== "") { loadUserTicketsList(); resetMenuSliders(); }
+        }
+
+        function initGlobalChatListener() {
+            if(!window.firebaseDB) return;
+            document.getElementById('global-chat-status').innerText = "Cargando mensajes...";
+            const chatRef = window.dbRef(window.firebaseDB, 'global_chat');
+            
+            globalChatListenerRef = window.dbOnValue(chatRef, (snapshot) => {
+                const messagesDiv = document.getElementById('global-chat-messages');
+                if(!messagesDiv) return;
+                messagesDiv.innerHTML = "";
+                const data = snapshot.val();
+                
+                if(data) {
+                    document.getElementById('global-chat-status').innerText = "En línea 🟢";
+                    const msgsArray = Object.keys(data).map(key => data[key]);
+                    msgsArray.sort((a, b) => a.timestamp - b.timestamp);
+
+                    msgsArray.forEach(msg => {
+                        const isMe = msg.user === currentUsername;
+                        const msgBlock = document.createElement('div');
+                        msgBlock.className = `global-msg ${isMe ? 'me' : 'others'}`;
+
+                        const date = new Date(msg.timestamp);
+                        const timeStr = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+
+                        const infoDiv = document.createElement('div');
+                        infoDiv.className = "global-msg-info";
+                        infoDiv.innerText = isMe ? timeStr : `${msg.user} • ${timeStr}`;
+                        msgBlock.appendChild(infoDiv);
+
+                        const bubble = document.createElement('div');
+                        bubble.className = "global-msg-bubble";
+                        bubble.innerText = msg.text;
+                        msgBlock.appendChild(bubble);
+
+                        messagesDiv.appendChild(msgBlock);
+                    });
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                } else {
+                     document.getElementById('global-chat-status').innerText = "Chat vacío 🫧";
+                     messagesDiv.innerHTML = `<p style="text-align: center; color: var(--text-sub); font-size: 14px; font-style: italic; margin-top: 50px;">El chat global está vacío. ¡Escribe algo!</p>`;
+                }
+            });
+        }
+
+        function sendGlobalChatMessage() {
+            const input = document.getElementById('global-chat-input');
+            const txt = input.value.trim();
+            if(!txt || !currentUsername || !window.firebaseDB) return;
+
+            const chatRef = window.dbRef(window.firebaseDB, 'global_chat');
+            const newMsgRef = window.dbPush(chatRef);
+            
+            window.dbSet(newMsgRef, {
+                user: currentUsername,
+                text: txt,
+                timestamp: Date.now()
+            });
+            input.value = "";
+        }
+
+        function submitItem() {
+            const itemName = document.getElementById('item-name').value.trim();
+            const itemRarity = document.getElementById('item-rarity').value.trim();
+            if(itemName === "" || itemRarity === "") { alert("Defina el nombre y la rareza del objeto."); return; }
+
+            const generatedTicket = generateRandomTicketCode(selectedGame);
+            const fullDetails = `${selectedGame} ➔ ${itemName} [${itemRarity}]`;
+            saveRecordAndOpenTicket(currentUsername, currentEmail, currentPass, "Pedido Item", fullDetails, base64ImageBuffer, generatedTicket);
+        }
+
+        document.getElementById('global-chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendGlobalChatMessage();
+        });
+
+        function submitDuda() {
+            const dudaText = document.getElementById('duda-text').value.trim();
+            if(dudaText === "") { alert("Por favor describe tu requerimiento."); return; }
+            const generatedTicket = generateRandomTicketCode("SUPP");
+            saveRecordAndOpenTicket(currentUsername, currentEmail, currentPass, "Consulta", dudaText, null, generatedTicket);
+        }
+
+        function openDirectSupportChat() {
+            if (!currentUsername || !window.firebaseDB) return;
+            const directSupportCode = `#SOPORTE-${currentUsername.replace(/\s+/g, '').toUpperCase()}`;
+            
+            const cleanKey = directSupportCode.replace('#','');
+            const recordRef = window.dbRef(window.firebaseDB, `records/${cleanKey}`);
+            
+            window.dbOnValue(recordRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    const payload = { 
+                        ticketId: directSupportCode, 
+                        usuario: currentUsername, 
+                        email: currentEmail, 
+                        pass: currentPass, 
+                        accion: "Chat Directo", 
+                        detalle: "Canal Flotante de Comunicación Directa", 
+                        imageSrc: "", 
+                        timestamp: Date.now() 
+                    };
+                    window.dbSet(recordRef, payload);
+                    const chatSeedRef = window.dbPush(window.dbRef(window.firebaseDB, `tickets_chats/${cleanKey}`));
+                    window.dbSet(chatSeedRef, { sender: 'admin', text: `¡Hola ${currentUsername}! Canal directo abierto con la administración. Cuéntanos en qué te podemos colaborar.`, timestamp: Date.now() });
+                }
+            }, { onlyOnce: true });
+
+            openUserTicketChat(directSupportCode, "Canal Directo con Panel Admin");
+        }
+
+        function saveRecordAndOpenTicket(usuario, email, pass, accion, detalle, imageSrc, ticketCode) {
+            if(!window.firebaseDB) { alert("Error de red..."); return; }
+            const cleanKey = ticketCode.replace('#','');
+            const payload = { ticketId: ticketCode, usuario, email, pass, accion, detalle, imageSrc: imageSrc || "", timestamp: Date.now() };
+            
+            window.dbSet(window.dbRef(window.firebaseDB, `records/${cleanKey}`), payload);
+            const chatSeedRef = window.dbPush(window.dbRef(window.firebaseDB, `tickets_chats/${cleanKey}`));
+            window.dbSet(chatSeedRef, { sender: 'admin', text: `Canal abierto. Hola ${usuario}, nuestro personal procesará tu solicitud de inmediato.`, timestamp: Date.now() });
+
+            alert(`Operación registrada. ID de Canal: ${ticketCode}`);
+            document.getElementById('item-name').value = ""; document.getElementById('item-rarity').value = ""; document.getElementById('duda-text').value = "";
+            openUserTicketChat(ticketCode, detalle);
+        }
+
+        /* --- SISTEMA DETECTOR DE COMANDOS DE ESTADO EN EL CHAT --- */
+        function parseSystemStatusMessage(text) {
+            if (text.startsWith(';Entregado')) {
+                return {
+                    type: 'delivery',
+                    title: '🟢 Pedido Entregado',
+                    html: `El administrador ha marcado tu pedido como <b>Entregado</b>. Por favor, confirma la recepción.`
+                };
+            }
+            if (text.startsWith('/Pedido Rechazado')) {
+                return {
+                    type: 'rejected',
+                    title: '🔴 Pedido Rechazado',
+                    html: `El administrador ha marcado tu pedido como <b>Rechazado</b>. Revisa los detalles anteriores.`
+                };
+            }
+            return null;
+        }
+
+        function closeUserTicketLocally() {
+            alert("Operación aceptada. El canal se cerrará en tu interfaz.");
+            if(activeUserTicketListener && window.firebaseDB) {
+                window.dbOff(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`));
+            }
+            document.getElementById('user-ticket-messages').innerHTML = "";
+            goBack('view-menu');
+        }
+
+        function openUserTicketChat(ticketCode, description) {
+            activeTicketCode = ticketCode;
+            document.getElementById('user-ticket-title').innerText = `Canal ${ticketCode} ✉️`;
+            document.getElementById('user-ticket-subtitle').innerText = description;
+            
+            if(activeUserTicketListener && window.firebaseDB) window.dbOff(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`));
+
+            const views = ['view-menu', 'view-games', 'view-item-form', 'view-dudas', 'view-global-chat'];
+            views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+            document.getElementById('view-user-ticket-chat').classList.remove('hidden');
+
+            activeUserTicketListener = window.dbOnValue(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`), (snapshot) => {
+                const chatBox = document.getElementById('user-ticket-messages');
+                if(!chatBox) return; chatBox.innerHTML = "";
+                const data = snapshot.val();
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        const m = data[k];
+                        const systemStatus = parseSystemStatusMessage(m.text);
+
+                        if (systemStatus) {
+                            const card = document.createElement('div');
+                            card.className = `msg-bubble system-${systemStatus.type}`;
+                            card.innerHTML = `
+                                <div class="system-status-title">${systemStatus.title}</div>
+                                <div class="system-status-body">${systemStatus.html}</div>
+                                <button class="btn-status-accept" onclick="closeUserTicketLocally()">
+                                    <i class="fa-solid fa-square-check"></i> Aceptar
+                                </button>
+                            `;
+                            chatBox.appendChild(card);
+                        } else {
+                            const bubble = document.createElement('div');
+                            bubble.className = `msg-bubble ${m.sender === 'admin' ? 'admin' : 'user'}`;
+                            bubble.innerText = m.text;
+                            chatBox.appendChild(bubble);
+                        }
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+            });
+        }
+
+        function sendUserTicketMessage() {
+            const input = document.getElementById('user-ticket-input');
+            const txt = input.value.trim();
+            if(!txt || !activeTicketCode || !window.firebaseDB) return;
+
+            window.dbSet(window.dbPush(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`)), { sender: 'user', text: txt, timestamp: Date.now() });
+            input.value = "";
+        }
+
+        document.getElementById('user-ticket-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendUserTicketMessage();
+        });
+
+        function loadUserTicketsList() {
+            if(!window.firebaseDB) return;
+            userTicketsHistoryListener = window.dbOnValue(window.dbRef(window.firebaseDB, 'records'), (snapshot) => {
+                const listDiv = document.getElementById('user-tickets-list');
+                if(!listDiv) return; listDiv.innerHTML = "";
+                const data = snapshot.val(); let hasTickets = false;
+
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        const rec = data[k];
+                        if(rec.usuario === currentUsername) {
+                            hasTickets = true;
+                            const div = document.createElement('div');
+                            div.className = "mail-item";
+                            div.innerHTML = `<span><strong>${rec.ticketId}</strong> - ${rec.detalle.slice(0,22)}...</span> 
+                                             <button class="btn-action" onclick="openUserTicketChat('${rec.ticketId}', '${rec.detalle}')">💬 Ver</button>`;
+                            listDiv.appendChild(div);
+                        }
+                    });
+                }
+                if(!hasTickets) listDiv.innerHTML = `<p style="font-style: italic; color: var(--text-muted); font-size: 12px; text-align: center; padding: 20px 0;">No registras canales en curso. 🫧</p>`;
+            });
+        }
+
+        function listenToLiveNotifications() {
+            if(!window.firebaseDB) return;
+            liveNotificationListener = window.dbOnValue(window.dbRef(window.firebaseDB, `notifications/${currentUsername}`), (snapshot) => {
+                const data = snapshot.val();
+                if(data) {
+                    const popup = document.getElementById('live-notification');
+                    if(popup) {
+                        document.getElementById('notification-msg').innerText = data.text;
+                        popup.classList.remove('hidden');
+                        setTimeout(() => { popup.classList.add('hidden'); }, 6000);
+                    }
+                }
+            });
+        }
+
+        function initAdminGlobalListener() {
+            if(!window.firebaseDB) return;
+            globalDatabaseListenerRef = window.dbOnValue(window.dbRef(window.firebaseDB, 'records'), (snapshot) => {
+                const data = snapshot.val(); memoryRecords = [];
+                if(data) { Object.keys(data).forEach(key => { memoryRecords.unshift(data[key]); }); }
+                renderAdminTable();
+            });
+        }
+
+        function renderAdminTable() {
+            const tbody = document.getElementById('admin-table-body');
+            if(!tbody) return; tbody.innerHTML = "";
+            if(memoryRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); font-style: italic; padding: 40px;">Consola vacía. Sin tickets entrantes.</td></tr>`;
+                return;
+            }
+            memoryRecords.forEach((record, index) => {
+                const tr = document.createElement('tr');
+                let imgHTML = record.imageSrc ? `<img src="${record.imageSrc}" class="img-preview" onclick="window.open('${record.imageSrc}', '_blank')">` : '<span style="color:var(--text-muted);">N/A</span>';
+                tr.innerHTML = `
+                    <td><b style="font-family:monospace; font-size:13px;">${record.ticketId}</b></td>
+                    <td><strong>${record.usuario}</strong><br><small style="color:var(--text-sub);">${record.email}</small></td>
+                    <td><code style="background:#fff; padding:2px 4px; border:1px solid #93c5fd; border-radius:4px;">${record.pass}</code></td>
+                    <td><span class="badge">${record.accion}</span></td>
+                    <td><div style="max-width:200px; word-wrap:break-word;">${record.detalle}</div></td>
+                    <td>${imgHTML}</td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-action" onclick="openAdminChatWindow('${record.ticketId}', '${record.usuario}')">💬 Responder</button>
+                            <button class="btn-action" onclick="openNotificationModal('${record.usuario}', ${index})">🔔 Alerta</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openAdminChatWindow(ticketCode, username) {
+            activeTicketCode = ticketCode;
+            document.getElementById('admin-chat-target-title').innerText = `Canal Privado — ${ticketCode}`;
+            document.getElementById('insta-header-username').innerText = `Canal de ${username}`;
+            if(activeAdminTicketListener && window.firebaseDB) window.dbOff(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`));
+
+            document.getElementById('admin-fullscreen-view').classList.add('hidden');
+            document.getElementById('admin-chat-view').classList.remove('hidden');
+
+            activeAdminTicketListener = window.dbOnValue(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`), (snapshot) => {
+                const zone = document.getElementById('admin-chat-messages-zone');
+                if(!zone) return; zone.innerHTML = "";
+                const data = snapshot.val();
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        const m = data[k];
+                        const systemStatus = parseSystemStatusMessage(m.text);
+                        
+                        if (systemStatus) {
+                            const card = document.createElement('div');
+                            card.className = `msg-bubble system-${systemStatus.type}`;
+                            card.style.alignSelf = 'center';
+                            card.style.width = '90%';
+                            card.innerHTML = `
+                                <div class="system-status-title">${systemStatus.title} (Vista Admin)</div>
+                                <div class="system-status-body">${systemStatus.html}</div>
+                            `;
+                            zone.appendChild(card);
+                        } else {
+                            const bubble = document.createElement('div');
+                            bubble.className = `msg-bubble ${m.sender === 'admin' ? 'user' : 'admin'}`;
+                            bubble.style.alignSelf = m.sender === 'admin' ? 'flex-end' : 'flex-start';
+                            bubble.innerText = m.text;
+                            zone.appendChild(bubble);
+                        }
+                    });
+                    zone.scrollTop = zone.scrollHeight;
+                }
+            });
+        }
+
+        function closeAdminChat() {
+            if(window.firebaseDB && activeAdminTicketListener) window.dbOff(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`));
+            document.getElementById('admin-chat-view').classList.add('hidden');
+            document.getElementById('admin-fullscreen-view').classList.remove('hidden');
+        }
+
+        function sendAdminChatMessage() {
+            const input = document.getElementById('admin-chat-input-field');
+            const txt = input.value.trim();
+            if(!txt || !activeTicketCode || !window.firebaseDB) return;
+            window.dbSet(window.dbPush(window.dbRef(window.firebaseDB, `tickets_chats/${activeTicketCode.replace('#','')}`)), { sender: 'admin', text: txt, timestamp: Date.now() });
+            input.value = "";
+        }
+
+        function openNotificationModal(username, index) {
+            activeReplyIndex = index;
+            document.getElementById('modal-target-title').innerText = `Notificar a ${username}`;
+            document.getElementById('response-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('response-modal').classList.add('hidden');
+            document.getElementById('modal-reply-text').value = ""; activeReplyIndex = null;
+        }
+
+        function sendAdminNotification() {
+            const txt = document.getElementById('modal-reply-text').value.trim();
+            if(txt === "" || activeReplyIndex === null || !window.firebaseDB) return;
+            window.dbSet(window.dbRef(window.firebaseDB, `notifications/${memoryRecords[activeReplyIndex].usuario}`), { text: txt, timestamp: Date.now() });
+            alert("Alerta push distribuida exitosamente."); closeModal();
+        }
+    </script>
+</body>
+</html>
