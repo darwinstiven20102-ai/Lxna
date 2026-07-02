@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iconix - Inicio</title>
+    <style>
+        body { 
+            margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: radial-gradient(circle at top right, #25282c, #0a0a0b); 
+            color: #e8eaed; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        #home-view { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100%; padding: 20px; text-align: center;
+        }
+
+        .logo { 
+            font-size: clamp(3rem, 10vw, 4.5rem); font-weight: 900; margin-bottom: 20px; 
+            background: linear-gradient(135deg, #ffffff, #8ab4f8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(138, 180, 248, 0.3));
+        }
+
+        .search-box { 
+            width: 100%; max-width: 600px; padding: 20px 30px; 
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 40px; 
+            outline: none; color: #fff; font-size: 1.1rem; margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .info-section {
+            max-width: 500px; width: 90%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            padding: 25px; border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: float 5s ease-in-out infinite;
+        }
+        .info-section h3 { margin: 0 0 10px 0; color: #8ab4f8; }
+        .info-section p { color: #bdc1c6; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+
+        #browser-view { display: none; flex-direction: column; height: 100%; }
+        .top-bar { 
+            background: rgba(26, 28, 30, 0.8); backdrop-filter: blur(20px); 
+            padding: 10px 15px; display: flex; align-items: center; 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        }
+        #url-display { 
+            flex-grow: 1; background: rgba(0,0,0,0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; 
+            padding: 8px 15px; color: #ccc; cursor: pointer; margin: 0 10px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9rem;
+        }
+        .iframe-container { flex-grow: 1; background: #fff; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 600px) {
+            .logo { font-size: 3rem; }
+            .search-box { padding: 15px 20px; }
+            .info-section { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="home-view">
+        <div class="logo">Iconix</div>
+        
+        <form id="search-form" style="width: 100%; display: flex; justify-content: center;">
+            <input type="text" id="main-search-input" class="search-box" placeholder="¿Qué quieres descubrir hoy?" required>
+        </form>
+
+        <div class="info-section">
+            <h3>✨ Conoce Iconix</h3>
+            <p>Navegación privada y eficiente. Iconix no registra tu historial. <i>Nota: Somos una interfaz personalizada, los resultados son servidos por Google.</i></p>
+        </div>
+    </div>
+
+    <div id="browser-view">
+        <div class="top-bar">
+            <button onclick="volverInicio()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer; padding: 0 10px;">←</button>
+            <div id="url-display" onclick="activarEdicion()"></div>
+            <input type="text" id="edit-url-input" onkeydown="if(event.key==='Enter') ejecutarNuevaBusqueda(this.value)" style="display:none; flex-grow:1; background:#2d3033; border:1px solid #555; border-radius:20px; padding:8px 15px; color:white; margin:0 10px;">
+        </div>
+        <div class="iframe-container">
+            <iframe id="results-frame" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Funciones Originales
+        const homeView = document.getElementById('home-view');
+        const browserView = document.getElementById('browser-view');
+        const urlDisplay = document.getElementById('url-display');
+        const editInput = document.getElementById('edit-url-input');
+        const resultsFrame = document.getElementById('results-frame');
+
+        function realizarBusqueda(query) {
+            homeView.style.display = 'none';
+            browserView.style.display = 'flex';
+            urlDisplay.innerText = 'iconix.com/search?q=' + query;
+            resultsFrame.src = 'https://www.google.com/search?igu=1&q=' + encodeURIComponent(query);
+            editInput.style.display = 'none';
+            urlDisplay.style.display = 'block';
+        }
+
+        document.getElementById('search-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            realizarBusqueda(document.getElementById('main-search-input').value);
+        });
+
+        function activarEdicion() {
+            urlDisplay.style.display = 'none';
+            editInput.style.display = 'block';
+            editInput.value = document.getElementById('main-search-input').value;
+            editInput.focus();
+        }
+
+        function ejecutarNuevaBusqueda(val) {
+            if(val.trim() !== "") realizarBusqueda(val);
+        }
+
+        function volverInicio() {
+            browserView.style.display = 'none';
+            homeView.style.display = 'flex';
+        }
+
+        // Lógica IA
+        document.getElementById('iconix-ai-btn').onclick = () => {
+            const chat = document.getElementById('ai-chat-interface');
+            chat.style.display = (chat.style.display === 'none') ? 'flex' : 'none';
+        };
+
+        const chatInput = document.getElementById('chat-input');
+        const chatHistory = document.getElementById('chat-history');
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymQcdlHCrRBAiP1W0ixbLo7j0271DBVzSLBJfDIeGVURZ9mzh-No_nt3CUlBSmeh0BKw/exec'; 
+
+        chatInput.addEventListener('keydown', async (e) => {
+            if(e.key === 'Enter' && chatInput.value.trim() !== "") {
+                const query = chatInput.value;
+                chatHistory.innerHTML += `<div style="margin-bottom:10px;"><b>Tú:</b> ${query}</div>`;
+                chatInput.value = "";
+                chatHistory.innerHTML += `<div><i>Iconix IA pensando...</i></div>`;
+                
+                try {
+                    const res = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: query })
+                    });
+                    const data = await res.json();
+                    chatHistory.lastElementChild.innerHTML = `<b>Iconix IA:</b> ${data.response}`;
+                } catch (err) {
+                    chatHistory.lastElementChild.innerHTML = `<b>Error:</b> Problema de conexión.`;
+                }
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
