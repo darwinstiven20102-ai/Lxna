@@ -40,7 +40,6 @@ body{
   overflow-x:hidden;
 }
 
-/* ESTILOS DE EMOJIS CON DISEÑO PROPIO (CUSTOM BADGES/ICONS) */
 .custom-emoji {
   display: inline-flex;
   align-items: center;
@@ -50,7 +49,7 @@ body{
   font-style: normal;
 }
 
-.emoji-cash::before { content: "💵"; /* O puedes usar iconos vectoriales limpios */ }
+.emoji-cash::before { content: "💵"; }
 .icon-gem {
   width: 14px;
   height: 14px;
@@ -79,7 +78,6 @@ body{
   transform: translateX(-50%);
 }
 
-/* LOGIN OVERLAY */
 .login-overlay{
   position:fixed;
   top:0;
@@ -96,7 +94,7 @@ body{
 .login-card{
   background:var(--panel);
   border:1px solid var(--border);
-  width:100%;
+  width:90%;
   max-width:380px;
   padding:30px;
   border-radius:16px;
@@ -142,14 +140,12 @@ body{
   cursor:pointer;
 }
 
-/* LAYOUT DEL DASHBOARD */
 .app-container{
   display:none;
   width:100%;
   min-height:100vh;
 }
 
-/* BARRA LATERAL IZQUIERDA */
 .sidebar{
   width:80px;
   background:var(--sidebar);
@@ -161,6 +157,7 @@ body{
   gap:20px;
   position:fixed;
   height:100vh;
+  z-index: 100;
 }
 
 .sidebar-icon{
@@ -185,37 +182,119 @@ body{
   cursor:pointer;
 }
 
-/* CONTENIDO PRINCIPAL */
 .main-layout{
   margin-left:80px;
   flex:1;
-  display:grid;
-  grid-template-columns: 1fr 320px;
+  display:block;
   min-height:100vh;
+  position: relative;
 }
 
 .content-left{
   padding:30px;
-  max-width:700px;
+  max-width:800px;
 }
 
-.content-right{
-  background:var(--sidebar);
-  border-left:1px solid var(--border);
-  padding:20px;
+.sidebar-popup-panel {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 100%;
+  max-width: 380px;
+  height: 100vh;
+  background: var(--sidebar);
+  border-left: 1px solid var(--border);
+  padding: 25px;
+  z-index: 9999;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.7);
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* SECCIÓN DE PERFIL (IZQUIERDA) */
+.sidebar-popup-panel.active {
+  right: 0;
+}
+
+.sidebar-popup-panel.wide-shop-panel {
+  max-width: 600px;
+  right: -620px;
+}
+
+.sidebar-popup-panel.wide-shop-panel.active {
+  right: 0;
+}
+
+.popup-overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
+  z-index: 9998;
+  display: none;
+}
+
+.popup-overlay-bg.active {
+  display: block;
+}
+
+.profile-header-flex {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.profile-avatar-large{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  border:3px solid var(--border);
+  object-fit:cover;
+  background:#222;
+  flex-shrink: 0;
+}
+
+.profile-info-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
 .user-title-container{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:20px;
+  gap: 10px;
 }
 
 .user-title{
-  font-size:28px;
+  font-size:24px;
   font-weight:900;
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.badge-plus-tag {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(243, 156, 18, 0.4);
 }
 
 .btn-logout{
@@ -227,22 +306,13 @@ body{
   font-size:12px;
   cursor:pointer;
   transition:0.2s;
+  white-space: nowrap;
 }
 
 .btn-logout:hover{
   background:#c0392b;
   color:#fff;
   border-color:#c0392b;
-}
-
-.profile-avatar-large{
-  width:120px;
-  height:120px;
-  border-radius:50%;
-  border:3px solid var(--border);
-  object-fit:cover;
-  margin-bottom:24px;
-  background:#222;
 }
 
 .stat-box{
@@ -321,7 +391,6 @@ body{
   background:#222;
 }
 
-/* SECCIÓN DERECHA */
 .top-balance-container{
   display:flex;
   flex-direction:column;
@@ -405,7 +474,6 @@ body{
   cursor:pointer;
 }
 
-/* LISTAS DE AUTOCOMPLETADO */
 .autocomplete-list{
   position:absolute;
   top:100%;
@@ -445,37 +513,10 @@ body{
   object-fit:cover;
 }
 
-/* MODALES GENERALES */
-.modal-overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100vw;
-  height:100vh;
-  background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(4px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-
-.modal-overlay.active{ display:flex; }
-
-.modal-box{
-  background:var(--panel);
-  width:100%;
-  max-width:400px;
-  border-radius:16px;
-  padding:24px;
-  border:1px solid var(--border);
-}
-
-/* ESTILOS DE MISIONES */
 .missions-scroll-area{
-  max-height: 380px;
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
-  padding-right: 6px;
+  padding-right: 4px;
 }
 
 .mission-card{
@@ -502,7 +543,7 @@ body{
 
 .mission-reward{
   font-size: 11px;
-  color: var(--gold);
+  color: var(--text-muted);
   font-weight: 700;
 }
 
@@ -514,31 +555,113 @@ body{
   font-size: 11px;
   cursor: pointer;
   transition: 0.2s;
-}
-
-.btn-action-mission.start{
-  background: var(--green);
+  white-space: nowrap;
+  background: var(--roblox-btn-bg);
   color: #fff;
 }
 
-.btn-action-mission.waiting{
-  background: #333;
-  color: #aaa;
-  cursor: not-allowed;
+.btn-action-mission:hover{
+  background: var(--roblox-btn-hover);
 }
 
-.btn-action-mission.claim{
-  background: var(--gold);
-  color: #000;
+.btn-action-mission.start{
+  background: var(--roblox-btn-bg);
+  color: #fff;
 }
 
-.btn-action-mission.completed{
-  background: #222;
-  color: #555;
-  cursor: not-allowed;
+.btn-action-mission.green-btn{
+  background: var(--green);
+  color: #fff;
+}
+.btn-action-mission.green-btn:hover{
+  background: var(--green-hover);
 }
 
-/* TOP GLOBAL ESTILOS */
+.shop-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.shop-title-main {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.shop-subtitle-info {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.shop-section-heading {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  margin-top: 20px;
+}
+
+.subscriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sub-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sub-card-title {
+  font-weight: 900;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.sub-card-price {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.sub-card-features {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.sub-card-features div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.faq-box {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .top-global-tabs{
   display: flex;
   gap: 6px;
@@ -594,6 +717,62 @@ body{
   width: 20px;
   color: var(--gold);
 }
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0 10px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+  }
+  .plushop-btn {
+    writing-mode: horizontal-tb;
+    transform: none;
+    margin-top: 0;
+    font-size: 12px;
+  }
+  .main-layout {
+    margin-left: 0;
+    margin-bottom: 60px;
+  }
+  .content-left {
+    padding: 15px;
+    max-width: 100%;
+  }
+  .sidebar-popup-panel {
+    top: auto;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: 92%;
+    max-width: 420px;
+    height: 80vh;
+    max-height: 600px;
+    border-radius: 24px 24px 0 0;
+    border: 1px solid var(--border);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    transition: bottom 0.35s cubic-bezier(0.1, 1, 0.1, 1);
+  }
+  .sidebar-popup-panel.active {
+    bottom: 0;
+    right: auto;
+  }
+  .sidebar-popup-panel.wide-shop-panel {
+    width: 92%;
+    max-width: 460px;
+    right: auto;
+  }
+}
 </style>
 </head>
 
@@ -620,13 +799,12 @@ body{
 <!-- DASHBOARD -->
 <div class="app-container" id="appContainer">
   
-  <!-- BARRA LATERAL IZQUIERDA -->
   <aside class="sidebar">
     <svg class="sidebar-icon" id="iconMissionsMenu" viewBox="0 0 24 24" title="Misiones Diarias">
       <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
     </svg>
 
-    <svg class="sidebar-icon" id="sidebarWithdrawBtn" viewBox="0 0 24 24" title="Retirar Robux" style="fill: var(--gold);">
+    <svg class="sidebar-icon" id="sidebarWithdrawBtn" viewBox="0 0 24 24" title="Retirar Robux y Conversión" style="fill: var(--gold);">
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-1c-1.1 0-2-.9-2-2h2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1c-1.66 0-3-1.34-3-3 0-1.1.9-2 2-2V7h2v1c1.1 0 2 .9 2 2h-2c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1c1.66 0 3 1.34 3 3 0 1.1-.9 2-2 2v1z"/>
     </svg>
 
@@ -638,24 +816,233 @@ body{
       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
     </svg>
 
-    <svg class="sidebar-icon" id="iconProfileCircle" viewBox="0 0 24 24" title="Editar Perfil Rápido">
+    <svg class="sidebar-icon" id="iconProfileCircle" viewBox="0 0 24 24" title="Abrir Panel de Saldos">
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
     </svg>
 
     <div class="plushop-btn" id="openShopBtn">Blue Shop</div>
   </aside>
 
-  <!-- ESTRUCTURA PRINCIPAL -->
-  <div class="main-layout">
-    
-    <!-- COLUMNA IZQUIERDA -->
-    <div class="content-left">
-      <div class="user-title-container">
-        <h1 class="user-title" id="displayUsername">darwinrbxtik</h1>
-        <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+  <div class="popup-overlay-bg" id="popupOverlayBg"></div>
+
+  <div class="sidebar-popup-panel" id="sidebarPopupPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <b style="font-size:18px; font-weight:900;">Menú de Saldos</b>
+      <div class="close-panel-btn" onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+
+    <div class="top-balance-container">
+      <div class="top-balance money-balance" title="Dinero disponible">
+        <span class="custom-emoji emoji-cash"></span>
+        <span id="currentMoney">0</span>
+        <span>COP</span>
       </div>
+
+      <div class="top-balance">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M5.165 0L0 18.835 18.835 24 24 5.165 5.165 0zm10.548 14.137l-5.685-1.523 1.523-5.685 5.685 1.523-1.523 5.685z"/></svg>
+        <span id="currentBalance">0</span>
+        <button id="btnTransfer" style="margin-left:auto; background:var(--green); border:0; color:#fff; border-radius:50%; width:22px; height:22px; cursor:pointer;" title="Enviar Robux">+</button>
+      </div>
+
+      <button class="btn-withdraw" id="btnOpenWithdrawModal">
+        <span class="icon-gem"></span> Retirar Robux / Convertir COP
+      </button>
+
+      <button class="btn-code-redeem" id="btnOpenCodeModal">
+        <span class="icon-gift"></span> Canjear Código Promocional
+      </button>
+    </div>
+
+    <div class="add-friends-section">
+      <h3>Agregar amistades</h3>
+      <div class="search-box">
+        <input type="text" id="searchUserInput" placeholder="Buscar usuario..." autocomplete="off">
+        <span>🔍</span>
+        <div id="searchAutocompleteList" class="autocomplete-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="missionsPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <b style="font-size:18px; font-weight:900;">📜 Misiones Diarias</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">Inicia cada misión y espera 5 minutos para recibir $ 2.000 COP.</p>
+    <div class="missions-scroll-area" id="missionsListContainer"></div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="withdrawPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <b style="font-size:18px; font-weight:900;">Gestión de Saldo</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+
+    <div class="top-global-tabs" style="margin-bottom:16px;">
+      <button class="top-tab-btn active" id="tabBtnWithdraw" onclick="switchWithdrawSubTab('withdraw')">Retirar Robux</button>
+      <button class="top-tab-btn" id="tabBtnConvert" onclick="switchWithdrawSubTab('convert')">Convertir a COP</button>
+    </div>
+
+    <div id="subSectionWithdraw">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Retira tus Robux directamente hacia tu cuenta de Roblox.</div>
       
-      <img id="displayAvatar" class="profile-avatar-large" src="" alt="Avatar">
+      <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--text-muted);">Robux disponibles:</span>
+        <span id="withdrawModalBalance" style="font-weight:900; color:var(--green); font-size:14px;">0 R$</span>
+      </div>
+
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad Robux</div>
+      <input type="number" id="withdrawAmountRobux" class="form-control" placeholder="Ej: 1000">
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px; margin-top:4px;">Usuario</div>
+      <input type="text" id="withdrawTargetUser" class="form-control" placeholder="darwinrbxtik">
+      <button class="btn-primary" id="btnSubmitWithdraw" style="background:#e67e22; margin-top:8px; font-weight:900;">Solicitar retiro</button>
+    </div>
+
+    <div id="subSectionConvert" style="display:none;">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Convierte tus Robux a pesos COP (1 Robux = 1 COP).</div>
+
+      <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--text-muted);">Robux disponibles:</span>
+        <span id="convertModalBalance" style="font-weight:900; color:var(--green); font-size:14px;">0 R$</span>
+      </div>
+
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad de Robux a convertir</div>
+      <input type="number" id="convertAmountRobux" class="form-control" placeholder="Ej: 1000" oninput="calcConversionPreview()">
+      <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px;">
+        Recibirás aprox: <b id="previewCopResult" style="color:var(--gold);">0 COP</b>
+      </div>
+      <button class="btn-primary" id="btnSubmitConvert" style="background:var(--green); margin-top:4px; font-weight:900;">Convertir Robux a COP</button>
+    </div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="topGlobalPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <b style="font-size:18px; font-weight:900;">🏆 Top Global</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <div class="top-global-tabs">
+      <button class="top-tab-btn active" onclick="switchTopTab('balance', this)">Más Robux</button>
+      <button class="top-tab-btn" onclick="switchTopTab('money', this)">Más COP</button>
+      <button class="top-tab-btn" onclick="switchTopTab('received', this)">Recibidos</button>
+      <button class="top-tab-btn" onclick="switchTopTab('sent', this)">Enviados</button>
+    </div>
+    <div class="missions-scroll-area" id="topGlobalContainer"></div>
+  </div>
+
+  <div class="sidebar-popup-panel wide-shop-panel" id="robotShopPanel">
+    <div class="shop-header-row">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:20px; font-weight:900;">✕</span>
+        <div style="display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); padding:6px 12px; border-radius:20px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+          <span id="shopHeaderBalance" style="font-weight:800; font-size:13px;">0</span>
+          <button onclick="openPanel('sidebarPopupPanel')" style="background:var(--green); border:0; color:#fff; border-radius:50%; width:20px; height:20px; font-weight:900; cursor:pointer;" title="Añadir saldo">+</button>
+        </div>
+      </div>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+
+    <div class="missions-scroll-area">
+      <div class="shop-title-main">Comprar Robux</div>
+      
+      <div class="shop-section-heading" style="margin-top:16px;">Paquetes de Robux</div>
+      <div class="shop-subtitle-info">Al comprar Robux, aceptas nuestros Términos de uso, incluida la cláusula de arbitraje y la política de revocación.</div>
+
+      <div id="robloxItemsContainer"></div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; margin-bottom:12px;">
+        <div style="font-weight:900; font-size:16px; display:flex; align-items:center; gap:6px;">
+          <span class="icon-gift"></span> Nuevo en Roblox
+        </div>
+        <a href="#" style="font-size:12px; color:var(--text-muted); text-decoration:none;" onclick="alert('Sección informativa oficial de Roblox')">Aprende más</a>
+      </div>
+
+      <div class="subscriptions-grid">
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Roblox Plus</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">29.900 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>✓ Hasta 20% de descuento en objetos y avatares</div>
+              <div>✓ Servidores privados gratis</div>
+              <div>✓ Enviar Robux gratis</div>
+              <div>✓ 100 Robux cada 15 segundos</div>
+            </div>
+          </div>
+          <button class="btn-action-mission green-btn" onclick="buySubscription('Roblox Plus', 29900, 'Roblox Plus')">29.900 COP/month</button>
+        </div>
+
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Plus 500</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">500.000 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>✓ Todo en Plus</div>
+              <div>✓ 200 Robux cada 15 segundos</div>
+              <div>✓ Insignia oficial Blue Shop</div>
+            </div>
+          </div>
+          <button class="btn-action-mission" onclick="buySubscription('Plus 500', 500000, 'Plus 500')">500.000 COP/month</button>
+        </div>
+
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Plus 1000</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">1.000.000 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>✓ Todo en Plus</div>
+              <div>✓ 300 Robux cada 15 segundos</div>
+              <div>✓ Insignia oficial Blue Shop</div>
+            </div>
+          </div>
+          <button class="btn-action-mission" onclick="buySubscription('Plus 1000', 1000000, 'Plus 1000')">1.000.000 COP/month</button>
+        </div>
+
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Plus VIP 5M</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">5.000.000 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>✓ Todo en Plus Pro</div>
+              <div>✓ 100.000 Robux cada segundo</div>
+              <div>✓ Insignia exclusiva Blue Shop</div>
+            </div>
+          </div>
+          <button class="btn-action-mission green-btn" onclick="buySubscription('Plus VIP 5M', 5000000, 'Plus VIP 5M')">5.000.000 COP/month</button>
+        </div>
+      </div>
+
+      <div class="shop-section-heading" style="margin-top:30px;">Preguntas frecuentes</div>
+      
+      <div class="faq-box" onclick="alert('Los Robux son la moneda virtual de Roblox que te permite comprar accesorios, equipo y mucho más.')">
+        <span>¿Qué son los Robux?</span>
+        <span>⌄</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="content-left">
+      <div class="profile-header-flex">
+        <img id="displayAvatar" class="profile-avatar-large" src="" alt="Avatar">
+        <div class="profile-info-side">
+          <div class="user-title-container">
+            <h1 class="user-title" id="displayUsername">
+              <span id="usernameText">darwinrbxtik</span>
+              <span id="userBadgeContainer"></span>
+            </h1>
+            <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
 
       <div class="stat-box">
         <div class="stat-title">Total Robux Recibidos</div>
@@ -679,80 +1066,11 @@ body{
         <div class="friends-row" id="friendsContainer"></div>
       </div>
     </div>
-
-    <!-- COLUMNA DERECHA -->
-    <div class="content-right">
-      
-      <div class="top-balance-container">
-        <div class="top-balance money-balance" title="Dinero disponible">
-          <span class="custom-emoji emoji-cash"></span>
-          <span id="currentMoney">0</span>
-          <span>COP</span>
-        </div>
-
-        <div class="top-balance">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M5.165 0L0 18.835 18.835 24 24 5.165 5.165 0zm10.548 14.137l-5.685-1.523 1.523-5.685 5.685 1.523-1.523 5.685z"/></svg>
-          <span id="currentBalance">0</span>
-          <button id="btnTransfer" style="margin-left:auto; background:var(--green); border:0; color:#fff; border-radius:50%; width:22px; height:22px; cursor:pointer;" title="Enviar Robux">+</button>
-        </div>
-
-        <button class="btn-withdraw" id="btnOpenWithdrawModal">
-          <span class="icon-gem"></span> Retirar Robux
-        </button>
-
-        <button class="btn-code-redeem" id="btnOpenCodeModal">
-          <span class="icon-gift"></span> Canjear Código Promocional
-        </button>
-      </div>
-
-      <div class="add-friends-section">
-        <h3>Agregar amistades</h3>
-        <div class="search-box">
-          <input type="text" id="searchUserInput" placeholder="Buscar usuario..." autocomplete="off">
-          <span>🔍</span>
-          <div id="searchAutocompleteList" class="autocomplete-list"></div>
-        </div>
-      </div>
-
-    </div>
-
   </div>
 </div>
 
-<!-- MODAL DE RETIRO DE ROBUX -->
-<div class="modal-overlay" id="withdrawModal">
-  <div class="modal-box">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <b style="font-size:20px; font-weight:900;">Retirar</b>
-      <div onclick="closeModal('withdrawModal')" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;" onmouseover="this.style.borderColor='#fff'; this.style.color='#fff';" onmouseout="this.style.borderColor='var(--border)'; this.style.color='var(--text-muted)';">✕</div>
-    </div>
-
-    <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad Robux</div>
-    <input type="number" id="withdrawAmountRobux" class="form-control" placeholder="22000">
-
-    <div style="font-size:13px; font-weight:700; margin-bottom:6px; margin-top:4px;">Usuario</div>
-    <input type="text" id="withdrawTargetUser" class="form-control" placeholder="darwinrbxtik">
-
-    <button class="btn-primary" id="btnSubmitWithdraw" style="background:#e67e22; margin-top:8px; font-weight:900;">Solicitar retiro</button>
-  </div>
-</div>
-
-<!-- MODAL DE MISIONES -->
-<div class="modal-overlay" id="missionsModal">
-  <div class="modal-box" style="max-width:480px;">
-    <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
-      <b style="font-size:16px;">📜 Misiones Diarias (100 Misiones)</b>
-      <span onclick="closeModal('missionsModal')" style="cursor:pointer; font-weight:bold;">✕</span>
-    </div>
-    <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Inicia cada misión y espera 5 minutos para recibir $ 2.000 COP.</p>
-
-    <div class="missions-scroll-area" id="missionsListContainer"></div>
-  </div>
-</div>
-
-<!-- MODAL CANJEAR CÓDIGOS -->
-<div class="modal-overlay" id="redeemCodeModal">
-  <div class="modal-box">
+<div class="modal-overlay" id="redeemCodeModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:10000; padding:15px;">
+  <div class="modal-box" style="background:var(--panel); width:100%; max-width:400px; border-radius:16px; padding:24px; border:1px solid var(--border);">
     <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
       <b style="font-size:15px;">Canjear Código Promocional</b>
       <span onclick="closeModal('redeemCodeModal')" style="cursor:pointer; font-weight:bold;">✕</span>
@@ -762,37 +1080,8 @@ body{
   </div>
 </div>
 
-<!-- MODAL TIENDA ROBLOX -->
-<div class="modal-overlay" id="robotShopModal">
-  <div class="modal-box" style="max-width:500px;">
-    <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
-      <b style="font-size:16px;">Tienda de Robux</b>
-      <span onclick="closeModal('robotShopModal')" style="cursor:pointer; font-weight:bold;">✕</span>
-    </div>
-    <div class="missions-scroll-area" id="robloxItemsContainer"></div>
-  </div>
-</div>
-
-<!-- MODAL TOP GLOBAL -->
-<div class="modal-overlay" id="topGlobalModal">
-  <div class="modal-box" style="max-width:460px;">
-    <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
-      <b style="font-size:16px;">🏆 Top Global</b>
-      <span onclick="closeModal('topGlobalModal')" style="cursor:pointer; font-weight:bold;">✕</span>
-    </div>
-    <div class="top-global-tabs">
-      <button class="top-tab-btn active" onclick="switchTopTab('balance', this)">Más Robux</button>
-      <button class="top-tab-btn" onclick="switchTopTab('money', this)">Más Saldo COP</button>
-      <button class="top-tab-btn" onclick="switchTopTab('received', this)">Más Recibidos</button>
-      <button class="top-tab-btn" onclick="switchTopTab('sent', this)">Más Enviados</button>
-    </div>
-    <div class="missions-scroll-area" id="topGlobalContainer"></div>
-  </div>
-</div>
-
-<!-- MODAL ENVIAR ROBUX -->
-<div class="modal-overlay" id="transferModal">
-  <div class="modal-box">
+<div class="modal-overlay" id="transferModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:10000; padding:15px;">
+  <div class="modal-box" style="background:var(--panel); width:100%; max-width:400px; border-radius:16px; padding:24px; border:1px solid var(--border);">
     <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
       <b style="font-size:16px;">Enviar Robux</b>
       <span onclick="closeModal('transferModal')" style="cursor:pointer; font-weight:bold;">✕</span>
@@ -806,7 +1095,6 @@ body{
   </div>
 </div>
 
-<!-- INTEGRACIÓN FIREBASE v10 -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -832,6 +1120,7 @@ body{
   let currentMoneyValue = 0;
   let currentUserDataObj = {};
   let missionInterval = null;
+  let plusRobuxInterval = null; 
   let currentTopMetric = 'balance';
 
   const promoCodes = {
@@ -842,24 +1131,105 @@ body{
   };
 
   const robloxPackages = [
-    { amount: "22.500", priceText: "$ 1.150.000 COP", priceCOP: 1150000, robuxVal: 22500 },
-    { amount: "10.000", priceText: "$ 600.000 COP", priceCOP: 600000, robuxVal: 10000 },
-    { amount: "4.500", priceText: "$ 300.000 COP", priceCOP: 300000, robuxVal: 4500 },
-    { amount: "800", priceText: "$ 60.000 COP", priceCOP: 60000, robuxVal: 800 },
-    { amount: "400", priceText: "$ 30.000 COP", priceCOP: 30000, robuxVal: 400 },
-    { amount: "80", priceText: "$ 5.900 COP", priceCOP: 5900, robuxVal: 80 }
+    { amount: "22.500", priceText: "1,1499 M COP", priceCOP: 1150000, robuxVal: 22500, highlight: false },
+    { amount: "10.000", priceText: "599,9 mil COP", priceCOP: 600000, robuxVal: 10000, highlight: false },
+    { amount: "4500", priceText: "299,9 mil COP", priceCOP: 300000, robuxVal: 4500, highlight: false },
+    { amount: "3150", priceText: "34,99 US$", priceCOP: 140000, robuxVal: 3150, highlight: false },
+    { amount: "1700", priceText: "114,9 mil COP", priceCOP: 115000, robuxVal: 1700, highlight: false },
+    { amount: "1200", priceText: "14,99 US$", priceCOP: 60000, robuxVal: 1200, highlight: false },
+    { amount: "800", priceText: "59,9 mil COP", priceCOP: 60000, robuxVal: 800, highlight: false },
+    { amount: "400", priceText: "29,9 mil COP", priceCOP: 30000, robuxVal: 400, highlight: false },
+    { amount: "80", priceText: "5900 COP", priceCOP: 5900, robuxVal: 80, highlight: true, tag: "Para ti" },
+    { amount: "40", priceText: "2950 COP", priceCOP: 2950, robuxVal: 40, highlight: false }
   ];
 
   function fmt(n){ return Number(n).toLocaleString("es-CO"); }
 
-  // Abrir / Cerrar Modal Transferencia
+  const popupOverlayBg = document.getElementById("popupOverlayBg");
+
+  function closeAllPanels() {
+    document.querySelectorAll(".sidebar-popup-panel").forEach(panel => {
+      panel.classList.remove("active");
+    });
+    popupOverlayBg.classList.remove("active");
+    if(missionInterval) clearInterval(missionInterval);
+  }
+
+  window.closeAllPanels = closeAllPanels;
+  popupOverlayBg.addEventListener("click", closeAllPanels);
+
+  function openPanel(panelId) {
+    closeAllPanels();
+    document.getElementById(panelId).classList.add("active");
+    popupOverlayBg.classList.add("active");
+  }
+
+  document.getElementById("iconProfileCircle").addEventListener("click", () => openPanel("sidebarPopupPanel"));
+  document.getElementById("iconMissionsMenu").addEventListener("click", () => {
+    renderMissionsList();
+    openPanel("missionsPanel");
+    if(missionInterval) clearInterval(missionInterval);
+    missionInterval = setInterval(() => {
+      if(document.getElementById("missionsPanel").classList.contains("active")) renderMissionsList();
+    }, 1000);
+  });
+
+  function openWithdrawPanelHandler() {
+    document.getElementById("withdrawTargetUser").value = currentUsername;
+    document.getElementById("withdrawAmountRobux").value = "";
+    document.getElementById("convertAmountRobux").value = "";
+    document.getElementById("previewCopResult").textContent = "0 COP";
+    
+    document.getElementById("withdrawModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+    document.getElementById("convertModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+
+    switchWithdrawSubTab('withdraw');
+    openPanel("withdrawPanel");
+  }
+
+  window.switchWithdrawSubTab = function(type) {
+    const btnW = document.getElementById("tabBtnWithdraw");
+    const btnC = document.getElementById("tabBtnConvert");
+    const secW = document.getElementById("subSectionWithdraw");
+    const secC = document.getElementById("subSectionConvert");
+
+    if(type === 'withdraw') {
+      btnW.classList.add("active");
+      btnC.classList.remove("active");
+      secW.style.display = "block";
+      secC.style.display = "none";
+    } else {
+      btnC.classList.add("active");
+      btnW.classList.remove("active");
+      secC.style.display = "block";
+      secW.style.display = "none";
+    }
+  };
+
+  window.calcConversionPreview = function() {
+    const val = parseInt(document.getElementById("convertAmountRobux").value) || 0;
+    document.getElementById("previewCopResult").textContent = fmt(val) + " COP";
+  };
+
+  document.getElementById("btnOpenWithdrawModal").addEventListener("click", openWithdrawPanelHandler);
+  document.getElementById("sidebarWithdrawBtn").addEventListener("click", openWithdrawPanelHandler);
+  document.getElementById("iconTopGlobal").addEventListener("click", () => { renderTopGlobal(currentTopMetric); openPanel("topGlobalPanel"); });
+  document.getElementById("iconRobotShop").addEventListener("click", () => { renderRobloxShop(); openPanel("robotShopPanel"); });
+  document.getElementById("openShopBtn").addEventListener("click", () => { renderRobloxShop(); openPanel("robotShopPanel"); });
+
+  document.getElementById("btnOpenCodeModal").addEventListener("click", () => {
+    document.getElementById("promoCodeInput").value = "";
+    document.getElementById("redeemCodeModal").style.display = "flex";
+  });
+
   document.getElementById("btnTransfer").addEventListener("click", () => {
     document.getElementById("targetUsername").value = "";
     document.getElementById("transferAmount").value = "";
-    document.getElementById("transferModal").classList.add("active");
+    document.getElementById("transferModal").style.display = "flex";
   });
 
-  // Funcionalidad de Transferir Robux
+  window.closeModal = function(id){ document.getElementById(id).style.display = "none"; };
+
   document.getElementById("btnConfirmTransfer").addEventListener("click", async () => {
     const target = document.getElementById("targetUsername").value.trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
     const amount = parseInt(document.getElementById("transferAmount").value);
@@ -871,41 +1241,29 @@ body{
 
     const targetRef = ref(db, `users/${target}`);
     const targetSnap = await get(targetRef);
-
     if(!targetSnap.exists()) return alert("El usuario destinatario no existe en la base de datos.");
 
     const targetData = targetSnap.val();
-    const newSenderBalance = currentBalanceValue - amount;
-    const newTargetBalance = (targetData.balance || 0) + amount;
-    const newSenderSent = (currentUserDataObj.sent || 0) + amount;
-    const newTargetReceived = (targetData.received || 0) + amount;
-
-    await set(ref(db, `users/${currentUsername}/balance`), newSenderBalance);
-    await set(ref(db, `users/${currentUsername}/sent`), newSenderSent);
-    await set(ref(db, `users/${target}/balance`), newTargetBalance);
-    await set(ref(db, `users/${target}/received`), newTargetReceived);
+    await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - amount);
+    await set(ref(db, `users/${currentUsername}/sent`), (currentUserDataObj.sent || 0) + amount);
+    await set(ref(db, `users/${target}/balance`), (targetData.balance || 0) + amount);
+    await set(ref(db, `users/${target}/received`), (targetData.received || 0) + amount);
 
     alert(`¡Transferencia de ${fmt(amount)} R$ realizada con éxito a ${target}!`);
     closeModal("transferModal");
   });
 
-  // Buscador de Amigos (Autocomplete lateral derecho) con filtrado en tiempo real
+  // Buscador 1: Agregar Amistades (Filtro por prefijo exacto)
   const searchInput = document.getElementById("searchUserInput");
   const autocompleteList = document.getElementById("searchAutocompleteList");
 
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase().trim();
     autocompleteList.innerHTML = "";
-    if(!query){
-      autocompleteList.style.display = "none";
-      return;
-    }
+    if(!query){ autocompleteList.style.display = "none"; return; }
 
-    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().includes(query) && u !== currentUsername);
-    if(matches.length === 0){
-      autocompleteList.style.display = "none";
-      return;
-    }
+    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().startsWith(query) && u !== currentUsername);
+    if(matches.length === 0){ autocompleteList.style.display = "none"; return; }
 
     matches.forEach(matchKey => {
       const uData = allUsersData[matchKey];
@@ -915,7 +1273,6 @@ body{
       item.addEventListener("click", () => {
         searchInput.value = matchKey;
         autocompleteList.style.display = "none";
-        alert(`Usuario seleccionado: ${matchKey}`);
       });
       autocompleteList.appendChild(item);
     });
@@ -923,28 +1280,20 @@ body{
   });
 
   document.addEventListener("click", (e) => {
-    if(!e.target.closest(".search-box")){
-      autocompleteList.style.display = "none";
-    }
+    if(!e.target.closest(".search-box")) autocompleteList.style.display = "none";
   });
 
-  // Autocomplete para modal de transferencia con filtrado en tiempo real
+  // Buscador 2: Transferencia de Robux (Filtro por prefijo exacto)
   const transferInput = document.getElementById("targetUsername");
-  const transferAutocomplete = document.getElementById("transferAutocompleteList");
+  const transferAutocompleteList = document.getElementById("transferAutocompleteList");
 
   transferInput.addEventListener("input", () => {
     const query = transferInput.value.toLowerCase().trim();
-    transferAutocomplete.innerHTML = "";
-    if(!query){
-      transferAutocomplete.style.display = "none";
-      return;
-    }
+    transferAutocompleteList.innerHTML = "";
+    if(!query){ transferAutocompleteList.style.display = "none"; return; }
 
-    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().includes(query) && u !== currentUsername);
-    if(matches.length === 0){
-      transferAutocomplete.style.display = "none";
-      return;
-    }
+    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().startsWith(query) && u !== currentUsername);
+    if(matches.length === 0){ transferAutocompleteList.style.display = "none"; return; }
 
     matches.forEach(matchKey => {
       const uData = allUsersData[matchKey];
@@ -953,47 +1302,45 @@ body{
       item.innerHTML = `<img src="${uData.avatar || 'https://robohash.org/' + matchKey}"><span>${uData.displayName || matchKey}</span>`;
       item.addEventListener("click", () => {
         transferInput.value = matchKey;
-        transferAutocomplete.style.display = "none";
+        transferAutocompleteList.style.display = "none";
       });
-      transferAutocomplete.appendChild(item);
+      transferAutocompleteList.appendChild(item);
     });
-    transferAutocomplete.style.display = "block";
+    transferAutocompleteList.style.display = "block";
   });
 
   document.addEventListener("click", (e) => {
-    if(!e.target.closest("#transferModal")){
-      transferAutocomplete.style.display = "none";
-    }
+    if(!e.target.closest("#transferModal")) transferAutocompleteList.style.display = "none";
   });
-
-  // Retirar Robux
-  function openWithdrawModalHandler() {
-    document.getElementById("withdrawTargetUser").value = currentUsername;
-    document.getElementById("withdrawAmountRobux").value = "";
-    document.getElementById("withdrawModal").classList.add("active");
-  }
-
-  document.getElementById("btnOpenWithdrawModal").addEventListener("click", openWithdrawModalHandler);
-  document.getElementById("sidebarWithdrawBtn").addEventListener("click", openWithdrawModalHandler);
 
   document.getElementById("btnSubmitWithdraw").addEventListener("click", async () => {
     const robuxVal = parseInt(document.getElementById("withdrawAmountRobux").value);
     const targetUser = document.getElementById("withdrawTargetUser").value.trim();
 
     if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida de Robux.");
-    if(robuxVal > currentBalanceValue) {
-      return alert(`Saldo insuficiente. Tienes ${fmt(currentBalanceValue)} R$ y deseas retirar ${fmt(robuxVal)} R$.`);
-    }
+    if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente.`);
     if(!targetUser) return alert("Ingresa el usuario receptor.");
 
-    const newBalance = currentBalanceValue - robuxVal;
-    await set(ref(db, `users/${currentUsername}/balance`), newBalance);
-
-    alert(`¡Solicitud de retiro exitosa! Se han descontado ${fmt(robuxVal)} R$ de tu cuenta y enviado a ${targetUser}.`);
-    closeModal("withdrawModal");
+    await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - robuxVal);
+    alert(`¡Solicitud de retiro exitosa! Se han descontado ${fmt(robuxVal)} R$.`);
+    closeAllPanels();
   });
 
-  // Renderizar Tienda
+  document.getElementById("btnSubmitConvert").addEventListener("click", async () => {
+    const robuxVal = parseInt(document.getElementById("convertAmountRobux").value);
+
+    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida de Robux para convertir.");
+    if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente de Robux.`);
+
+    const copGained = robuxVal;
+
+    await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - robuxVal);
+    await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue + copGained);
+
+    alert(`¡Conversión exitosa! Convertiste ${fmt(robuxVal)} Robux en $ ${fmt(copGained)} COP.`);
+    closeAllPanels();
+  });
+
   function renderRobloxShop() {
     const container = document.getElementById("robloxItemsContainer");
     container.innerHTML = "";
@@ -1001,23 +1348,23 @@ body{
     robloxPackages.forEach(pkg => {
       const row = document.createElement("div");
       row.className = "mission-card";
+      let tagHtml = pkg.tag ? `<span style="background:var(--border); color:#fff; font-size:9px; padding:2px 6px; border-radius:10px; margin-left:6px;">⭐ ${pkg.tag}</span>` : "";
+      let btnClass = pkg.highlight ? "btn-action-mission green-btn" : "btn-action-mission";
+
       row.innerHTML = `
-        <div class="mission-info">
-          <span class="mission-title">${pkg.amount} Robux</span>
-          <span class="mission-reward">${pkg.priceText}</span>
+        <div class="mission-info" style="flex-direction:row; align-items:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M5.165 0L0 18.835 18.835 24 24 5.165 5.165 0zm10.548 14.137l-5.685-1.523 1.523-5.685 5.685 1.523-1.523 5.685z"/></svg>
+          <span class="mission-title" style="font-size:15px; font-weight:900;">${pkg.amount}</span>
+          ${tagHtml}
         </div>
-        <button class="btn-action-mission start" onclick="buyPackage('${pkg.amount}', ${pkg.robuxVal}, ${pkg.priceCOP})">Comprar</button>
+        <button class="${btnClass}" onclick="buyPackage('${pkg.amount}', ${pkg.robuxVal}, ${pkg.priceCOP})">${pkg.priceText}</button>
       `;
       container.appendChild(row);
     });
   }
 
   window.buyPackage = async function(label, robuxVal, priceCOP) {
-    if(currentMoneyValue < priceCOP) {
-      alert(`⚠️ No tienes suficiente dinero. Necesitas $ ${fmt(priceCOP)} COP.`);
-      return;
-    }
-
+    if(currentMoneyValue < priceCOP) return alert(`⚠️ No tienes suficiente dinero. Necesitas $ ${fmt(priceCOP)} COP.`);
     if(confirm(`¿Deseas comprar ${label} Robux?`)) {
       await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue - priceCOP);
       await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue + robuxVal);
@@ -1026,7 +1373,18 @@ body{
     }
   };
 
-  // RENDERIZAR TOP GLOBAL
+  window.buySubscription = async function(name, priceCOP, subTypeKey) {
+    if(currentMoneyValue < priceCOP) return alert(`⚠️ No tienes suficiente dinero para ${name}. Necesitas $ ${fmt(priceCOP)} COP.`);
+    if(confirm(`¿Deseas adquirir la suscripción ${name}?`)) {
+      await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue - priceCOP);
+      await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue + 500);
+      await set(ref(db, `users/${currentUsername}/hasPlus`), true);
+      await set(ref(db, `users/${currentUsername}/subscriptionType`), subTypeKey);
+      alert(`🎉 ¡Suscripción ${name} activada con éxito! Ya tienes tu insignia de Blue Shop y tus ganancias automáticas configuradas.`);
+      restartPlusInterval();
+    }
+  };
+
   function renderTopGlobal(metric = 'balance') {
     currentTopMetric = metric;
     const container = document.getElementById("topGlobalContainer");
@@ -1037,29 +1395,24 @@ body{
         username: key,
         displayName: allUsersData[key].displayName || key,
         avatar: allUsersData[key].avatar || `https://robohash.org/${key}`,
-        value: allUsersData[key][metric] || 0
+        value: allUsersData[key][metric] || 0,
+        hasPlus: allUsersData[key].hasPlus || false
       };
     });
 
     userList.sort((a, b) => b.value - a.value);
 
-    if(userList.length === 0){
-      container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:12px; padding:20px;">No hay datos disponibles.</p>`;
-      return;
-    }
-
     userList.forEach((u, index) => {
       const row = document.createElement("div");
       row.className = "top-item-row";
-      let suffix = "";
-      if(metric === 'balance' || metric === 'received' || metric === 'sent') suffix = " R$";
-      else if(metric === 'money') suffix = " COP";
+      let suffix = (metric === 'balance' || metric === 'received' || metric === 'sent') ? " R$" : " COP";
+      let badgeHtml = u.hasPlus ? `<span class="badge-plus-tag">✓ Blue Shop</span>` : "";
 
       row.innerHTML = `
         <div class="top-user-info">
           <span class="top-rank-num">#${index + 1}</span>
           <img src="${u.avatar}" alt="Avatar">
-          <span><b>${u.displayName}</b></span>
+          <span><b>${u.displayName}</b> ${badgeHtml}</span>
         </div>
         <span style="font-weight:800; color:var(--green);">${fmt(u.value)}${suffix}</span>
       `;
@@ -1073,12 +1426,6 @@ body{
     renderTopGlobal(metric);
   };
 
-  document.getElementById("iconTopGlobal").addEventListener("click", () => {
-    renderTopGlobal(currentTopMetric);
-    document.getElementById("topGlobalModal").classList.add("active");
-  });
-
-  // MISIONES
   function renderMissionsList() {
     const container = document.getElementById("missionsListContainer");
     container.innerHTML = "";
@@ -1109,13 +1456,7 @@ body{
         btnHtml = `<button class="btn-action-mission start" onclick="startMissionTimer('${mKey}')">Iniciar</button>`;
       }
 
-      card.innerHTML = `
-        <div class="mission-info">
-          <span class="mission-title">Misión #${i}</span>
-          <span class="mission-reward">+ $ 2.000 COP</span>
-        </div>
-        ${btnHtml}
-      `;
+      card.innerHTML = `<div class="mission-info"><span class="mission-title">Misión #${i}</span><span class="mission-reward">+ $ 2.000 COP</span></div>${btnHtml}`;
       container.appendChild(card);
     }
   }
@@ -1130,20 +1471,6 @@ body{
     alert("💰 ¡Reclamado con éxito!");
   };
 
-  document.getElementById("iconMissionsMenu").addEventListener("click", () => {
-    renderMissionsList();
-    document.getElementById("missionsModal").classList.add("active");
-    if(missionInterval) clearInterval(missionInterval);
-    missionInterval = setInterval(() => {
-      if(document.getElementById("missionsModal").classList.contains("active")) renderMissionsList();
-    }, 1000);
-  });
-
-  document.getElementById("btnOpenCodeModal").addEventListener("click", () => {
-    document.getElementById("promoCodeInput").value = "";
-    document.getElementById("redeemCodeModal").classList.add("active");
-  });
-
   document.getElementById("btnRedeemCode").addEventListener("click", async () => {
     const code = document.getElementById("promoCodeInput").value.trim().toUpperCase();
     if(promoCodes[code]) {
@@ -1153,16 +1480,6 @@ body{
     } else {
       alert("Código inválido.");
     }
-  });
-
-  document.getElementById("iconRobotShop").addEventListener("click", () => {
-    renderRobloxShop();
-    document.getElementById("robotShopModal").classList.add("active");
-  });
-
-  document.getElementById("openShopBtn").addEventListener("click", () => {
-    renderRobloxShop();
-    document.getElementById("robotShopModal").classList.add("active");
   });
 
   document.getElementById("loginAvatarFile").addEventListener("change", (e) => {
@@ -1179,6 +1496,32 @@ body{
     reader.readAsDataURL(file);
   });
 
+  function restartPlusInterval() {
+    if(plusRobuxInterval) clearInterval(plusRobuxInterval);
+
+    plusRobuxInterval = setInterval(async () => {
+      const freshSnap = await get(ref(db, 'users/' + currentUsername));
+      if(freshSnap.exists()) {
+        const data = freshSnap.val();
+        if(data.hasPlus === true) {
+          const subType = data.subscriptionType || "Roblox Plus";
+          let robuxToAdd = 100;
+
+          if(subType === "Roblox Plus") robuxToAdd = 100;
+          else if(subType === "Plus 500") robuxToAdd = 200;
+          else if(subType === "Plus 1000") robuxToAdd = 300;
+          else if(subType === "Plus VIP 5M") robuxToAdd = 100000;
+
+          const currentBal = data.balance || 0;
+          const currentRec = data.received || 0;
+          
+          await set(ref(db, `users/${currentUsername}/balance`), currentBal + robuxToAdd);
+          await set(ref(db, `users/${currentUsername}/received`), currentRec + robuxToAdd);
+        }
+      }
+    }, 15000);
+  }
+
   async function loadUserSession(username, customAvatar = null) {
     currentUsername = username;
     localStorage.setItem("saved_roblox_user", currentUsername);
@@ -1193,13 +1536,15 @@ body{
         money: 0,
         received: 0,
         sent: 0,
-        description: "¡Hola!"
+        description: "¡Hola!",
+        hasPlus: false,
+        subscriptionType: "Roblox Plus"
       });
     }
 
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("appContainer").style.display = "block";
-    document.getElementById("displayUsername").textContent = currentUsername;
+    document.getElementById("usernameText").textContent = currentUsername;
 
     onValue(ref(db, 'users/' + currentUsername), (s) => {
       if(s.exists()){
@@ -1210,11 +1555,24 @@ body{
         document.getElementById("displayAvatar").src = currentUserDataObj.avatar;
         document.getElementById("currentBalance").textContent = fmt(currentBalanceValue);
         document.getElementById("currentMoney").textContent = fmt(currentMoneyValue);
+        document.getElementById("shopHeaderBalance").textContent = fmt(currentBalanceValue);
         document.getElementById("valReceived").textContent = fmt(currentUserDataObj.received || 0) + " R$";
         document.getElementById("valSent").textContent = fmt(currentUserDataObj.sent || 0) + " R$";
         document.getElementById("userDescription").value = currentUserDataObj.description || "";
+
+        document.getElementById("withdrawModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+        document.getElementById("convertModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+
+        const badgeContainer = document.getElementById("userBadgeContainer");
+        if(currentUserDataObj.hasPlus) {
+          badgeContainer.innerHTML = `<span class="badge-plus-tag">✓ Blue Shop</span>`;
+        } else {
+          badgeContainer.innerHTML = "";
+        }
       }
     });
+
+    restartPlusInterval();
 
     onValue(ref(db, 'users'), (s) => {
       if(s.exists()){
@@ -1222,7 +1580,7 @@ body{
         const container = document.getElementById("friendsContainer");
         container.innerHTML = "";
         Object.keys(allUsersData).forEach(k => {
-          if(k !== currentUsername){
+            if(k !== currentUsername){
             const item = document.createElement("div");
             item.className = "friend-item";
             item.innerHTML = `<img class="friend-avatar" src="${allUsersData[k].avatar}"><span>${allUsersData[k].displayName || k}</span>`;
@@ -1248,11 +1606,6 @@ body{
     localStorage.removeItem("saved_roblox_user");
     location.reload();
   });
-
-  window.closeModal = function(id){
-    document.getElementById(id).classList.remove("active");
-    if(id === 'missionsModal' && missionInterval) clearInterval(missionInterval);
-  };
 </script>
 
 </body>
