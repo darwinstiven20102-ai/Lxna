@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roblox Profile Dashboard</title>
+<title>Blue Shop - Dashboard</title>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&display=swap');
@@ -17,20 +17,18 @@
 }
 
 :root{
-  --bg:#0b0b0d;
-  --sidebar:#111215;
-  --panel:#191b1d;
-  --panel-hover:#232527;
-  --input-bg:#1c1d22;
-  --border:#26282d;
+  --bg:#07080a;
+  --sidebar:#0d0e12;
+  --panel:#13151a;
+  --panel-hover:#1c1e24;
+  --input-bg:#181a20;
+  --border:#21242d;
   --text-muted:#8d9299;
-  --green:#00a200;
-  --green-hover:#008800;
+  --blue-primary:#0066ff;
+  --blue-hover:#0052cc;
   --roblox-card-bg:#16181c;
-  --roblox-btn-bg:#2b2d32;
-  --roblox-btn-hover:#383a40;
   --gold:#f39c12;
-  --red:#e74c3c;
+  --coin-color: #3498db;
 }
 
 body{
@@ -47,10 +45,28 @@ body{
   justify-content: center;
   font-size: 0.9em;
   vertical-align: middle;
-  font-style: normal;
 }
 
 .emoji-cash::before { content: "💵"; }
+
+/* Moneda propia y original de la página (Blue Coin) */
+.custom-blue-coin {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 900;
+  color: #fff;
+  box-shadow: 0 0 8px rgba(0, 114, 255, 0.6);
+  vertical-align: -2px;
+  margin-right: 3px;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
 .icon-gem {
   width: 14px;
   height: 14px;
@@ -106,7 +122,7 @@ body{
   width:80px;
   height:80px;
   border-radius:50%;
-  background:#22252c;
+  background:#1a1d24;
   margin:0 auto 14px;
   display:flex;
   align-items:center;
@@ -133,13 +149,15 @@ body{
 .btn-primary{
   width:100%;
   padding:12px;
-  background:var(--green);
+  background:var(--blue-primary);
   border:0;
   border-radius:8px;
   color:#fff;
   font-weight:800;
   cursor:pointer;
+  transition: 0.2s;
 }
+.btn-primary:hover{ background: var(--blue-hover); }
 
 .app-container{
   display:none;
@@ -166,29 +184,28 @@ body{
   height:24px;
   fill:#fff;
   cursor:pointer;
-  opacity:0.7;
+  opacity:0.6;
   transition:0.2s;
-  flex-shrink: 0;
   position: relative;
 }
 
 .sidebar-icon:hover{ opacity:1; }
+.sidebar-icon.active-tab { opacity: 1; fill: var(--blue-primary); }
 
 .notification-badge-dot {
   position: absolute;
   top: -2px;
   right: -2px;
-  background: var(--red);
+  background: #e74c3c;
   color: #fff;
   font-size: 9px;
   font-weight: 900;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--sidebar);
   display: none;
 }
 
@@ -221,6 +238,9 @@ body{
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  /* EVITA QUE EL FONDO SE MUEVA AL DESLIZAR DENTRO DEL PANEL */
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-popup-panel.active {
@@ -265,15 +285,14 @@ body{
   border-radius:50%;
   border:3px solid var(--border);
   object-fit:cover;
-  background:#222;
+  background:#1a1d24;
   flex-shrink: 0;
 }
 
 .profile-info-side {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 }
@@ -282,8 +301,7 @@ body{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap: 15px;
-  width: 100%;
+  gap: 10px;
 }
 
 .user-title{
@@ -292,12 +310,12 @@ body{
   word-break: break-all;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .badge-plus-tag {
-  background: linear-gradient(135deg, #f39c12, #e67e22);
+  background: linear-gradient(135deg, #0072ff, #00c6ff);
   color: #fff;
   font-size: 11px;
   padding: 2px 8px;
@@ -306,7 +324,7 @@ body{
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  box-shadow: 0 2px 6px rgba(243, 156, 18, 0.4);
+  box-shadow: 0 2px 6px rgba(0, 114, 255, 0.4);
 }
 
 .btn-logout{
@@ -344,7 +362,7 @@ body{
 .stat-value{
   font-size:22px;
   font-weight:900;
-  color:var(--green);
+  color:var(--blue-primary);
 }
 
 .account-info-card{
@@ -393,6 +411,7 @@ body{
   align-items:center;
   gap:6px;
   font-size:11px;
+  cursor: pointer;
 }
 
 .friend-avatar{
@@ -400,7 +419,8 @@ body{
   height:46px;
   border-radius:50%;
   object-fit:cover;
-  background:#222;
+  background:#1a1d24;
+  border: 1px solid var(--border);
 }
 
 .top-balance-container{
@@ -429,7 +449,7 @@ body{
 }
 
 .btn-code-redeem, .btn-withdraw{
-  background: var(--green);
+  background: var(--blue-primary);
   color: #fff;
   border: 0;
   border-radius: 20px;
@@ -453,7 +473,7 @@ body{
 }
 
 .btn-code-redeem:hover{
-  background: var(--green-hover);
+  background: var(--blue-hover);
 }
 
 .add-friends-section h3{
@@ -493,53 +513,43 @@ body{
   right:0;
   background:var(--panel);
   border:1px solid var(--border);
-  border-radius:10px;
-  max-height:220px;
+  border-radius:8px;
+  max-height:180px;
   overflow-y:auto;
   z-index:1000;
-  margin-top:6px;
+  margin-top:4px;
   display:none;
-  box-shadow:0 8px 24px rgba(0,0,0,0.6);
-  padding: 6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
 }
 
 .autocomplete-item{
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: 8px;
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  margin-bottom: 6px;
-  transition: background 0.2s, border-color 0.2s;
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+  font-size:12px;
+  border-bottom:1px solid var(--border);
 }
 
-.autocomplete-item:last-child{ margin-bottom:0; }
+.autocomplete-item:last-child{ border-bottom:none; }
 
 .autocomplete-item:hover{
-  background: var(--panel-hover);
-  border-color: var(--text-muted);
+  background:var(--panel-hover);
 }
 
 .autocomplete-item img{
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 1px solid var(--border);
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  object-fit:cover;
 }
 
 .missions-scroll-area{
-  max-height: calc(100vh - 140px);
+  max-height: calc(100vh - 180px);
   overflow-y: auto;
   padding-right: 4px;
-  display: flex;
-  flex-direction: column;
+  overscroll-behavior: contain;
 }
 
 .mission-card{
@@ -579,20 +589,20 @@ body{
   cursor: pointer;
   transition: 0.2s;
   white-space: nowrap;
-  background: var(--roblox-btn-bg);
+  background: var(--panel-hover);
   color: #fff;
 }
 
 .btn-action-mission:hover{
-  background: var(--roblox-btn-hover);
+  background: var(--border);
 }
 
 .btn-action-mission.green-btn{
-  background: var(--green);
+  background: var(--blue-primary);
   color: #fff;
 }
 .btn-action-mission.green-btn:hover{
-  background: var(--green-hover);
+  background: var(--blue-hover);
 }
 
 .shop-header-row {
@@ -600,6 +610,84 @@ body{
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.shop-title-main {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.shop-subtitle-info {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.shop-section-heading {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  margin-top: 20px;
+}
+
+.subscriptions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sub-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sub-card-title {
+  font-weight: 900;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.sub-card-price {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.sub-card-features {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.sub-card-features div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.faq-box {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .top-global-tabs{
@@ -622,9 +710,9 @@ body{
 }
 
 .top-tab-btn.active{
-  background: var(--green);
+  background: var(--blue-primary);
   color: #fff;
-  border-color: var(--green);
+  border-color: var(--blue-primary);
 }
 
 .top-item-row{
@@ -637,7 +725,9 @@ body{
   border-radius: 8px;
   margin-bottom: 8px;
   font-size: 12px;
+  cursor: pointer;
 }
+.top-item-row:hover { background: var(--panel-hover); }
 
 .top-user-info{
   display: flex;
@@ -658,86 +748,27 @@ body{
   color: var(--gold);
 }
 
-.btn-add-friend {
-  background: var(--green);
-  color: #fff;
-  border: 0;
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.2s;
-  width: 100%;
-  margin-top: 12px;
-}
-
-.btn-add-friend:hover {
-  background: var(--green-hover);
-}
-
-.btn-add-friend.pending {
-  background: var(--roblox-btn-bg);
-  color: var(--text-muted);
-  cursor: default;
-}
-
-.btn-add-friend.friends {
-  background: #34495e;
-  color: #fff;
-  cursor: default;
-}
-
-.notif-item {
-  background: var(--input-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 10px;
+/* ESTILOS PARA LA NOTIFICACIÓN FLOTANTE DE MENSAJES */
+#chatNotificationToast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--panel);
+  border: 1px solid var(--blue-primary);
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+  z-index: 20000;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.notif-user-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.notif-user-info img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.notif-actions {
-  display: flex;
-  gap: 6px;
-}
-
-.btn-accept-req {
-  background: var(--green);
-  color: #fff;
-  border: 0;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 11px;
-  font-weight: 800;
+  gap: 12px;
   cursor: pointer;
+  transform: translateY(-120%);
+  transition: transform 0.3s cubic-bezier(0.1, 1, 0.1, 1);
+  max-width: 320px;
 }
-
-.btn-reject-req {
-  background: var(--red);
-  color: #fff;
-  border: 0;
-  border-radius: 6px;
-  padding: 6px 10px;
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
+#chatNotificationToast.show {
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
@@ -751,17 +782,10 @@ body{
     bottom: 0;
     top: auto;
     flex-direction: row;
-    justify-content: flex-start;
-    overflow-x: auto;
-    padding: 0 15px;
-    gap: 24px;
+    justify-content: space-around;
+    padding: 0 10px;
     border-right: none;
     border-top: 1px solid var(--border);
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .sidebar::-webkit-scrollbar {
-    display: none;
   }
   .main-layout {
     margin-left: 0;
@@ -801,6 +825,15 @@ body{
 
 <body>
 
+<!-- NOTIFICACIÓN FLOTANTE DE MENSAJE NUEVO -->
+<div id="chatNotificationToast" onclick="openChatFromNotification()">
+  <img id="toastAvatar" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" src="" alt="Avatar">
+  <div>
+    <b id="toastSenderName" style="font-size:13px; display:block;">Nuevo mensaje</b>
+    <span id="toastMessageText" style="font-size:11px; color:var(--text-muted);">...</span>
+  </div>
+</div>
+
 <!-- LOGIN -->
 <div class="login-overlay" id="loginScreen">
   <div class="login-card">
@@ -823,11 +856,34 @@ body{
 <div class="app-container" id="appContainer">
   
   <aside class="sidebar">
+    <svg class="sidebar-icon active-tab" id="iconHomeMain" viewBox="0 0 24 24" title="Inicio">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+
+    <!-- NUEVO ICONO DE CHAT EN LA BARRA DE PESTAÑAS -->
+    <svg class="sidebar-icon" id="iconChatMenu" viewBox="0 0 24 24" title="Chats de Amigos">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+    </svg>
+
     <svg class="sidebar-icon" id="iconMissionsMenu" viewBox="0 0 24 24" title="Misiones Diarias">
       <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
     </svg>
 
-    <svg class="sidebar-icon" id="sidebarWithdrawBtn" viewBox="0 0 24 24" title="Retirar Robux y Conversión" style="fill: var(--gold);">
+    <svg class="sidebar-icon" id="iconSearchPeople" viewBox="0 0 24 24" title="Buscar Personas">
+      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+
+    <svg class="sidebar-icon" id="iconNotifications" viewBox="0 0 24 24" title="Notificaciones de Amistad">
+      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+      <circle id="notifBadgeDot" class="notification-badge-dot" cx="18" cy="6" r="5" style="display:none;"></circle>
+    </svg>
+
+    <!-- PANEL ADMIN OCULTO DE LA BARRA -->
+    <svg class="sidebar-icon" id="iconAdminPanel" viewBox="0 0 24 24" title="Panel Admin" style="display:none;">
+      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+    </svg>
+
+    <svg class="sidebar-icon" id="sidebarWithdrawBtn" viewBox="0 0 24 24" title="Retirar Blue Coins y Conversión" style="fill: var(--gold);">
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-1c-1.1 0-2-.9-2-2h2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1c-1.66 0-3-1.34-3-3 0-1.1.9-2 2-2V7h2v1c1.1 0 2 .9 2 2h-2c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1c1.66 0 3 1.34 3 3 0 1.1-.9 2-2 2v1z"/>
     </svg>
 
@@ -839,60 +895,123 @@ body{
       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
     </svg>
 
-    <!-- Icono de Lápiz para Editar Perfil -->
-    <svg class="sidebar-icon" id="iconEditProfile" viewBox="0 0 24 24" title="Editar Perfil (Foto, Nombre y Descripción)">
-      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-    </svg>
-
-    <!-- Icono de Notificaciones -->
-    <svg class="sidebar-icon" id="iconNotifications" viewBox="0 0 24 24" title="Notificaciones de Amistad">
-      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
-      <span class="notification-badge-dot" id="notifBadgeDot">0</span>
-    </svg>
-
     <svg class="sidebar-icon" id="iconProfileCircle" viewBox="0 0 24 24" title="Abrir Panel de Saldos">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-    </svg>
-
-    <svg class="sidebar-icon" id="openShopBtn" viewBox="0 0 24 24" title="Buscar Usuario">
-      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8 z"/>
     </svg>
   </aside>
 
   <div class="popup-overlay-bg" id="popupOverlayBg"></div>
 
-  <!-- Panel de Edición de Perfil (Lápiz) -->
-  <div class="sidebar-popup-panel" id="editProfilePanel">
+  <!-- NUEVO PANEL FLOTANTE DE CHATS ESTILO WHATSAPP -->
+  <div class="sidebar-popup-panel" id="chatsPanelModal">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <b style="font-size:18px; font-weight:900;">✏️ Editar Perfil</b>
+      <b style="font-size:18px; font-weight:900;">💬 Chats con Amigos</b>
       <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
     </div>
-    <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Personaliza tu avatar, nombre de visualización y descripción de cuenta.</div>
-
-    <div style="text-align:center; margin-bottom:16px;">
-      <div class="avatar-preview-box" onclick="document.getElementById('editAvatarFile').click()" style="margin:0 auto 8px; width:90px; height:90px;">
-        <img id="editAvatarPreviewImg" alt="Avatar Preview" style="display:block;">
-      </div>
-      <span style="font-size:11px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editAvatarFile').click()">Cambiar foto de perfil</span>
-      <input type="file" id="editAvatarFile" style="display:none;" accept="image/*">
+    
+    <!-- VISTA 1: LISTA DE AMIGOS -->
+    <div id="chatsListView" style="display:flex; flex-direction:column; height:calc(100vh - 100px);">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Selecciona un amigo para chatear en tiempo real:</div>
+      <div class="missions-scroll-area" id="chatsFriendsListContainer" style="flex:1;"></div>
     </div>
 
-    <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Nombre de visualización</div>
-    <input type="text" id="editDisplayNameInput" class="form-control" placeholder="Tu nombre">
+    <!-- VISTA 2: CONVERSACIÓN ACTIVA (ESTILO WHATSAPP) -->
+    <div id="chatConversationView" style="display:none; flex-direction:column; height:calc(100vh - 90px);">
+      <div style="display:flex; align-items:center; gap:10px; padding-bottom:12px; border-bottom:1px solid var(--border); margin-bottom:12px;">
+        <button class="btn-action-mission" onclick="backToChatsList()" style="background:var(--panel-hover);">← Volver</button>
+        <img id="activeChatAvatar" style="width:32px; height:32px; border-radius:50%; object-fit:cover;" src="" alt="Avatar">
+        <b id="activeChatUsername" style="font-size:14px; font-weight:900;">Amigo</b>
+      </div>
 
-    <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Descripción</div>
-    <textarea id="editDescriptionInput" class="desc-area" rows="4" placeholder="Escribe tu descripción aquí..."></textarea>
+      <div class="missions-scroll-area" id="chatMessagesContainer" style="flex:1; display:flex; flex-direction:column; gap:8px; padding-right:4px; margin-bottom:10px;"></div>
 
-    <button class="btn-primary" id="btnSaveProfileChanges" style="margin-top:4px; font-weight:900;">Guardar Cambios</button>
+      <div style="display:flex; gap:6px; margin-top:auto;">
+        <input type="text" id="chatMessageInput" class="form-control" placeholder="Escribe un mensaje..." autocomplete="off" style="margin-bottom:0;" onkeypress="handleChatKeyPress(event)">
+        <button class="btn-primary" onclick="sendChatMessage()" style="width:auto; padding:10px 16px;">Enviar</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Panel de Notificaciones -->
-  <div class="sidebar-popup-panel" id="notificationsPanel">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <b style="font-size:18px; font-weight:900;">🔔 Notificaciones</b>
+  <!-- PANEL ADMIN MODAL -->
+  <div class="sidebar-popup-panel wide-shop-panel" id="adminPanelModal">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <b style="font-size:18px; font-weight:900;">👑 Panel de Administración - Usuarios Registrados</b>
       <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
     </div>
-    <div class="missions-scroll-area" id="notificationsContainer"></div>
+    <div style="margin-bottom:14px;">
+      <input type="text" id="adminSearchInput" class="form-control" placeholder="Buscar usuario en la base de datos..." autocomplete="off">
+    </div>
+    <div class="missions-scroll-area" id="adminUsersListContainer"></div>
+  </div>
+
+  <!-- CONTENEDOR FLOTANTE PARA VER PERFIL DE CUALQUIER USUARIO -->
+  <div class="sidebar-popup-panel" id="userProfileModalPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <b style="font-size:18px; font-weight:900;" id="modalProfileTitle">👤 Perfil de Usuario</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    
+    <div class="missions-scroll-area">
+      <div class="profile-header-flex" style="margin-bottom:16px;">
+        <img id="modalDisplayAvatar" class="profile-avatar-large" style="width:80px; height:80px;" src="" alt="Avatar">
+        <div class="profile-info-side">
+          <div class="user-title">
+            <span id="modalUsernameText">usuario</span>
+            <span id="modalUserBadgeContainer"></span>
+          </div>
+          <div id="modalProfileAddFriendActionContainer"></div>
+        </div>
+      </div>
+
+      <!-- CONTENEDOR DE INFORMACIÓN PRIVADA (OCULTO SI ESTÁ EN PRIVADO) -->
+      <div id="modalPrivateInfoSection">
+        <div class="stat-box" style="padding:12px; margin-bottom:10px;">
+          <div class="stat-title" style="font-size:12px;">Blue Coins</div>
+          <div class="stat-value" id="modalValBalance" style="font-size:18px;">0 BC</div>
+        </div>
+
+        <div class="stat-box" style="padding:12px; margin-bottom:10px;">
+          <div class="stat-title" style="font-size:12px;">Blue Coins Recibidas</div>
+          <div class="stat-value" id="modalValReceived" style="font-size:18px;">0 BC</div>
+        </div>
+
+        <div class="stat-box" style="padding:12px; margin-bottom:10px;">
+          <div class="stat-title" style="font-size:12px;">Blue Coins Enviadas</div>
+          <div class="stat-value" id="modalValSent" style="font-size:18px; color:#e74c3c;">0 BC</div>
+        </div>
+
+        <div class="account-info-card" style="margin-top:14px; padding:14px;">
+          <div class="info-header" style="font-size:14px;">Descripción</div>
+          <div id="modalUserDescription" style="font-size:12px; color:var(--text-muted); margin-top:6px; word-break: break-all;">Sin descripción</div>
+        </div>
+      </div>
+
+      <!-- AVISO DE CUENTA PRIVADA -->
+      <div id="modalAccountPrivateNotice" style="display:none; text-align:center; padding:30px 10px; color:var(--text-muted); font-size:13px;">
+        🔒 Esta cuenta es privada. Toda la información está oculta.
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL DE BÚSQUEDA DE PERSONAS -->
+  <div class="sidebar-popup-panel" id="searchPeoplePanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <b style="font-size:18px; font-weight:900;">🔍 Buscar Personas</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <input type="text" id="globalUserSearchInput" class="form-control" placeholder="Escribe el nombre o iniciales..." autocomplete="off">
+    </div>
+    <div class="missions-scroll-area" id="globalSearchUserResults"></div>
+  </div>
+
+  <!-- PANEL DE NOTIFICACIONES -->
+  <div class="sidebar-popup-panel" id="notificationsPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <b style="font-size:18px; font-weight:900;">📩 Solicitudes de Amistad</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <div class="missions-scroll-area" id="friendRequestsContainer"></div>
   </div>
 
   <div class="sidebar-popup-panel" id="sidebarPopupPanel">
@@ -902,20 +1021,26 @@ body{
     </div>
 
     <div class="top-balance-container">
-      <div class="top-balance money-balance" title="Dinero disponible">
+      <div class="top-balance money-balance" title="Dinero disponible en COP">
         <span class="custom-emoji emoji-cash"></span>
         <span id="currentMoney">0</span>
         <span>COP</span>
       </div>
 
+      <div class="top-balance money-balance" title="Dinero disponible en Dólares" style="color: #2ecc71; border-color: rgba(46, 204, 113, 0.3);">
+        <span style="font-weight:900;">$</span>
+        <span id="currentDollar">0.00</span>
+        <span>USD</span>
+      </div>
+
       <div class="top-balance">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M5.165 0L0 18.835 18.835 24 24 5.165 5.165 0zm10.548 14.137l-5.685-1.523 1.523-5.685 5.685 1.523-1.523 5.685z"/></svg>
+        <span class="custom-blue-coin">BC</span>
         <span id="currentBalance">0</span>
-        <button id="btnTransfer" style="margin-left:auto; background:var(--green); border:0; color:#fff; border-radius:50%; width:22px; height:22px; cursor:pointer;" title="Enviar Robux">+</button>
+        <button id="btnTransfer" style="margin-left:auto; background:var(--blue-primary); border:0; color:#fff; border-radius:50%; width:22px; height:22px; cursor:pointer;" title="Enviar Blue Coins">+</button>
       </div>
 
       <button class="btn-withdraw" id="btnOpenWithdrawModal">
-        <span class="icon-gem"></span> Retirar Robux / Convertir COP
+        <span class="icon-gem"></span> Retirar Blue Coins / Convertir COP
       </button>
 
       <button class="btn-code-redeem" id="btnOpenCodeModal">
@@ -924,8 +1049,8 @@ body{
     </div>
 
     <div class="add-friends-section">
-      <h3>Buscar usuarios</h3>
-      <div class="search-box" style="position:relative;">
+      <h3>Agregar amistades</h3>
+      <div class="search-box">
         <input type="text" id="searchUserInput" placeholder="Buscar usuario..." autocomplete="off">
         <span>🔍</span>
         <div id="searchAutocompleteList" class="autocomplete-list"></div>
@@ -935,7 +1060,7 @@ body{
 
   <div class="sidebar-popup-panel" id="missionsPanel">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <b style="font-size:18px; font-weight:900;">📜 Misiones Diarias</b>
+      <b style="font-size:18px; font-weight:900;">🎯 Misiones Diarias</b>
       <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
     </div>
     <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">Inicia cada misión y espera 5 minutos para recibir $ 2.000 COP.</p>
@@ -949,19 +1074,19 @@ body{
     </div>
 
     <div class="top-global-tabs" style="margin-bottom:16px;">
-      <button class="top-tab-btn active" id="tabBtnWithdraw" onclick="switchWithdrawSubTab('withdraw')">Retirar Robux</button>
+      <button class="top-tab-btn active" id="tabBtnWithdraw" onclick="switchWithdrawSubTab('withdraw')">Retirar Blue Coins</button>
       <button class="top-tab-btn" id="tabBtnConvert" onclick="switchWithdrawSubTab('convert')">Convertir a COP</button>
     </div>
 
     <div id="subSectionWithdraw">
-      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Retira tus Robux directamente hacia tu cuenta de Roblox.</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Retira tus Blue Coins directamente hacia tu cuenta asociada.</div>
       
       <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:12px; color:var(--text-muted);">Robux disponibles:</span>
-        <span id="withdrawModalBalance" style="font-weight:900; color:var(--green); font-size:14px;">0 R$</span>
+        <span style="font-size:12px; color:var(--text-muted);">Blue Coins disponibles:</span>
+        <span id="withdrawModalBalance" style="font-weight:900; color:var(--blue-primary); font-size:14px;">0 BC</span>
       </div>
 
-      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad Robux</div>
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad Blue Coins</div>
       <input type="number" id="withdrawAmountRobux" class="form-control" placeholder="Ej: 1000">
       <div style="font-size:13px; font-weight:700; margin-bottom:6px; margin-top:4px;">Usuario</div>
       <input type="text" id="withdrawTargetUser" class="form-control" placeholder="darwinrbxtik">
@@ -969,19 +1094,19 @@ body{
     </div>
 
     <div id="subSectionConvert" style="display:none;">
-      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Convierte tus Robux a pesos COP (1 Robux = 1 COP).</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Convierte tus Blue Coins a pesos COP (1 Blue Coin = 1 COP).</div>
 
       <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:12px; color:var(--text-muted);">Robux disponibles:</span>
-        <span id="convertModalBalance" style="font-weight:900; color:var(--green); font-size:14px;">0 R$</span>
+        <span style="font-size:12px; color:var(--text-muted);">Blue Coins disponibles:</span>
+        <span id="convertModalBalance" style="font-weight:900; color:var(--blue-primary); font-size:14px;">0 BC</span>
       </div>
 
-      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad de Robux a convertir</div>
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad de Blue Coins a convertir</div>
       <input type="number" id="convertAmountRobux" class="form-control" placeholder="Ej: 1000" oninput="calcConversionPreview()">
       <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px;">
         Recibirás aprox: <b id="previewCopResult" style="color:var(--gold);">0 COP</b>
       </div>
-      <button class="btn-primary" id="btnSubmitConvert" style="background:var(--green); margin-top:4px; font-weight:900;">Convertir Robux a COP</button>
+      <button class="btn-primary" id="btnSubmitConvert" style="background:var(--blue-primary); margin-top:4px; font-weight:900;">Convertir Blue Coins a COP</button>
     </div>
   </div>
 
@@ -991,7 +1116,7 @@ body{
       <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
     </div>
     <div class="top-global-tabs">
-      <button class="top-tab-btn active" onclick="switchTopTab('balance', this)">Más Robux</button>
+      <button class="top-tab-btn active" onclick="switchTopTab('balance', this)">Más Blue Coins</button>
       <button class="top-tab-btn" onclick="switchTopTab('money', this)">Más COP</button>
       <button class="top-tab-btn" onclick="switchTopTab('received', this)">Recibidos</button>
       <button class="top-tab-btn" onclick="switchTopTab('sent', this)">Enviados</button>
@@ -1000,60 +1125,112 @@ body{
   </div>
 
   <div class="sidebar-popup-panel wide-shop-panel" id="robotShopPanel">
-    <div class="shop-header-row" style="margin-bottom:12px;">
-      <b style="font-size:18px; font-weight:900;">🔍 Buscar Usuario</b>
+    <div class="shop-header-row">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:20px; font-weight:900;">🛒</span>
+        <div style="display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--border); padding:6px 12px; border-radius:20px;">
+          <span class="custom-blue-coin">BC</span>
+          <span id="shopHeaderBalance" style="font-weight:800; font-size:13px;">0</span>
+          <button onclick="openPanel('sidebarPopupPanel')" style="background:var(--blue-primary); border:0; color:#fff; border-radius:50%; width:20px; height:20px; font-weight:900; cursor:pointer;" title="Añadir saldo">+</button>
+        </div>
+      </div>
       <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
     </div>
 
-    <div class="missions-scroll-area" style="flex:1; display:flex; flex-direction:column; padding-bottom:20px;">
-      <div class="search-box" style="margin-bottom:16px; flex-shrink:0; position:relative;">
-        <input type="text" id="sidebarSearchInput" placeholder="Escribe un usuario..." autocomplete="off">
-        <span>🔍</span>
-        <div id="sidebarSearchAutocomplete" class="autocomplete-list"></div>
+    <div class="missions-scroll-area">
+      <div class="shop-title-main">Comprar Blue Coins</div>
+      
+      <div class="shop-section-heading" style="margin-top:16px;">Paquetes de Blue Coins</div>
+      <div class="shop-subtitle-info">Al comprar Blue Coins, aceptas nuestros Términos de uso y políticas de la plataforma.</div>
+
+      <div id="robloxItemsContainer"></div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; margin-bottom:12px;">
+        <div style="font-weight:900; font-size:16px; display:flex; align-items:center; gap:6px;">
+          <span class="icon-gift"></span> Nuevo en Blue Shop
+        </div>
+        <a href="#" style="font-size:12px; color:var(--text-muted); text-decoration:none;" onclick="alert('Sección informativa oficial de Blue Shop')">Aprende más</a>
       </div>
 
-      <div id="searchedUserProfileCard" style="display:none; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:20px; flex:1;">
-        <div class="profile-header-flex" style="margin-bottom:16px;">
-          <img id="searchProfileAvatar" class="profile-avatar-large" style="width:80px; height:80px;" src="" alt="Avatar">
-          <div class="profile-info-side">
-            <div class="user-title" id="searchProfileUsername" style="font-size:18px;"></div>
-            <div id="searchProfileBadge"></div>
+      <div class="subscriptions-grid">
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Blue Plus</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">29.900 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>⚡ Hasta 20% de descuento en objetos</div>
+              <div>⚡ Servidores privados gratis</div>
+              <div>⚡ Enviar Blue Coins gratis</div>
+              <div>⚡ 100 Blue Coins cada 15 segundos</div>
+            </div>
           </div>
+          <button class="btn-action-mission green-btn" onclick="buySubscription('Blue Plus', 29900, 'Roblox Plus')">29.900 COP/month</button>
         </div>
 
-        <div id="searchedUserActionContainer" style="margin-bottom:16px;"></div>
-
-        <div class="stat-box" style="margin-bottom:12px; padding:12px;">
-          <div class="stat-title" style="font-size:12px;">Total Robux Recibidos</div>
-          <div class="stat-value" id="searchValReceived" style="font-size:18px;">0 R$</div>
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Plus 500</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">500.000 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>⚡ Todo en Plus</div>
+              <div>⚡ 200 Blue Coins cada 15 segundos</div>
+              <div>⚡ Insignia oficial Blue Shop</div>
+            </div>
+          </div>
+          <button class="btn-action-mission" onclick="buySubscription('Plus 500', 500000, 'Plus 500')">500.000 COP/month</button>
         </div>
 
-        <div class="stat-box" style="margin-bottom:16px; padding:12px;">
-          <div class="stat-title" style="font-size:12px;">Total Robux Enviados</div>
-          <div class="stat-value" id="searchValSent" style="font-size:18px; color:#e74c3c;">0 R$</div>
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Plus 1000</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">1.000.000 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>⚡ Todo en Plus</div>
+              <div>⚡ 300 Blue Coins cada 15 segundos</div>
+              <div>⚡ Insignia oficial Blue Shop</div>
+            </div>
+          </div>
+          <button class="btn-action-mission" onclick="buySubscription('Plus 1000', 1000000, 'Plus 1000')">1.000.000 COP/month</button>
         </div>
 
-        <div class="account-info-card" style="margin-top:0; padding:14px;">
-          <div class="info-header" style="font-size:14px;">Información de la Cuenta</div>
-          <div class="info-sub" style="margin-bottom:12px;">Año de creación: 2026</div>
-
-          <div style="font-weight:700; font-size:12px; margin-bottom:4px;">Descripción</div>
-          <div id="searchProfileDesc" style="background:var(--input-bg); border:1px solid var(--border); border-radius:8px; color:#fff; padding:10px; font-size:12px; min-height:40px; margin-bottom:16px; word-break:break-all;"></div>
-
-          <div style="font-weight:700; font-size:12px; margin-bottom:8px;">Amistades</div>
-          <div class="friends-row" id="searchFriendsContainer"></div>
+        <div class="sub-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <span class="sub-card-title">Plus VIP 5M</span>
+              <span style="font-size:11px; font-weight:800; color:#fff;">5.000.000 COP</span>
+            </div>
+            <div class="sub-card-features">
+              <div>⚡ Todo en Plus Pro</div>
+              <div>⚡ 100.000 Blue Coins cada segundo</div>
+              <div>⚡ Insignia exclusiva Blue Shop</div>
+            </div>
+          </div>
+          <button class="btn-action-mission green-btn" onclick="buySubscription('Plus VIP 5M', 5000000, 'Plus VIP 5M')">5.000.000 COP/month</button>
         </div>
+      </div>
+
+      <div class="shop-section-heading" style="margin-top:30px;">Preguntas frecuentes</div>
+      
+      <div class="faq-box" onclick="alert('Las Blue Coins son la moneda virtual de nuestra plataforma que te permite comprar accesorios y mucho más.')">
+        <span>¿Qué son las Blue Coins?</span>
+        <span>▼</span>
       </div>
     </div>
   </div>
 
   <div class="main-layout">
-    <div class="content-left">
+    <div class="content-left" id="mainContentArea">
       <div class="profile-header-flex">
         <img id="displayAvatar" class="profile-avatar-large" src="" alt="Avatar">
         <div class="profile-info-side">
           <div class="user-title-container">
-            <h1 class="user-title" id="displayUsername">
+            <h1 class="user-title" id="displayUsername" title="Haz clic 5 veces para abrir el panel admin">
               <span id="usernameText">darwinrbxtik</span>
               <span id="userBadgeContainer"></span>
             </h1>
@@ -1062,28 +1239,63 @@ body{
         </div>
       </div>
 
-      <div class="stat-box">
-        <div class="stat-title">Total Robux Recibidos</div>
-        <div class="stat-value" id="valReceived">0 R$</div>
+      <!-- TEMPORIZADOR DE BLUE COINS (VISIBLE ÚNICAMENTE PARA USUARIOS CON PLUS ACTIVO) -->
+      <div class="stat-box" id="plusTimerBox" style="display:none; border-color: rgba(0, 114, 255, 0.4); background: linear-gradient(135deg, rgba(19,21,26,1), rgba(0,114,255,0.08));">
+        <div class="stat-title" style="display:flex; align-items:center; gap:6px;">
+          <span>⚡ Siguiente entrega de Blue Coins Plus</span>
+          <span class="badge-plus-tag" style="font-size:9px;">Activo</span>
+        </div>
+        <div class="stat-value" id="plusCountdownTimer" style="color:#00c6ff; font-size:26px; font-weight:900;">15s</div>
+      </div>
+
+      <div class="stat-box" id="clickableBalanceCard" style="cursor: pointer;" title="Presiona para ver saldo exacto">
+        <div class="stat-title">Total Blue Coins</div>
+        <div class="stat-value" id="valBalance">0 BC</div>
       </div>
 
       <div class="stat-box">
-        <div class="stat-title">Total Robux Enviados</div>
-        <div class="stat-value" id="valSent" style="color:#e74c3c;">0 R$</div>
+        <div class="stat-title">Total Blue Coins Recibidas</div>
+        <div class="stat-value" id="valReceived">0 BC</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-title">Total Blue Coins Enviadas</div>
+        <div class="stat-value" id="valSent" style="color:#e74c3c;">0 BC</div>
       </div>
 
       <div class="account-info-card">
-        <div class="info-header">Información de la Cuenta</div>
+        <div class="info-header" id="infoCardTitle">Información de la Cuenta</div>
         <div class="info-sub">Año de creación: 2026</div>
 
-        <div style="font-weight:700; font-size:13px; margin-bottom:6px;">Descripción</div>
-        <!-- Descripción de solo lectura en el panel principal -->
-        <div id="displayUserDescription" style="background:var(--input-bg); border:1px solid var(--border); border-radius:8px; color:#fff; padding:10px; font-size:12px; min-height:45px; margin-bottom:16px; word-break:break-all;"></div>
+        <div style="font-weight:700; font-size:13px; margin-bottom:6px;">Visibilidad de tus Blue Coins</div>
+        <select id="coinsPrivacySelect" class="form-control" style="margin-bottom:16px;">
+          <option value="public">Público (Visible para todos)</option>
+          <option value="private">Privado (Oculto para los demás)</option>
+        </select>
+
+        <div style="font-weight:700; font-size:13px; margin-bottom:6px;" id="descLabelTitle">Descripción</div>
+        <textarea id="userDescription" class="desc-area" rows="3" placeholder="Escribe tu descripción aquí..."></textarea>
+        <button class="btn-primary" id="btnSaveDesc" style="padding:8px; font-size:12px; margin-bottom:16px;">Guardar Cambios</button>
 
         <div style="font-weight:700; font-size:13px; margin-bottom:10px;">Amistades</div>
         <div class="friends-row" id="friendsContainer"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL FLOTANTE PARA VER SALDO EXACTO (LÍNEA RECTA) -->
+<div class="modal-overlay" id="exactBalanceModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:10000; padding:15px;">
+  <div class="modal-box" style="background:var(--panel); width:100%; max-width:320px; border-radius:16px; padding:20px; border:1px solid var(--border); text-align:center;">
+    <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;">
+      <b style="font-size:14px; color:var(--text-muted);">Saldo Total Exacto</b>
+      <span onclick="closeModal('exactBalanceModal')" style="cursor:pointer; font-weight:bold;">✕</span>
+    </div>
+    <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:10px; padding:15px; margin-bottom:12px;">
+      <span id="exactBalanceNumber" style="font-size:22px; font-weight:900; color:var(--blue-primary);">0 BC</span>
+    </div>
+    <div style="height:2px; background:var(--blue-primary); width:100%; border-radius:2px; margin-bottom:12px;"></div>
+    <button class="btn-primary" onclick="closeModal('exactBalanceModal')" style="padding:8px; font-size:12px;">Cerrar</button>
   </div>
 </div>
 
@@ -1093,7 +1305,7 @@ body{
       <b style="font-size:15px;">Canjear Código Promocional</b>
       <span onclick="closeModal('redeemCodeModal')" style="cursor:pointer; font-weight:bold;">✕</span>
     </div>
-    <input type="text" id="promoCodeInput" class="form-control" placeholder="Ej: ROBLOX2026, BLUESHOP" style="text-transform:uppercase;">
+    <input type="text" id="promoCodeInput" class="form-control" placeholder="Ej: BLUESHOP2026" style="text-transform:uppercase;">
     <button class="btn-primary" id="btnRedeemCode">Canjear Saldo</button>
   </div>
 </div>
@@ -1101,21 +1313,21 @@ body{
 <div class="modal-overlay" id="transferModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:10000; padding:15px;">
   <div class="modal-box" style="background:var(--panel); width:100%; max-width:400px; border-radius:16px; padding:24px; border:1px solid var(--border);">
     <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
-      <b style="font-size:16px;">Enviar Robux</b>
+      <b style="font-size:16px;">Enviar Blue Coins</b>
       <span onclick="closeModal('transferModal')" style="cursor:pointer; font-weight:bold;">✕</span>
     </div>
     <div style="position:relative;">
       <input type="text" id="targetUsername" class="form-control" placeholder="Usuario destinatario" autocomplete="off">
       <div id="transferAutocompleteList" class="autocomplete-list"></div>
     </div>
-    <input type="number" id="transferAmount" class="form-control" placeholder="Cantidad de Robux">
+    <input type="number" id="transferAmount" class="form-control" placeholder="Cantidad de Blue Coins">
     <button class="btn-primary" id="btnConfirmTransfer">Realizar Transferencia</button>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, get, onValue, remove, push, query, limitToLast } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCScDrnMGvBQh8g7Z2yCkwtWqdVNu8fqJI",
@@ -1133,23 +1345,46 @@ body{
 
   let currentUsername = "";
   let uploadedBase64Image = "";
-  let editAvatarBase64 = "";
   let allUsersData = {};
   let currentBalanceValue = 0;
   let currentMoneyValue = 0;
   let currentUserDataObj = {};
   let missionInterval = null;
   let plusRobuxInterval = null; 
+  let countdownTimerInterval = null;
   let currentTopMetric = 'balance';
+  let activeChatFriendKey = null;
+  let globalChatsListeners = [];
+  let notificationTargetFriendKey = null;
 
   const promoCodes = {
-    "ROBLOX2026": 1000,
     "BLUESHOP": 2500,
     "FREE80": 80,
     "SUPER5000": 5000
   };
 
+  const robloxPackages = [
+    { amount: "22.500", priceText: "1.149.900 COP", priceCOP: 1150000, robuxVal: 22500, highlight: false },
+    { amount: "10.000", priceText: "599.900 COP", priceCOP: 600000, robuxVal: 10000, highlight: false },
+    { amount: "4.500", priceText: "299.900 COP", priceCOP: 300000, robuxVal: 4500, highlight: false },
+    { amount: "3.150", priceText: "140.000 COP", priceCOP: 140000, robuxVal: 3150, highlight: false },
+    { amount: "1.700", priceText: "114.900 COP", priceCOP: 115000, robuxVal: 1700, highlight: false },
+    { amount: "1.200", priceText: "60.000 COP", priceCOP: 60000, robuxVal: 1200, highlight: false },
+    { amount: "800", priceText: "59.900 COP", priceCOP: 60000, robuxVal: 800, highlight: false },
+    { amount: "400", priceText: "29.900 COP", priceCOP: 30000, robuxVal: 400, highlight: false },
+    { amount: "80", priceText: "5.900 COP", priceCOP: 5900, robuxVal: 80, highlight: true, tag: "Para ti" },
+    { amount: "40", priceText: "2.950 COP", priceCOP: 2950, robuxVal: 40, highlight: false }
+  ];
+
   function fmt(n){ return Number(n).toLocaleString("es-CO"); }
+
+  function fmtCoins(n) {
+    const val = Number(n) || 0;
+    if (val >= 1000000) {
+      return (val / 1000000).toFixed(val % 1000000 === 0 ? 0 : 1) + "M";
+    }
+    return fmt(val);
+  }
 
   const popupOverlayBg = document.getElementById("popupOverlayBg");
 
@@ -1170,46 +1405,306 @@ body{
     popupOverlayBg.classList.add("active");
   }
 
+  document.getElementById("iconHomeMain").addEventListener("click", () => {
+    closeAllPanels();
+  });
+
+  document.getElementById("iconChatMenu").addEventListener("click", () => {
+    renderChatsFriendsList();
+    backToChatsList();
+    openPanel("chatsPanelModal");
+  });
+
   document.getElementById("iconProfileCircle").addEventListener("click", () => openPanel("sidebarPopupPanel"));
+  
+  document.getElementById("iconSearchPeople").addEventListener("click", () => {
+    renderGlobalUserSearchList("");
+    openPanel("searchPeoplePanel");
+  });
+
   document.getElementById("iconNotifications").addEventListener("click", () => {
-    renderNotificationsList();
+    renderFriendRequests();
     openPanel("notificationsPanel");
   });
 
-  // Abrir panel de edición de perfil (Icono de Lápiz)
-  document.getElementById("iconEditProfile").addEventListener("click", () => {
-    document.getElementById("editDisplayNameInput").value = currentUserDataObj.displayName || currentUsername;
-    document.getElementById("editDescriptionInput").value = currentUserDataObj.description || "";
-    editAvatarBase64 = currentUserDataObj.avatar || "";
-    const preview = document.getElementById("editAvatarPreviewImg");
-    preview.src = editAvatarBase64;
-    openPanel("editProfilePanel");
-  });
+  function renderChatsFriendsList() {
+    const container = document.getElementById("chatsFriendsListContainer");
+    container.innerHTML = "";
+    const myFriends = currentUserDataObj.friends || {};
+    const fKeys = Object.keys(myFriends);
 
-  document.getElementById("editAvatarFile").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      editAvatarBase64 = evt.target.result;
-      document.getElementById("editAvatarPreviewImg").src = editAvatarBase64;
-    };
-    reader.readAsDataURL(file);
-  });
-
-  document.getElementById("btnSaveProfileChanges").addEventListener("click", async () => {
-    const newName = document.getElementById("editDisplayNameInput").value.trim() || currentUsername;
-    const newDesc = document.getElementById("editDescriptionInput").value;
-
-    await set(ref(db, `users/${currentUsername}/displayName`), newName);
-    await set(ref(db, `users/${currentUsername}/description`), newDesc);
-    if(editAvatarBase64) {
-      await set(ref(db, `users/${currentUsername}/avatar`), editAvatarBase64);
+    if(fKeys.length === 0) {
+      container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:20px;">No tienes amigos agregados para chatear todavía.</div>`;
+      return;
     }
 
-    alert("¡Perfil actualizado con éxito!");
-    closeAllPanels();
+    fKeys.forEach(friendKey => {
+      const friendData = allUsersData[friendKey] || {};
+      const friendAvatar = friendData.avatar || `https://robohash.org/${friendKey}`;
+      const friendName = friendData.displayName || friendKey;
+
+      const card = document.createElement("div");
+      card.className = "mission-card";
+      card.style.cursor = "pointer";
+      card.innerHTML = `
+        <div class="mission-info" style="flex-direction:row; align-items:center; gap:10px;">
+          <img src="${friendAvatar}" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+          <div>
+            <span class="mission-title" style="font-size:14px; font-weight:900;">${friendName}</span>
+            <div style="font-size:11px; color:var(--text-muted);">@${friendKey} • Toca para abrir chat</div>
+          </div>
+        </div>
+        <button class="btn-action-mission green-btn" style="pointer-events:none;">Chat</button>
+      `;
+      card.addEventListener("click", () => {
+        openChatWithFriend(friendKey, friendName, friendAvatar);
+      });
+      container.appendChild(card);
+    });
+  }
+
+  function openChatWithFriend(friendKey, friendName, friendAvatar) {
+    activeChatFriendKey = friendKey;
+    document.getElementById("activeChatUsername").textContent = friendName;
+    document.getElementById("activeChatAvatar").src = friendAvatar;
+
+    document.getElementById("chatsListView").style.display = "none";
+    document.getElementById("chatConversationView").style.display = "flex";
+
+    const chatId = [currentUsername, friendKey].sort().join("_");
+    const messagesRef = ref(db, `chats/${chatId}/messages`);
+
+    onValue(messagesRef, (snapshot) => {
+      const container = document.getElementById("chatMessagesContainer");
+      container.innerHTML = "";
+      if(!snapshot.exists()) {
+        container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center; padding:15px;">No hay mensajes aún. ¡Di hola!</div>`;
+        return;
+      }
+      const msgs = snapshot.val();
+      Object.keys(msgs).forEach(mKey => {
+        const msg = msgs[mKey];
+        const isMe = msg.sender === currentUsername;
+        const bubble = document.createElement("div");
+        bubble.style.maxWidth = "75%";
+        bubble.style.padding = "10px 14px";
+        bubble.style.borderRadius = "12px";
+        bubble.style.fontSize = "12px";
+        bubble.style.wordBreak = "break-all";
+        bubble.style.alignSelf = isMe ? "flex-end" : "flex-start";
+        bubble.style.background = isMe ? "var(--blue-primary)" : "var(--input-bg)";
+        bubble.style.color = "#fff";
+        bubble.style.border = "1px solid var(--border)";
+        bubble.textContent = msg.text;
+        container.appendChild(bubble);
+      });
+      container.scrollTop = container.scrollHeight;
+    });
+  }
+
+  window.backToChatsList = function() {
+    activeChatFriendKey = null;
+    document.getElementById("chatsListView").style.display = "flex";
+    document.getElementById("chatConversationView").style.display = "none";
+    renderChatsFriendsList();
+  };
+
+  window.sendChatMessage = async function() {
+    const input = document.getElementById("chatMessageInput");
+    const text = input.value.trim();
+    if(!text || !activeChatFriendKey) return;
+
+    const chatId = [currentUsername, activeChatFriendKey].sort().join("_");
+    const messagesRef = ref(db, `chats/${chatId}/messages`);
+
+    await push(messagesRef, {
+      sender: currentUsername,
+      text: text,
+      timestamp: Date.now()
+    });
+
+    input.value = "";
+  };
+
+  window.handleChatKeyPress = function(e) {
+    if(e.key === "Enter") {
+      sendChatMessage();
+    }
+  };
+
+  // SISTEMA DE ESCUCHA DE MENSAJES EN SEGUNDO PLANO Y NOTIFICACIONES FLOTANTES
+  function initBackgroundChatListeners() {
+    globalChatsListeners.forEach(unsub => unsub());
+    globalChatsListeners = [];
+
+    const myFriends = currentUserDataObj.friends || {};
+    Object.keys(myFriends).forEach(friendKey => {
+      const chatId = [currentUsername, friendKey].sort().join("_");
+      const lastMsgRef = query(ref(db, `chats/${chatId}/messages`), limitToLast(1));
+
+      let isInitialLoad = true;
+      const unsubscribe = onValue(lastMsgRef, (snapshot) => {
+        if (isInitialLoad) {
+          isInitialLoad = false;
+          return;
+        }
+
+        if(snapshot.exists()) {
+          const msgs = snapshot.val();
+          const msgKey = Object.keys(msgs)[0];
+          const msg = msgs[msgKey];
+
+          // Si el mensaje fue enviado por el amigo y NO estamos actualmente en este chat específico
+          if(msg.sender === friendKey && activeChatFriendKey !== friendKey) {
+            showChatNotification(friendKey, msg.text);
+          }
+        }
+      });
+      globalChatsListeners.push(unsubscribe);
+    });
+  }
+
+  function showChatNotification(friendKey, messageText) {
+    notificationTargetFriendKey = friendKey;
+    const friendData = allUsersData[friendKey] || {};
+    const friendName = friendData.displayName || friendKey;
+    const friendAvatar = friendData.avatar || `https://robohash.org/${friendKey}`;
+
+    document.getElementById("toastAvatar").src = friendAvatar;
+    document.getElementById("toastSenderName").textContent = friendName;
+    document.getElementById("toastMessageText").textContent = messageText;
+
+    const toast = document.getElementById("chatNotificationToast");
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 5000);
+  }
+
+  window.openChatFromNotification = function() {
+    const toast = document.getElementById("chatNotificationToast");
+    toast.classList.remove("show");
+
+    if(notificationTargetFriendKey) {
+      const friendData = allUsersData[notificationTargetFriendKey] || {};
+      const friendName = friendData.displayName || notificationTargetFriendKey;
+      const friendAvatar = friendData.avatar || `https://robohash.org/${notificationTargetFriendKey}`;
+
+      openPanel("chatsPanelModal");
+      openChatWithFriend(notificationTargetFriendKey, friendName, friendAvatar);
+    }
+  };
+
+  let adminClickCount = 0;
+  let adminClickTimer = null;
+  document.getElementById("displayUsername").addEventListener("click", () => {
+    adminClickCount++;
+    if(adminClickTimer) clearTimeout(adminClickTimer);
+    
+    adminClickTimer = setTimeout(() => {
+      adminClickCount = 0;
+    }, 1000);
+
+    if(adminClickCount >= 5) {
+      adminClickCount = 0;
+      renderAdminUsersList("");
+      openPanel("adminPanelModal");
+    }
   });
+
+  const adminSearchInput = document.getElementById("adminSearchInput");
+  adminSearchInput.addEventListener("input", () => {
+    renderAdminUsersList(adminSearchInput.value.toLowerCase().trim());
+  });
+
+  function renderAdminUsersList(filterText) {
+    const container = document.getElementById("adminUsersListContainer");
+    container.innerHTML = "";
+
+    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().includes(filterText));
+    if(matches.length === 0) {
+      container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:20px;">No se encontraron cuentas registradas</div>`;
+      return;
+    }
+
+    matches.forEach(uKey => {
+      const uData = allUsersData[uKey];
+      const card = document.createElement("div");
+      card.className = "mission-card";
+      card.style.flexDirection = "column";
+      card.style.alignItems = "stretch";
+      card.style.gap = "10px";
+
+      card.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${uData.avatar || 'https://robohash.org/' + uKey}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+            <div>
+              <span class="mission-title" style="font-size:14px; font-weight:900;">${uData.displayName || uKey}</span>
+              <div style="font-size:11px; color:var(--text-muted);">@${uKey} | Saldo: ${fmtCoins(uData.balance || 0)} BC</div>
+            </div>
+          </div>
+          <button class="btn-action-mission" style="background:#c0392b; color:#fff;" onclick="adminDeleteAccount('${uKey}')">🗑️ Eliminar cuenta</button>
+        </div>
+
+        <div style="display:flex; gap:6px; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:8px;">
+          <button class="btn-action-mission green-btn" onclick="adminGiveCoins('${uKey}')">🎁 Regalar monedas</button>
+          <button class="btn-action-mission" style="background:var(--blue-primary); color:#fff;" onclick="adminGivePlus('${uKey}')">⚡ Regalar Plus</button>
+          <button class="btn-action-mission" style="background:#e67e22; color:#fff;" onclick="adminRemovePlus('${uKey}')">❌ Quitar Plus</button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  window.adminDeleteAccount = async function(uKey) {
+    if(confirm(`¿Estás completamente seguro de eliminar la cuenta de @${uKey}? Esta acción es irreversible.`)) {
+      await remove(ref(db, `users/${uKey}`));
+      alert(`Cuenta @${uKey} eliminada correctamente.`);
+      renderAdminUsersList(adminSearchInput.value.toLowerCase().trim());
+    }
+  };
+
+  window.adminGiveCoins = async function(uKey) {
+    const amountStr = prompt(`Ingresa la cantidad de Blue Coins a regalar para @${uKey}:`);
+    if(!amountStr) return;
+    const amount = parseInt(amountStr);
+    if(isNaN(amount) || amount <= 0) return alert("Cantidad inválida.");
+
+    const uData = allUsersData[uKey] || {};
+    const currentBal = uData.balance || 0;
+    const currentRec = uData.received || 0;
+
+    await set(ref(db, `users/${uKey}/balance`), currentBal + amount);
+    await set(ref(db, `users/${uKey}/received`), currentRec + amount);
+    alert(`¡Se han regalado ${fmt(amount)} Blue Coins a @${uKey} con éxito!`);
+  };
+
+  window.adminGivePlus = async function(uKey) {
+    const subChoice = prompt(`Elige el pase Plus para @${uKey}:\n1. Blue Plus\n2. Plus 500\n3. Plus 1000\n4. Plus VIP 5M\n(Escribe 1, 2, 3 o 4)`);
+    let subTypeKey = "Roblox Plus";
+    if(subChoice === "2") subTypeKey = "Plus 500";
+    else if(subChoice === "3") subTypeKey = "Plus 1000";
+    else if(subChoice === "4") subTypeKey = "Plus VIP 5M";
+
+    const nextReward = Date.now() + 15000;
+    await set(ref(db, `users/${uKey}/hasPlus`), true);
+    await set(ref(db, `users/${uKey}/subscriptionType`), subTypeKey);
+    await set(ref(db, `users/${uKey}/nextRewardTime`), nextReward);
+    alert(`¡Pase Plus (${subTypeKey}) otorgado correctamente a @${uKey}!`);
+    renderAdminUsersList(adminSearchInput.value.toLowerCase().trim());
+  };
+
+  window.adminRemovePlus = async function(uKey) {
+    if(confirm(`¿Deseas quitar el pase Plus y los privilegios a @${uKey}?`)) {
+      await set(ref(db, `users/${uKey}/hasPlus`), false);
+      await set(ref(db, `users/${uKey}/subscriptionType`), null);
+      await set(ref(db, `users/${uKey}/nextRewardTime`), null);
+      alert(`Pase Plus retirado a @${uKey} con éxito.`);
+      renderAdminUsersList(adminSearchInput.value.toLowerCase().trim());
+    }
+  };
 
   document.getElementById("iconMissionsMenu").addEventListener("click", () => {
     renderMissionsList();
@@ -1226,8 +1721,8 @@ body{
     document.getElementById("convertAmountRobux").value = "";
     document.getElementById("previewCopResult").textContent = "0 COP";
     
-    document.getElementById("withdrawModalBalance").textContent = fmt(currentBalanceValue) + " R$";
-    document.getElementById("convertModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+    document.getElementById("withdrawModalBalance").textContent = fmtCoins(currentBalanceValue) + " BC";
+    document.getElementById("convertModalBalance").textContent = fmtCoins(currentBalanceValue) + " BC";
 
     switchWithdrawSubTab('withdraw');
     openPanel("withdrawPanel");
@@ -1260,13 +1755,7 @@ body{
   document.getElementById("btnOpenWithdrawModal").addEventListener("click", openWithdrawPanelHandler);
   document.getElementById("sidebarWithdrawBtn").addEventListener("click", openWithdrawPanelHandler);
   document.getElementById("iconTopGlobal").addEventListener("click", () => { renderTopGlobal(currentTopMetric); openPanel("topGlobalPanel"); });
-  document.getElementById("iconRobotShop").addEventListener("click", () => { openPanel("robotShopPanel"); });
-  document.getElementById("openShopBtn").addEventListener("click", () => { 
-    document.getElementById("sidebarSearchInput").value = "";
-    document.getElementById("sidebarSearchAutocomplete").style.display = "none";
-    document.getElementById("searchedUserProfileCard").style.display = "none";
-    openPanel("robotShopPanel"); 
-  });
+  document.getElementById("iconRobotShop").addEventListener("click", () => { renderRobloxShop(); openPanel("robotShopPanel"); });
 
   document.getElementById("btnOpenCodeModal").addEventListener("click", () => {
     document.getElementById("promoCodeInput").value = "";
@@ -1279,43 +1768,12 @@ body{
     document.getElementById("transferModal").style.display = "flex";
   });
 
+  document.getElementById("clickableBalanceCard").addEventListener("click", () => {
+    document.getElementById("exactBalanceNumber").textContent = fmt(currentBalanceValue) + " BC";
+    document.getElementById("exactBalanceModal").style.display = "flex";
+  });
+
   window.closeModal = function(id){ document.getElementById(id).style.display = "none"; };
-
-  function setupAutocomplete(inputId, listId, onSelectCallback) {
-    const inputEl = document.getElementById(inputId);
-    const listEl = document.getElementById(listId);
-
-    inputEl.addEventListener("input", () => {
-      const query = inputEl.value.toLowerCase().trim();
-      listEl.innerHTML = "";
-      if(!query){ 
-        listEl.style.display = "none"; 
-        return; 
-      }
-
-      const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().startsWith(query) && u !== currentUsername);
-      if(matches.length === 0){ 
-        listEl.style.display = "none"; 
-        return; 
-      }
-
-      matches.forEach(matchKey => {
-        const uData = allUsersData[matchKey];
-        const item = document.createElement("div");
-        item.className = "autocomplete-item";
-        item.innerHTML = `<img src="${uData.avatar || 'https://robohash.org/' + matchKey}"><span>${uData.displayName || matchKey}</span>`;
-        item.addEventListener("click", () => {
-          inputEl.value = matchKey;
-          listEl.style.display = "none";
-          onSelectCallback(matchKey, uData);
-        });
-        listEl.appendChild(item);
-      });
-      listEl.style.display = "block";
-    });
-  }
-
-  setupAutocomplete("targetUsername", "transferAutocompleteList", () => {});
 
   document.getElementById("btnConfirmTransfer").addEventListener("click", async () => {
     const target = document.getElementById("targetUsername").value.trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
@@ -1336,155 +1794,299 @@ body{
     await set(ref(db, `users/${target}/balance`), (targetData.balance || 0) + amount);
     await set(ref(db, `users/${target}/received`), (targetData.received || 0) + amount);
 
-    alert(`¡Transferencia de ${fmt(amount)} R$ realizada con éxito a ${target}!`);
+    alert(`¡Transferencia de ${fmt(amount)} BC realizada con éxito a ${target}!`);
     closeModal("transferModal");
   });
 
-  setupAutocomplete("sidebarSearchInput", "sidebarSearchAutocomplete", (matchKey, uData) => {
-    displaySearchedUserProfile(matchKey, uData);
+  const searchInput = document.getElementById("searchUserInput");
+  const autocompleteList = document.getElementById("searchAutocompleteList");
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase().trim();
+    autocompleteList.innerHTML = "";
+    if(!query){ autocompleteList.style.display = "none"; return; }
+
+    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().includes(query) && u !== currentUsername);
+    if(matches.length === 0){ autocompleteList.style.display = "none"; return; }
+
+    matches.forEach(matchKey => {
+      const uData = allUsersData[matchKey];
+      const item = document.createElement("div");
+      item.className = "autocomplete-item";
+      item.innerHTML = `<img src="${uData.avatar || 'https://robohash.org/' + matchKey}"><span>${uData.displayName || matchKey}</span>`;
+      item.addEventListener("click", () => {
+        searchInput.value = matchKey;
+        autocompleteList.style.display = "none";
+      });
+      autocompleteList.appendChild(item);
+    });
+    autocompleteList.style.display = "block";
   });
 
-  function displaySearchedUserProfile(targetUsername, data) {
-    const profileCard = document.getElementById("searchedUserProfileCard");
-    profileCard.style.display = "block";
+  const targetUsernameInput = document.getElementById("targetUsername");
+  const transferAutocompleteList = document.getElementById("transferAutocompleteList");
 
-    document.getElementById("searchProfileAvatar").src = data.avatar || `https://robohash.org/${targetUsername}`;
-    document.getElementById("searchProfileUsername").textContent = data.displayName || targetUsername;
+  targetUsernameInput.addEventListener("input", () => {
+    const query = targetUsernameInput.value.toLowerCase().trim();
+    transferAutocompleteList.innerHTML = "";
+    if(!query) { transferAutocompleteList.style.display = "none"; return; }
+
+    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().includes(query) && u !== currentUsername);
+    if(matches.length === 0) { transferAutocompleteList.style.display = "none"; return; }
+
+    matches.forEach(matchKey => {
+      const uData = allUsersData[matchKey];
+      const item = document.createElement("div");
+      item.className = "autocomplete-item";
+      item.innerHTML = `<img src="${uData.avatar || 'https://robohash.org/' + matchKey}" style="width:26px; height:26px; border-radius:50%; object-fit:cover;"><span><b>${uData.displayName || matchKey}</b> (@${matchKey})</span>`;
+      item.addEventListener("click", () => {
+        targetUsernameInput.value = matchKey;
+        transferAutocompleteList.style.display = "none";
+      });
+      transferAutocompleteList.appendChild(item);
+    });
+    transferAutocompleteList.style.display = "block";
+  });
+
+  document.addEventListener("click", (e) => {
+    if(!e.target.closest(".search-box") && !e.target.closest("#targetUsername")) {
+      autocompleteList.style.display = "none";
+      if(transferAutocompleteList) transferAutocompleteList.style.display = "none";
+    }
+  });
+
+  const globalUserSearchInput = document.getElementById("globalUserSearchInput");
+  globalUserSearchInput.addEventListener("input", () => {
+    renderGlobalUserSearchList(globalUserSearchInput.value.toLowerCase().trim());
+  });
+
+  function renderGlobalUserSearchList(filterText) {
+    const container = document.getElementById("globalSearchUserResults");
+    container.innerHTML = "";
+
+    const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().includes(filterText));
+    if(matches.length === 0) {
+      container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:20px;">No se encontraron personas</div>`;
+      return;
+    }
+
+    matches.forEach(uKey => {
+      const uData = allUsersData[uKey];
+      const row = document.createElement("div");
+      row.className = "mission-card";
+      row.style.cursor = "pointer";
+      row.innerHTML = `
+        <div class="mission-info" style="flex-direction:row; align-items:center; gap:10px;">
+          <img src="${uData.avatar || 'https://robohash.org/' + uKey}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+          <div>
+            <span class="mission-title" style="font-size:14px; font-weight:900;">${uData.displayName || uKey}</span>
+            <div style="font-size:11px; color:var(--text-muted);">@${uKey}</div>
+          </div>
+        </div>
+        <button class="btn-action-mission green-btn" style="pointer-events:none;">Ver Perfil</button>
+      `;
+      row.addEventListener("click", () => {
+        closeAllPanels();
+        openUserProfileModal(uKey);
+      });
+      container.appendChild(row);
+    });
+  }
+
+  function openUserProfileModal(targetUserKey) {
+    const uData = allUsersData[targetUserKey];
+    if(!uData) return;
+
+    document.getElementById("modalDisplayAvatar").src = uData.avatar || `https://robohash.org/${targetUserKey}`;
+    document.getElementById("modalUsernameText").textContent = uData.displayName || targetUserKey;
     
-    const badgeContainer = document.getElementById("searchProfileBadge");
-    if(data.hasPlus) {
-      badgeContainer.innerHTML = `<span class="badge-plus-tag" style="margin-top:6px;">✓ Blue Shop</span>`;
+    const isPrivate = uData.coinsPrivacy === 'private';
+    const isSelf = (targetUserKey === currentUsername);
+    const privateSection = document.getElementById("modalPrivateInfoSection");
+    const privateNotice = document.getElementById("modalAccountPrivateNotice");
+
+    if (isPrivate && !isSelf) {
+      privateSection.style.display = "none";
+      privateNotice.style.display = "block";
+    } else {
+      privateSection.style.display = "block";
+      privateNotice.style.display = "none";
+
+      document.getElementById("modalValBalance").textContent = fmtCoins(uData.balance || 0) + " BC";
+      document.getElementById("modalValReceived").textContent = fmtCoins(uData.received || 0) + " BC";
+      document.getElementById("modalValSent").textContent = fmtCoins(uData.sent || 0) + " BC";
+      document.getElementById("modalUserDescription").textContent = uData.description || "Sin descripción";
+    }
+
+    const badgeContainer = document.getElementById("modalUserBadgeContainer");
+    if(uData.hasPlus) {
+      badgeContainer.innerHTML = `<span class="badge-plus-tag">⚡ Blue Shop</span>`;
     } else {
       badgeContainer.innerHTML = "";
     }
 
-    const actionContainer = document.getElementById("searchedUserActionContainer");
-    const myFriends = currentUserDataObj.friends || {};
-    const mySentRequests = currentUserDataObj.sentRequests || {};
-    const targetRequests = data.friendRequests || {};
+    const addFriendActionContainer = document.getElementById("modalProfileAddFriendActionContainer");
+    if(!isSelf) {
+      const myFriends = currentUserDataObj.friends || {};
+      const pendingReqs = uData.friendRequests || {};
+      const isAlreadyFriend = myFriends[targetUserKey];
+      const hasAlreadySent = pendingReqs[currentUsername];
 
-    if(myFriends[targetUsername]) {
-      actionContainer.innerHTML = `<button class="btn-add-friend friends" disabled>✓ Amigos</button>`;
-    } else if(mySentRequests[targetUsername] || targetRequests[currentUsername]) {
-      actionContainer.innerHTML = `<button class="btn-add-friend pending" disabled>Solicitud enviada</button>`;
+      if(isAlreadyFriend) {
+        addFriendActionContainer.innerHTML = `<button class="btn-action-mission" disabled style="background:var(--border);">Amigos</button>`;
+      } else if(hasAlreadySent) {
+        addFriendActionContainer.innerHTML = `<button class="btn-action-mission" disabled style="background:var(--border);">Solicitud enviada</button>`;
+      } else {
+        addFriendActionContainer.innerHTML = `<button class="btn-action-mission green-btn" id="modalAddFriendTrigger">Añadir amigo</button>`;
+        document.getElementById("modalAddFriendTrigger").addEventListener("click", async () => {
+          await set(ref(db, `users/${targetUserKey}/friendRequests/${currentUsername}`), {
+            sender: currentUsername,
+            displayName: currentUserDataObj.displayName || currentUsername,
+            avatar: currentUserDataObj.avatar || '',
+            timestamp: Date.now()
+          });
+          alert(`¡Solicitud de amistad enviada a ${targetUserKey}!`);
+          openUserProfileModal(targetUserKey);
+        });
+      }
     } else {
-      actionContainer.innerHTML = `<button class="btn-add-friend" onclick="sendFriendRequest('${targetUsername}')">Añadir amigo</button>`;
+      addFriendActionContainer.innerHTML = "";
     }
 
-    document.getElementById("searchValReceived").textContent = fmt(data.received || 0) + " R$";
-    document.getElementById("searchValSent").textContent = fmt(data.sent || 0) + " R$";
-    document.getElementById("searchProfileDesc").textContent = data.description || "¡Hola!";
-
-    const friendsContainer = document.getElementById("searchFriendsContainer");
-    friendsContainer.innerHTML = "";
-    const targetFriends = data.friends || {};
-    const friendKeys = Object.keys(targetFriends);
-    if(friendKeys.length === 0) {
-      friendsContainer.innerHTML = `<span style="font-size:11px; color:var(--text-muted);">Sin amistades aún</span>`;
-    } else {
-      friendKeys.forEach(fk => {
-        if(allUsersData[fk]) {
-          const item = document.createElement("div");
-          item.className = "friend-item";
-          item.innerHTML = `<img class="friend-avatar" src="${allUsersData[fk].avatar}"><span>${allUsersData[fk].displayName || fk}</span>`;
-          friendsContainer.appendChild(item);
-        }
-      });
-    }
+    openPanel("userProfileModalPanel");
   }
 
-  window.sendFriendRequest = async function(targetUsername) {
-    await set(ref(db, `users/${targetUsername}/friendRequests/${currentUsername}`), {
-      username: currentUsername,
-      avatar: currentUserDataObj.avatar,
-      displayName: currentUserDataObj.displayName || currentUsername,
-      timestamp: Date.now()
-    });
-    await set(ref(db, `users/${currentUsername}/sentRequests/${targetUsername}`), true);
-    alert(`¡Solicitud de amistad enviada a ${targetUsername}!`);
-    displaySearchedUserProfile(targetUsername, allUsersData[targetUsername]);
-  };
+  window.openUserProfileModal = openUserProfileModal;
 
-  function renderNotificationsList() {
-    const container = document.getElementById("notificationsContainer");
+  function renderFriendRequests() {
+    const container = document.getElementById("friendRequestsContainer");
     container.innerHTML = "";
-    const requests = currentUserDataObj.friendRequests || {};
-    const reqKeys = Object.keys(requests);
+    const reqs = currentUserDataObj.friendRequests || {};
+    const reqKeys = Object.keys(reqs);
 
     if(reqKeys.length === 0) {
-      container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:20px;">No tienes solicitudes pendientes.</div>`;
+      container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:20px;">No tienes solicitudes de amistad pendientes.</div>`;
       return;
     }
 
     reqKeys.forEach(senderKey => {
-      const req = requests[senderKey];
-      const item = document.createElement("div");
-      item.className = "notif-item";
-      item.innerHTML = `
-        <div class="notif-user-info">
-          <img src="${req.avatar || 'https://robohash.org/' + senderKey}" alt="Avatar">
+      const reqData = reqs[senderKey];
+      const card = document.createElement("div");
+      card.className = "mission-card";
+      card.innerHTML = `
+        <div class="mission-info" style="flex-direction:row; align-items:center; gap:10px;">
+          <img src="${reqData.avatar || 'https://robohash.org/' + senderKey}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
           <div>
-            <div style="font-size:13px; font-weight:800;">${req.displayName || senderKey}</div>
-            <div style="font-size:10px; color:var(--text-muted);">Quiere ser tu amigo</div>
+            <span class="mission-title" style="font-size:13px; font-weight:900;">${reqData.displayName || senderKey}</span>
+            <div style="font-size:11px; color:var(--text-muted);">Te ha enviado una solicitud</div>
           </div>
         </div>
-        <div class="notif-actions">
-          <button class="btn-accept-req" onclick="acceptFriendRequest('${senderKey}')">Aceptar</button>
-          <button class="btn-reject-req" onclick="rejectFriendRequest('${senderKey}')">Rechazar</button>
+        <div style="display:flex; gap:6px;">
+          <button class="btn-action-mission green-btn" onclick="acceptFriendRequest('${senderKey}')">Aceptar</button>
+          <button class="btn-action-mission" onclick="rejectFriendRequest('${senderKey}')" style="background:#c0392b;">Rechazar</button>
         </div>
       `;
-      container.appendChild(item);
+      container.appendChild(card);
     });
   }
 
   window.acceptFriendRequest = async function(senderKey) {
-    await set(ref(db, `users/${currentUsername}/friends/${senderKey}`), true);
-    await set(ref(db, `users/${senderKey}/friends/${currentUsername}`), true);
-    await set(ref(db, `users/${currentUsername}/friendRequests/${senderKey}`), null);
-    await set(ref(db, `users/${senderKey}/sentRequests/${currentUsername}`), null);
+    const myFriends = currentUserDataObj.friends || {};
+    myFriends[senderKey] = true;
+    await set(ref(db, `users/${currentUsername}/friends`), myFriends);
 
-    alert(`¡Ahora eres amigo de ${senderKey}!`);
-    renderNotificationsList();
+    const senderSnap = await get(ref(db, `users/${senderKey}`));
+    if(senderSnap.exists()) {
+      const senderData = senderSnap.val();
+      const senderFriends = senderData.friends || {};
+      senderFriends[currentUsername] = true;
+      await set(ref(db, `users/${senderKey}/friends`), senderFriends);
+    }
+
+    await set(ref(db, `users/${currentUsername}/friendRequests/${senderKey}`), null);
+    alert(`¡Ahora tú y ${senderKey} son amigos!`);
+    renderFriendRequests();
   };
 
   window.rejectFriendRequest = async function(senderKey) {
     await set(ref(db, `users/${currentUsername}/friendRequests/${senderKey}`), null);
-    await set(ref(db, `users/${senderKey}/sentRequests/${currentUsername}`), null);
-    renderNotificationsList();
+    alert("Solicitud rechazada.");
+    renderFriendRequests();
   };
-
-  document.addEventListener("click", (e) => {
-    if(!e.target.closest("#robotShopPanel")) document.getElementById("sidebarSearchAutocomplete").style.display = "none";
-    if(!e.target.closest("#transferModal")) document.getElementById("transferAutocompleteList").style.display = "none";
-  });
 
   document.getElementById("btnSubmitWithdraw").addEventListener("click", async () => {
     const robuxVal = parseInt(document.getElementById("withdrawAmountRobux").value);
     const targetUser = document.getElementById("withdrawTargetUser").value.trim();
 
-    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida de Robux.");
+    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida.");
     if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente.`);
     if(!targetUser) return alert("Ingresa el usuario receptor.");
 
     await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - robuxVal);
-    alert(`¡Solicitud de retiro exitosa! Se han descontado ${fmt(robuxVal)} R$.`);
+    alert(`¡Solicitud de retiro exitosa! Se han descontado ${fmt(robuxVal)} BC.`);
     closeAllPanels();
   });
 
   document.getElementById("btnSubmitConvert").addEventListener("click", async () => {
     const robuxVal = parseInt(document.getElementById("convertAmountRobux").value);
 
-    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida de Robux para convertir.");
-    if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente de Robux.`);
+    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida.");
+    if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente.`);
 
     const copGained = robuxVal;
 
     await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - robuxVal);
     await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue + copGained);
 
-    alert(`¡Conversión exitosa! Convertiste ${fmt(robuxVal)} Robux en $ ${fmt(copGained)} COP.`);
+    alert(`¡Conversión exitosa! Convertiste ${fmt(robuxVal)} Blue Coins en $ ${fmt(copGained)} COP.`);
     closeAllPanels();
   });
+
+  function renderRobloxShop() {
+    const container = document.getElementById("robloxItemsContainer");
+    container.innerHTML = "";
+
+    robloxPackages.forEach(pkg => {
+      const row = document.createElement("div");
+      row.className = "mission-card";
+      let tagHtml = pkg.tag ? `<span style="background:var(--border); color:#fff; font-size:9px; padding:2px 6px; border-radius:10px; margin-left:6px;">🔥 ${pkg.tag}</span>` : "";
+      let btnClass = pkg.highlight ? "btn-action-mission green-btn" : "btn-action-mission";
+
+      row.innerHTML = `
+        <div class="mission-info" style="flex-direction:row; align-items:center; gap:8px;">
+          <span class="custom-blue-coin">BC</span>
+          <span class="mission-title" style="font-size:15px; font-weight:900;">${pkg.amount}</span>
+          ${tagHtml}
+        </div>
+        <button class="${btnClass}" onclick="buyPackage('${pkg.amount}', ${pkg.robuxVal}, ${pkg.priceCOP})">${pkg.priceText}</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  window.buyPackage = async function(label, robuxVal, priceCOP) {
+    if(currentMoneyValue < priceCOP) return alert(`🚨 No tienes suficiente dinero. Necesitas $ ${fmt(priceCOP)} COP.`);
+    if(confirm(`¿Deseas comprar ${label} Blue Coins?`)) {
+      await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue - priceCOP);
+      await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue + robuxVal);
+      await set(ref(db, `users/${currentUsername}/received`), (currentUserDataObj.received || 0) + robuxVal);
+      alert(`🎉 ¡Compra exitosa!`);
+    }
+  };
+
+  window.buySubscription = async function(name, priceCOP, subTypeKey) {
+    if(currentMoneyValue < priceCOP) return alert(`🚨 No tienes suficiente dinero para ${name}. Necesitas $ ${fmt(priceCOP)} COP.`);
+    if(confirm(`¿Deseas adquirir la suscripción ${name}?`)) {
+      const nextReward = Date.now() + 15000;
+      await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue - priceCOP);
+      await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue + 500);
+      await set(ref(db, `users/${currentUsername}/hasPlus`), true);
+      await set(ref(db, `users/${currentUsername}/subscriptionType`), subTypeKey);
+      await set(ref(db, `users/${currentUsername}/nextRewardTime`), nextReward);
+      alert(`🎉 ¡Suscripción ${name} activada con éxito!`);
+      restartPlusInterval();
+    }
+  };
 
   function renderTopGlobal(metric = 'balance') {
     currentTopMetric = metric;
@@ -1506,8 +2108,16 @@ body{
     userList.forEach((u, index) => {
       const row = document.createElement("div");
       row.className = "top-item-row";
-      let suffix = (metric === 'balance' || metric === 'received' || metric === 'sent') ? " R$" : " COP";
-      let badgeHtml = u.hasPlus ? `<span class="badge-plus-tag">✓ Blue Shop</span>` : "";
+      let suffix = " COP";
+      let displayVal = "";
+      if (metric === 'balance' || metric === 'received' || metric === 'sent') {
+        suffix = " BC";
+        displayVal = fmtCoins(u.value);
+      } else {
+        displayVal = fmt(u.value);
+      }
+
+      let badgeHtml = u.hasPlus ? `<span class="badge-plus-tag">⚡ Blue Shop</span>` : "";
 
       row.innerHTML = `
         <div class="top-user-info">
@@ -1515,8 +2125,12 @@ body{
           <img src="${u.avatar}" alt="Avatar">
           <span><b>${u.displayName}</b> ${badgeHtml}</span>
         </div>
-        <span style="font-weight:800; color:var(--green);">${fmt(u.value)}${suffix}</span>
+        <span style="font-weight:800; color:var(--blue-primary);">${displayVal}${suffix}</span>
       `;
+      row.addEventListener("click", () => {
+        closeAllPanels();
+        openUserProfileModal(u.username);
+      });
       container.appendChild(row);
     });
   }
@@ -1569,7 +2183,7 @@ body{
   window.claimMissionReward = async function(mKey) {
     await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue + 2000);
     await set(ref(db, `users/${currentUsername}/missions/${mKey}/status`), 'completed');
-    alert("💰 ¡Reclamado con éxito!");
+    alert("🎉 ¡Reclamado con éxito!");
   };
 
   document.getElementById("btnRedeemCode").addEventListener("click", async () => {
@@ -1597,6 +2211,22 @@ body{
     reader.readAsDataURL(file);
   });
 
+  function startCountdownTimer(targetTime) {
+    if(countdownTimerInterval) clearInterval(countdownTimerInterval);
+    
+    countdownTimerInterval = setInterval(() => {
+      const now = Date.now();
+      const diff = Math.max(0, Math.ceil((targetTime - now) / 1000));
+      const timerEl = document.getElementById("plusCountdownTimer");
+      if(timerEl) {
+        timerEl.textContent = diff + "s";
+      }
+      if(diff <= 0) {
+        clearInterval(countdownTimerInterval);
+      }
+    }, 1000);
+  }
+
   function restartPlusInterval() {
     if(plusRobuxInterval) clearInterval(plusRobuxInterval);
 
@@ -1616,12 +2246,23 @@ body{
           const currentBal = data.balance || 0;
           const currentRec = data.received || 0;
           
+          const newTargetTime = Date.now() + 15000;
           await set(ref(db, `users/${currentUsername}/balance`), currentBal + robuxToAdd);
           await set(ref(db, `users/${currentUsername}/received`), currentRec + robuxToAdd);
+          await set(ref(db, `users/${currentUsername}/nextRewardTime`), newTargetTime);
+          startCountdownTimer(newTargetTime);
         }
       }
     }, 15000);
   }
+
+  document.getElementById("btnSaveDesc").addEventListener("click", async () => {
+    const desc = document.getElementById("userDescription").value;
+    const privacy = document.getElementById("coinsPrivacySelect").value;
+    await set(ref(db, `users/${currentUsername}/description`), desc);
+    await set(ref(db, `users/${currentUsername}/coinsPrivacy`), privacy);
+    alert("¡Cambios guardados con éxito!");
+  });
 
   async function loadUserSession(username, customAvatar = null) {
     currentUsername = username;
@@ -1630,6 +2271,7 @@ body{
     const snap = await get(userRef);
 
     if(!snap.exists()){
+      const initialNextReward = Date.now() + 15000;
       await set(userRef, {
         displayName: currentUsername,
         avatar: customAvatar || `https://robohash.org/${currentUsername}.png?set=set1`,
@@ -1638,14 +2280,15 @@ body{
         received: 0,
         sent: 0,
         description: "¡Hola!",
+        coinsPrivacy: "public",
         hasPlus: false,
-        subscriptionType: "Roblox Plus"
+        subscriptionType: "Roblox Plus",
+        nextRewardTime: initialNextReward
       });
     }
 
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("appContainer").style.display = "block";
-    document.getElementById("usernameText").textContent = currentUsername;
 
     onValue(ref(db, 'users/' + currentUsername), (s) => {
       if(s.exists()){
@@ -1654,78 +2297,89 @@ body{
         currentMoneyValue = currentUserDataObj.money || 0;
 
         document.getElementById("displayAvatar").src = currentUserDataObj.avatar;
-        document.getElementById("currentBalance").textContent = fmt(currentBalanceValue);
-        document.getElementById("currentMoney").textContent = fmt(currentMoneyValue);
-        document.getElementById("valReceived").textContent = fmt(currentUserDataObj.received || 0) + " R$";
-        document.getElementById("valSent").textContent = fmt(currentUserDataObj.sent || 0) + " R$";
+        document.getElementById("usernameText").textContent = currentUsername;
+        document.getElementById("valBalance").textContent = fmtCoins(currentBalanceValue) + " BC";
+        document.getElementById("valReceived").textContent = fmtCoins(currentUserDataObj.received || 0) + " BC";
+        document.getElementById("valSent").textContent = fmtCoins(currentUserDataObj.sent || 0) + " BC";
+        document.getElementById("userDescription").value = currentUserDataObj.description || "";
+        document.getElementById("coinsPrivacySelect").value = currentUserDataObj.coinsPrivacy || "public";
         
-        // Mostrar visualización limpia del nombre y la descripción sin inputs directos
-        document.getElementById("usernameText").textContent = currentUserDataObj.displayName || currentUsername;
-        document.getElementById("displayUserDescription").textContent = currentUserDataObj.description || "¡Hola!";
-
-        document.getElementById("withdrawModalBalance").textContent = fmt(currentBalanceValue) + " R$";
-        document.getElementById("convertModalBalance").textContent = fmt(currentBalanceValue) + " R$";
-
         const badgeContainer = document.getElementById("userBadgeContainer");
+        const plusTimerBox = document.getElementById("plusTimerBox");
+
         if(currentUserDataObj.hasPlus) {
-          badgeContainer.innerHTML = `<span class="badge-plus-tag">✓ Blue Shop</span>`;
+          badgeContainer.innerHTML = `<span class="badge-plus-tag">⚡ Blue Shop</span>`;
+          plusTimerBox.style.display = "block";
+          if(currentUserDataObj.nextRewardTime) {
+            startCountdownTimer(currentUserDataObj.nextRewardTime);
+          }
         } else {
           badgeContainer.innerHTML = "";
+          plusTimerBox.style.display = "none";
         }
 
-        const reqs = currentUserDataObj.friendRequests || {};
-        const reqCount = Object.keys(reqs).length;
-        const badgeDot = document.getElementById("notifBadgeDot");
-        if(reqCount > 0) {
-          badgeDot.textContent = reqCount;
-          badgeDot.style.display = "flex";
+        const container = document.getElementById("friendsContainer");
+        container.innerHTML = "";
+        const myFriends = currentUserDataObj.friends || {};
+        const fKeys = Object.keys(myFriends);
+        if(fKeys.length === 0) {
+          container.innerHTML = `<span style="font-size:11px; color:var(--text-muted);">No hay amigos agregados todavía.</span>`;
         } else {
-          badgeDot.style.display = "none";
-        }
+          fKeys.forEach(k => {
+            const friendData = allUsersData[k] || {};
+            const friendAvatar = friendData.avatar || `https://robohash.org/${k}`;
+            const friendName = friendData.displayName || k;
 
-        const friendsContainer = document.getElementById("friendsContainer");
-        friendsContainer.innerHTML = "";
-        const friendsMap = currentUserDataObj.friends || {};
-        const friendKeys = Object.keys(friendsMap);
-        if(friendKeys.length === 0) {
-          friendsContainer.innerHTML = `<span style="font-size:12px; color:var(--text-muted);">No tienes amistades agregadas aún.</span>`;
-        } else {
-          friendKeys.forEach(fk => {
-            if(allUsersData[fk]) {
-              const item = document.createElement("div");
-              item.className = "friend-item";
-              item.innerHTML = `<img class="friend-avatar" src="${allUsersData[fk].avatar}"><span>${allUsersData[fk].displayName || fk}</span>`;
-              friendsContainer.appendChild(item);
-            }
+            const item = document.createElement("div");
+            item.className = "friend-item";
+            item.innerHTML = `<img class="friend-avatar" src="${friendAvatar}" alt="${friendName}"><span>${friendName}</span>`;
+            item.addEventListener("click", () => {
+              openUserProfileModal(k);
+            });
+            container.appendChild(item);
           });
         }
-      }
-    });
 
-    restartPlusInterval();
+        document.getElementById("currentBalance").textContent = fmtCoins(currentBalanceValue);
+        document.getElementById("currentMoney").textContent = fmt(currentMoneyValue);
+        
+        const dollarsVal = (currentBalanceValue / 1000).toFixed(2);
+        document.getElementById("currentDollar").textContent = dollarsVal;
 
-    onValue(ref(db, 'users'), (s) => {
-      if(s.exists()){
-        allUsersData = s.val();
+        document.getElementById("shopHeaderBalance").textContent = fmtCoins(currentBalanceValue);
+        document.getElementById("withdrawModalBalance").textContent = fmtCoins(currentBalanceValue) + " BC";
+        document.getElementById("convertModalBalance").textContent = fmtCoins(currentBalanceValue) + " BC";
+
+        // Iniciar escuchas de chat en segundo plano para notificaciones
+        initBackgroundChatListeners();
       }
     });
   }
 
-  window.addEventListener("DOMContentLoaded", () => {
-    const savedUser = localStorage.getItem("saved_roblox_user");
-    if(savedUser) loadUserSession(savedUser);
+  onValue(ref(db, 'users'), (snapshot) => {
+    if(snapshot.exists()) {
+      allUsersData = snapshot.val();
+      const reqsCount = Object.keys(currentUserDataObj.friendRequests || {}).length;
+      const dot = document.getElementById("notifBadgeDot");
+      if(reqsCount > 0) {
+        dot.style.display = "flex";
+        dot.textContent = reqsCount;
+      } else {
+        dot.style.display = "none";
+      }
+    }
   });
 
   document.getElementById("btnLogin").addEventListener("click", () => {
-    const val = document.getElementById("loginUsername").value.trim();
-    if(!val) return alert("Ingresa un usuario");
-    loadUserSession(val.toLowerCase().replace(/[^a-z0-9]/g, "_"), uploadedBase64Image);
+    const user = document.getElementById("loginUsername").value.trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
+    if(!user) return alert("Ingresa un nombre de usuario válido.");
+    loadUserSession(user, uploadedBase64Image);
   });
 
-  document.getElementById("btnLogout").addEventListener("click", () => {
-    localStorage.removeItem("saved_roblox_user");
-    location.reload();
-  });
+  const savedUser = localStorage.getItem("saved_roblox_user");
+  if(savedUser) {
+    loadUserSession(savedUser);
+  }
 </script>
 
 </body>
