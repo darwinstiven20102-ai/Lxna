@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roblox Profile Dashboard</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800;900&display=swap');
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  user-select:none;
+  font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+}
+
+:root{
+  --bg:#0b0b0d;
+  --sidebar:#111215;
+  --panel:#191b1d;
+  --panel-hover:#232527;
+  --input-bg:#1c1d22;
+  --border:#26282d;
+  --text-muted:#8d9299;
+  --green:#00a200;
+  --green-hover:#008800;
+  --roblox-card-bg:#16181c;
+  --roblox-btn-bg:#2b2d32;
+  --roblox-btn-hover:#383a40;
+  --gold:#f39c12;
+  --red:#e74c3c;
+}
+
+body{
+  background:var(--bg);
+  color:#ffffff;
+  min-height:100vh;
+  display:flex;
+  overflow-x:hidden;
+}
+
+.custom-emoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+  vertical-align: middle;
+  font-style: normal;
+}
+
+.emoji-cash::before { content: "💵"; }
+.icon-gem {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background: linear-gradient(135deg, #00f2fe, #4facfe);
+  clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+
+.icon-gift {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background: var(--gold);
+  border-radius: 2px;
+  position: relative;
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+.icon-gift::after {
+  content: "";
+  position: absolute;
+  background: #fff;
+  top: 0; bottom: 0; left: 50%; width: 3px;
+  transform: translateX(-50%);
+}
+
+.login-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100vw;
+  height:100vh;
+  background:#050506;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+}
+
+.login-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  width:90%;
+  max-width:380px;
+  padding:30px;
+  border-radius:16px;
+  text-align:center;
+}
+
+.avatar-preview-box{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:#22252c;
+  margin:0 auto 14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:2px dashed var(--border);
+  cursor:pointer;
+}
+
+.avatar-preview-box img{ width:100%; height:100%; object-fit:cover; display:none; }
+
+.form-control{
+  width:100%;
+  background:var(--input-bg);
+  border:1px solid var(--border);
+  padding:10px 12px;
+  border-radius:8px;
+  color:#fff;
+  font-size:13px;
+  outline:none;
+  margin-bottom:12px;
+}
+
+.btn-primary{
+  width:100%;
+  padding:12px;
+  background:var(--green);
+  border:0;
+  border-radius:8px;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.app-container{
+  display:none;
+  width:100%;
+  min-height:100vh;
+}
+
+.sidebar{
+  width:80px;
+  background:var(--sidebar);
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px 0;
+  gap:20px;
+  position:fixed;
+  height:100vh;
+  z-index: 100;
+}
+
+.sidebar-icon{
+  width:24px;
+  height:24px;
+  fill:#fff;
+  cursor:pointer;
+  opacity:0.7;
+  transition:0.2s;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.sidebar-icon:hover{ opacity:1; }
+
+.notification-badge-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--sidebar);
+  display: none;
+}
+
+.main-layout{
+  margin-left:80px;
+  flex:1;
+  display:block;
+  min-height:100vh;
+  position: relative;
+}
+
+.content-left{
+  padding:30px;
+  max-width:800px;
+}
+
+.sidebar-popup-panel {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 100%;
+  max-width: 380px;
+  height: 100vh;
+  background: var(--sidebar);
+  border-left: 1px solid var(--border);
+  padding: 25px;
+  z-index: 9999;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.7);
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-popup-panel.active {
+  right: 0;
+}
+
+.sidebar-popup-panel.wide-shop-panel {
+  max-width: 600px;
+  right: -620px;
+}
+
+.sidebar-popup-panel.wide-shop-panel.active {
+  right: 0;
+}
+
+.popup-overlay-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
+  z-index: 9998;
+  display: none;
+}
+
+.popup-overlay-bg.active {
+  display: block;
+}
+
+.profile-header-flex {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.profile-avatar-large{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  border:3px solid var(--border);
+  object-fit:cover;
+  background:#222;
+  flex-shrink: 0;
+}
+
+.profile-info-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.user-title-container{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 15px;
+  width: 100%;
+}
+
+.user-title{
+  font-size:24px;
+  font-weight:900;
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badge-plus-tag {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(243, 156, 18, 0.4);
+}
+
+.btn-logout{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-muted);
+  padding:6px 12px;
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+  transition:0.2s;
+  white-space: nowrap;
+}
+
+.btn-logout:hover{
+  background:#c0392b;
+  color:#fff;
+  border-color:#c0392b;
+}
+
+.stat-box{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  margin-bottom:16px;
+}
+
+.stat-title{
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+
+.stat-value{
+  font-size:22px;
+  font-weight:900;
+  color:var(--green);
+}
+
+.account-info-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  margin-top:24px;
+}
+
+.info-header{
+  font-weight:800;
+  font-size:16px;
+  margin-bottom:4px;
+}
+
+.info-sub{
+  font-size:12px;
+  color:var(--text-muted);
+  margin-bottom:16px;
+}
+
+.desc-area{
+  width:100%;
+  background:var(--input-bg);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:#fff;
+  padding:10px;
+  font-size:12px;
+  resize:none;
+  outline:none;
+  margin-bottom:16px;
+}
+
+.friends-row{
+  display:flex;
+  gap:12px;
+  overflow-x:auto;
+  padding-bottom:8px;
+}
+
+.friend-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  font-size:11px;
+}
+
+.friend-avatar{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#222;
+}
+
+.top-balance-container{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:24px;
+}
+
+.top-balance{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:6px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:15px;
+  font-weight:800;
+}
+
+.money-balance{
+  color: var(--gold);
+  border-color: rgba(243, 156, 18, 0.3);
+}
+
+.btn-code-redeem, .btn-withdraw{
+  background: var(--green);
+  color: #fff;
+  border: 0;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: 0.2s;
+}
+
+.btn-withdraw{
+  background: #e67e22;
+}
+
+.btn-withdraw:hover{
+  background: #d35400;
+}
+
+.btn-code-redeem:hover{
+  background: var(--green-hover);
+}
+
+.add-friends-section h3{
+  font-size:14px;
+  font-weight:800;
+  margin-bottom:10px;
+}
+
+.search-box{
+  position:relative;
+}
+
+.search-box input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:10px 36px 10px 14px;
+  color:#fff;
+  font-size:12px;
+  outline:none;
+}
+
+.search-box span{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  opacity:0.5;
+  cursor:pointer;
+}
+
+.autocomplete-list{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:10px;
+  max-height:220px;
+  overflow-y:auto;
+  z-index:1000;
+  margin-top:6px;
+  display:none;
+  box-shadow:0 8px 24px rgba(0,0,0,0.6);
+  padding: 6px;
+}
+
+.autocomplete-item{
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.autocomplete-item:last-child{ margin-bottom:0; }
+
+.autocomplete-item:hover{
+  background: var(--panel-hover);
+  border-color: var(--text-muted);
+}
+
+.autocomplete-item img{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.missions-scroll-area{
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mission-card{
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-info{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mission-title{
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.mission-reward{
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.btn-action-mission{
+  border: 0;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 11px;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+  background: var(--roblox-btn-bg);
+  color: #fff;
+}
+
+.btn-action-mission:hover{
+  background: var(--roblox-btn-hover);
+}
+
+.btn-action-mission.green-btn{
+  background: var(--green);
+  color: #fff;
+}
+.btn-action-mission.green-btn:hover{
+  background: var(--green-hover);
+}
+
+.shop-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.top-global-tabs{
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.top-tab-btn{
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.top-tab-btn.active{
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+}
+
+.top-item-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.top-user-info{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-user-info img{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.top-rank-num{
+  font-weight: 900;
+  width: 20px;
+  color: var(--gold);
+}
+
+.btn-add-friend {
+  background: var(--green);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.btn-add-friend:hover {
+  background: var(--green-hover);
+}
+
+.btn-add-friend.pending {
+  background: var(--roblox-btn-bg);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.btn-add-friend.friends {
+  background: #34495e;
+  color: #fff;
+  cursor: default;
+}
+
+.notif-item {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.notif-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notif-user-info img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.notif-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-accept-req {
+  background: var(--green);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-reject-req {
+  background: var(--red);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: 60px;
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 0 15px;
+    gap: 24px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  .main-layout {
+    margin-left: 0;
+    margin-bottom: 60px;
+  }
+  .content-left {
+    padding: 15px;
+    max-width: 100%;
+  }
+  .sidebar-popup-panel {
+    top: auto;
+    bottom: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    width: 92%;
+    max-width: 420px;
+    height: 80vh;
+    max-height: 600px;
+    border-radius: 24px 24px 0 0;
+    border: 1px solid var(--border);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+    transition: bottom 0.35s cubic-bezier(0.1, 1, 0.1, 1);
+  }
+  .sidebar-popup-panel.active {
+    bottom: 0;
+    right: auto;
+  }
+  .sidebar-popup-panel.wide-shop-panel {
+    width: 92%;
+    max-width: 460px;
+    right: auto;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginScreen">
+  <div class="login-card">
+    <h2 style="margin-bottom:6px;">Iniciar Sesión</h2>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Ingresa para cargar tus datos en Firebase</p>
+
+    <div class="avatar-preview-box" onclick="document.getElementById('loginAvatarFile').click()">
+      <span id="uploadHint" style="font-size:10px; color:var(--text-muted);">Foto Avatar</span>
+      <img id="avatarPreviewImg" alt="Preview">
+    </div>
+
+    <input type="file" id="loginAvatarFile" style="display:none;" accept="image/*">
+    <input type="text" id="loginUsername" class="form-control" placeholder="Nombre de usuario (ej: darwinrbxtik)">
+
+    <button class="btn-primary" id="btnLogin">Entrar al Perfil</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="app-container" id="appContainer">
+  
+  <aside class="sidebar">
+    <svg class="sidebar-icon" id="iconMissionsMenu" viewBox="0 0 24 24" title="Misiones Diarias">
+      <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+    </svg>
+
+    <svg class="sidebar-icon" id="sidebarWithdrawBtn" viewBox="0 0 24 24" title="Retirar Robux y Conversión" style="fill: var(--gold);">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-1c-1.1 0-2-.9-2-2h2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1c-1.66 0-3-1.34-3-3 0-1.1.9-2 2-2V7h2v1c1.1 0 2 .9 2 2h-2c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1c1.66 0 3 1.34 3 3 0 1.1-.9 2-2 2v1z"/>
+    </svg>
+
+    <svg class="sidebar-icon" id="iconTopGlobal" viewBox="0 0 24 24" title="Top Global" style="fill: #f1c40f;">
+      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+    </svg>
+
+    <svg class="sidebar-icon" id="iconRobotShop" viewBox="0 0 24 24" title="Tienda de Robots">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+    </svg>
+
+    <!-- Icono de Lápiz para Editar Perfil -->
+    <svg class="sidebar-icon" id="iconEditProfile" viewBox="0 0 24 24" title="Editar Perfil (Foto, Nombre y Descripción)">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+    </svg>
+
+    <!-- Icono de Notificaciones -->
+    <svg class="sidebar-icon" id="iconNotifications" viewBox="0 0 24 24" title="Notificaciones de Amistad">
+      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+      <span class="notification-badge-dot" id="notifBadgeDot">0</span>
+    </svg>
+
+    <svg class="sidebar-icon" id="iconProfileCircle" viewBox="0 0 24 24" title="Abrir Panel de Saldos">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+    </svg>
+
+    <svg class="sidebar-icon" id="openShopBtn" viewBox="0 0 24 24" title="Buscar Usuario">
+      <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+  </aside>
+
+  <div class="popup-overlay-bg" id="popupOverlayBg"></div>
+
+  <!-- Panel de Edición de Perfil (Lápiz) -->
+  <div class="sidebar-popup-panel" id="editProfilePanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <b style="font-size:18px; font-weight:900;">✏️ Editar Perfil</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Personaliza tu avatar, nombre de visualización y descripción de cuenta.</div>
+
+    <div style="text-align:center; margin-bottom:16px;">
+      <div class="avatar-preview-box" onclick="document.getElementById('editAvatarFile').click()" style="margin:0 auto 8px; width:90px; height:90px;">
+        <img id="editAvatarPreviewImg" alt="Avatar Preview" style="display:block;">
+      </div>
+      <span style="font-size:11px; color:var(--text-muted); cursor:pointer;" onclick="document.getElementById('editAvatarFile').click()">Cambiar foto de perfil</span>
+      <input type="file" id="editAvatarFile" style="display:none;" accept="image/*">
+    </div>
+
+    <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Nombre de visualización</div>
+    <input type="text" id="editDisplayNameInput" class="form-control" placeholder="Tu nombre">
+
+    <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Descripción</div>
+    <textarea id="editDescriptionInput" class="desc-area" rows="4" placeholder="Escribe tu descripción aquí..."></textarea>
+
+    <button class="btn-primary" id="btnSaveProfileChanges" style="margin-top:4px; font-weight:900;">Guardar Cambios</button>
+  </div>
+
+  <!-- Panel de Notificaciones -->
+  <div class="sidebar-popup-panel" id="notificationsPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <b style="font-size:18px; font-weight:900;">🔔 Notificaciones</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <div class="missions-scroll-area" id="notificationsContainer"></div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="sidebarPopupPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <b style="font-size:18px; font-weight:900;">Menú de Saldos</b>
+      <div class="close-panel-btn" onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+
+    <div class="top-balance-container">
+      <div class="top-balance money-balance" title="Dinero disponible">
+        <span class="custom-emoji emoji-cash"></span>
+        <span id="currentMoney">0</span>
+        <span>COP</span>
+      </div>
+
+      <div class="top-balance">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M5.165 0L0 18.835 18.835 24 24 5.165 5.165 0zm10.548 14.137l-5.685-1.523 1.523-5.685 5.685 1.523-1.523 5.685z"/></svg>
+        <span id="currentBalance">0</span>
+        <button id="btnTransfer" style="margin-left:auto; background:var(--green); border:0; color:#fff; border-radius:50%; width:22px; height:22px; cursor:pointer;" title="Enviar Robux">+</button>
+      </div>
+
+      <button class="btn-withdraw" id="btnOpenWithdrawModal">
+        <span class="icon-gem"></span> Retirar Robux / Convertir COP
+      </button>
+
+      <button class="btn-code-redeem" id="btnOpenCodeModal">
+        <span class="icon-gift"></span> Canjear Código Promocional
+      </button>
+    </div>
+
+    <div class="add-friends-section">
+      <h3>Buscar usuarios</h3>
+      <div class="search-box" style="position:relative;">
+        <input type="text" id="searchUserInput" placeholder="Buscar usuario..." autocomplete="off">
+        <span>🔍</span>
+        <div id="searchAutocompleteList" class="autocomplete-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="missionsPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <b style="font-size:18px; font-weight:900;">📜 Misiones Diarias</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">Inicia cada misión y espera 5 minutos para recibir $ 2.000 COP.</p>
+    <div class="missions-scroll-area" id="missionsListContainer"></div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="withdrawPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <b style="font-size:18px; font-weight:900;">Gestión de Saldo</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+
+    <div class="top-global-tabs" style="margin-bottom:16px;">
+      <button class="top-tab-btn active" id="tabBtnWithdraw" onclick="switchWithdrawSubTab('withdraw')">Retirar Robux</button>
+      <button class="top-tab-btn" id="tabBtnConvert" onclick="switchWithdrawSubTab('convert')">Convertir a COP</button>
+    </div>
+
+    <div id="subSectionWithdraw">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Retira tus Robux directamente hacia tu cuenta de Roblox.</div>
+      
+      <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--text-muted);">Robux disponibles:</span>
+        <span id="withdrawModalBalance" style="font-weight:900; color:var(--green); font-size:14px;">0 R$</span>
+      </div>
+
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad Robux</div>
+      <input type="number" id="withdrawAmountRobux" class="form-control" placeholder="Ej: 1000">
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px; margin-top:4px;">Usuario</div>
+      <input type="text" id="withdrawTargetUser" class="form-control" placeholder="darwinrbxtik">
+      <button class="btn-primary" id="btnSubmitWithdraw" style="background:#e67e22; margin-top:8px; font-weight:900;">Solicitar retiro</button>
+    </div>
+
+    <div id="subSectionConvert" style="display:none;">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Convierte tus Robux a pesos COP (1 Robux = 1 COP).</div>
+
+      <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--text-muted);">Robux disponibles:</span>
+        <span id="convertModalBalance" style="font-weight:900; color:var(--green); font-size:14px;">0 R$</span>
+      </div>
+
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">Cantidad de Robux a convertir</div>
+      <input type="number" id="convertAmountRobux" class="form-control" placeholder="Ej: 1000" oninput="calcConversionPreview()">
+      <div style="background:var(--input-bg); border:1px solid var(--border); padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px;">
+        Recibirás aprox: <b id="previewCopResult" style="color:var(--gold);">0 COP</b>
+      </div>
+      <button class="btn-primary" id="btnSubmitConvert" style="background:var(--green); margin-top:4px; font-weight:900;">Convertir Robux a COP</button>
+    </div>
+  </div>
+
+  <div class="sidebar-popup-panel" id="topGlobalPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <b style="font-size:18px; font-weight:900;">🏆 Top Global</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+    <div class="top-global-tabs">
+      <button class="top-tab-btn active" onclick="switchTopTab('balance', this)">Más Robux</button>
+      <button class="top-tab-btn" onclick="switchTopTab('money', this)">Más COP</button>
+      <button class="top-tab-btn" onclick="switchTopTab('received', this)">Recibidos</button>
+      <button class="top-tab-btn" onclick="switchTopTab('sent', this)">Enviados</button>
+    </div>
+    <div class="missions-scroll-area" id="topGlobalContainer"></div>
+  </div>
+
+  <div class="sidebar-popup-panel wide-shop-panel" id="robotShopPanel">
+    <div class="shop-header-row" style="margin-bottom:12px;">
+      <b style="font-size:18px; font-weight:900;">🔍 Buscar Usuario</b>
+      <div onclick="closeAllPanels()" style="width:30px; height:30px; border:2px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:bold; color:var(--text-muted); transition:0.2s;">✕</div>
+    </div>
+
+    <div class="missions-scroll-area" style="flex:1; display:flex; flex-direction:column; padding-bottom:20px;">
+      <div class="search-box" style="margin-bottom:16px; flex-shrink:0; position:relative;">
+        <input type="text" id="sidebarSearchInput" placeholder="Escribe un usuario..." autocomplete="off">
+        <span>🔍</span>
+        <div id="sidebarSearchAutocomplete" class="autocomplete-list"></div>
+      </div>
+
+      <div id="searchedUserProfileCard" style="display:none; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:20px; flex:1;">
+        <div class="profile-header-flex" style="margin-bottom:16px;">
+          <img id="searchProfileAvatar" class="profile-avatar-large" style="width:80px; height:80px;" src="" alt="Avatar">
+          <div class="profile-info-side">
+            <div class="user-title" id="searchProfileUsername" style="font-size:18px;"></div>
+            <div id="searchProfileBadge"></div>
+          </div>
+        </div>
+
+        <div id="searchedUserActionContainer" style="margin-bottom:16px;"></div>
+
+        <div class="stat-box" style="margin-bottom:12px; padding:12px;">
+          <div class="stat-title" style="font-size:12px;">Total Robux Recibidos</div>
+          <div class="stat-value" id="searchValReceived" style="font-size:18px;">0 R$</div>
+        </div>
+
+        <div class="stat-box" style="margin-bottom:16px; padding:12px;">
+          <div class="stat-title" style="font-size:12px;">Total Robux Enviados</div>
+          <div class="stat-value" id="searchValSent" style="font-size:18px; color:#e74c3c;">0 R$</div>
+        </div>
+
+        <div class="account-info-card" style="margin-top:0; padding:14px;">
+          <div class="info-header" style="font-size:14px;">Información de la Cuenta</div>
+          <div class="info-sub" style="margin-bottom:12px;">Año de creación: 2026</div>
+
+          <div style="font-weight:700; font-size:12px; margin-bottom:4px;">Descripción</div>
+          <div id="searchProfileDesc" style="background:var(--input-bg); border:1px solid var(--border); border-radius:8px; color:#fff; padding:10px; font-size:12px; min-height:40px; margin-bottom:16px; word-break:break-all;"></div>
+
+          <div style="font-weight:700; font-size:12px; margin-bottom:8px;">Amistades</div>
+          <div class="friends-row" id="searchFriendsContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="content-left">
+      <div class="profile-header-flex">
+        <img id="displayAvatar" class="profile-avatar-large" src="" alt="Avatar">
+        <div class="profile-info-side">
+          <div class="user-title-container">
+            <h1 class="user-title" id="displayUsername">
+              <span id="usernameText">darwinrbxtik</span>
+              <span id="userBadgeContainer"></span>
+            </h1>
+            <button class="btn-logout" id="btnLogout">Cerrar Sesión</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-title">Total Robux Recibidos</div>
+        <div class="stat-value" id="valReceived">0 R$</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-title">Total Robux Enviados</div>
+        <div class="stat-value" id="valSent" style="color:#e74c3c;">0 R$</div>
+      </div>
+
+      <div class="account-info-card">
+        <div class="info-header">Información de la Cuenta</div>
+        <div class="info-sub">Año de creación: 2026</div>
+
+        <div style="font-weight:700; font-size:13px; margin-bottom:6px;">Descripción</div>
+        <!-- Descripción de solo lectura en el panel principal -->
+        <div id="displayUserDescription" style="background:var(--input-bg); border:1px solid var(--border); border-radius:8px; color:#fff; padding:10px; font-size:12px; min-height:45px; margin-bottom:16px; word-break:break-all;"></div>
+
+        <div style="font-weight:700; font-size:13px; margin-bottom:10px;">Amistades</div>
+        <div class="friends-row" id="friendsContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="redeemCodeModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:10000; padding:15px;">
+  <div class="modal-box" style="background:var(--panel); width:100%; max-width:400px; border-radius:16px; padding:24px; border:1px solid var(--border);">
+    <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
+      <b style="font-size:15px;">Canjear Código Promocional</b>
+      <span onclick="closeModal('redeemCodeModal')" style="cursor:pointer; font-weight:bold;">✕</span>
+    </div>
+    <input type="text" id="promoCodeInput" class="form-control" placeholder="Ej: ROBLOX2026, BLUESHOP" style="text-transform:uppercase;">
+    <button class="btn-primary" id="btnRedeemCode">Canjear Saldo</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="transferModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:10000; padding:15px;">
+  <div class="modal-box" style="background:var(--panel); width:100%; max-width:400px; border-radius:16px; padding:24px; border:1px solid var(--border);">
+    <div style="display:flex; justify-content:space-between; margin-bottom:12px; align-items:center;">
+      <b style="font-size:16px;">Enviar Robux</b>
+      <span onclick="closeModal('transferModal')" style="cursor:pointer; font-weight:bold;">✕</span>
+    </div>
+    <div style="position:relative;">
+      <input type="text" id="targetUsername" class="form-control" placeholder="Usuario destinatario" autocomplete="off">
+      <div id="transferAutocompleteList" class="autocomplete-list"></div>
+    </div>
+    <input type="number" id="transferAmount" class="form-control" placeholder="Cantidad de Robux">
+    <button class="btn-primary" id="btnConfirmTransfer">Realizar Transferencia</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCScDrnMGvBQh8g7Z2yCkwtWqdVNu8fqJI",
+    authDomain: "pepe-58c72.firebaseapp.com",
+    databaseURL: "https://pepe-58c72-default-rtdb.firebaseio.com",
+    projectId: "pepe-58c72",
+    storageBucket: "pepe-58c72.firebasestorage.app",
+    messagingSenderId: "964204938889",
+    appId: "1:964204938889:web:c0c1ef98e9396649e4a858",
+    measurementId: "G-5DR9LYPENZ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let currentUsername = "";
+  let uploadedBase64Image = "";
+  let editAvatarBase64 = "";
+  let allUsersData = {};
+  let currentBalanceValue = 0;
+  let currentMoneyValue = 0;
+  let currentUserDataObj = {};
+  let missionInterval = null;
+  let plusRobuxInterval = null; 
+  let currentTopMetric = 'balance';
+
+  const promoCodes = {
+    "ROBLOX2026": 1000,
+    "BLUESHOP": 2500,
+    "FREE80": 80,
+    "SUPER5000": 5000
+  };
+
+  function fmt(n){ return Number(n).toLocaleString("es-CO"); }
+
+  const popupOverlayBg = document.getElementById("popupOverlayBg");
+
+  function closeAllPanels() {
+    document.querySelectorAll(".sidebar-popup-panel").forEach(panel => {
+      panel.classList.remove("active");
+    });
+    popupOverlayBg.classList.remove("active");
+    if(missionInterval) clearInterval(missionInterval);
+  }
+
+  window.closeAllPanels = closeAllPanels;
+  popupOverlayBg.addEventListener("click", closeAllPanels);
+
+  function openPanel(panelId) {
+    closeAllPanels();
+    document.getElementById(panelId).classList.add("active");
+    popupOverlayBg.classList.add("active");
+  }
+
+  document.getElementById("iconProfileCircle").addEventListener("click", () => openPanel("sidebarPopupPanel"));
+  document.getElementById("iconNotifications").addEventListener("click", () => {
+    renderNotificationsList();
+    openPanel("notificationsPanel");
+  });
+
+  // Abrir panel de edición de perfil (Icono de Lápiz)
+  document.getElementById("iconEditProfile").addEventListener("click", () => {
+    document.getElementById("editDisplayNameInput").value = currentUserDataObj.displayName || currentUsername;
+    document.getElementById("editDescriptionInput").value = currentUserDataObj.description || "";
+    editAvatarBase64 = currentUserDataObj.avatar || "";
+    const preview = document.getElementById("editAvatarPreviewImg");
+    preview.src = editAvatarBase64;
+    openPanel("editProfilePanel");
+  });
+
+  document.getElementById("editAvatarFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      editAvatarBase64 = evt.target.result;
+      document.getElementById("editAvatarPreviewImg").src = editAvatarBase64;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("btnSaveProfileChanges").addEventListener("click", async () => {
+    const newName = document.getElementById("editDisplayNameInput").value.trim() || currentUsername;
+    const newDesc = document.getElementById("editDescriptionInput").value;
+
+    await set(ref(db, `users/${currentUsername}/displayName`), newName);
+    await set(ref(db, `users/${currentUsername}/description`), newDesc);
+    if(editAvatarBase64) {
+      await set(ref(db, `users/${currentUsername}/avatar`), editAvatarBase64);
+    }
+
+    alert("¡Perfil actualizado con éxito!");
+    closeAllPanels();
+  });
+
+  document.getElementById("iconMissionsMenu").addEventListener("click", () => {
+    renderMissionsList();
+    openPanel("missionsPanel");
+    if(missionInterval) clearInterval(missionInterval);
+    missionInterval = setInterval(() => {
+      if(document.getElementById("missionsPanel").classList.contains("active")) renderMissionsList();
+    }, 1000);
+  });
+
+  function openWithdrawPanelHandler() {
+    document.getElementById("withdrawTargetUser").value = currentUsername;
+    document.getElementById("withdrawAmountRobux").value = "";
+    document.getElementById("convertAmountRobux").value = "";
+    document.getElementById("previewCopResult").textContent = "0 COP";
+    
+    document.getElementById("withdrawModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+    document.getElementById("convertModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+
+    switchWithdrawSubTab('withdraw');
+    openPanel("withdrawPanel");
+  }
+
+  window.switchWithdrawSubTab = function(type) {
+    const btnW = document.getElementById("tabBtnWithdraw");
+    const btnC = document.getElementById("tabBtnConvert");
+    const secW = document.getElementById("subSectionWithdraw");
+    const secC = document.getElementById("subSectionConvert");
+
+    if(type === 'withdraw') {
+      btnW.classList.add("active");
+      btnC.classList.remove("active");
+      secW.style.display = "block";
+      secC.style.display = "none";
+    } else {
+      btnC.classList.add("active");
+      btnW.classList.remove("active");
+      secC.style.display = "block";
+      secW.style.display = "none";
+    }
+  };
+
+  window.calcConversionPreview = function() {
+    const val = parseInt(document.getElementById("convertAmountRobux").value) || 0;
+    document.getElementById("previewCopResult").textContent = fmt(val) + " COP";
+  };
+
+  document.getElementById("btnOpenWithdrawModal").addEventListener("click", openWithdrawPanelHandler);
+  document.getElementById("sidebarWithdrawBtn").addEventListener("click", openWithdrawPanelHandler);
+  document.getElementById("iconTopGlobal").addEventListener("click", () => { renderTopGlobal(currentTopMetric); openPanel("topGlobalPanel"); });
+  document.getElementById("iconRobotShop").addEventListener("click", () => { openPanel("robotShopPanel"); });
+  document.getElementById("openShopBtn").addEventListener("click", () => { 
+    document.getElementById("sidebarSearchInput").value = "";
+    document.getElementById("sidebarSearchAutocomplete").style.display = "none";
+    document.getElementById("searchedUserProfileCard").style.display = "none";
+    openPanel("robotShopPanel"); 
+  });
+
+  document.getElementById("btnOpenCodeModal").addEventListener("click", () => {
+    document.getElementById("promoCodeInput").value = "";
+    document.getElementById("redeemCodeModal").style.display = "flex";
+  });
+
+  document.getElementById("btnTransfer").addEventListener("click", () => {
+    document.getElementById("targetUsername").value = "";
+    document.getElementById("transferAmount").value = "";
+    document.getElementById("transferModal").style.display = "flex";
+  });
+
+  window.closeModal = function(id){ document.getElementById(id).style.display = "none"; };
+
+  function setupAutocomplete(inputId, listId, onSelectCallback) {
+    const inputEl = document.getElementById(inputId);
+    const listEl = document.getElementById(listId);
+
+    inputEl.addEventListener("input", () => {
+      const query = inputEl.value.toLowerCase().trim();
+      listEl.innerHTML = "";
+      if(!query){ 
+        listEl.style.display = "none"; 
+        return; 
+      }
+
+      const matches = Object.keys(allUsersData).filter(u => u.toLowerCase().startsWith(query) && u !== currentUsername);
+      if(matches.length === 0){ 
+        listEl.style.display = "none"; 
+        return; 
+      }
+
+      matches.forEach(matchKey => {
+        const uData = allUsersData[matchKey];
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        item.innerHTML = `<img src="${uData.avatar || 'https://robohash.org/' + matchKey}"><span>${uData.displayName || matchKey}</span>`;
+        item.addEventListener("click", () => {
+          inputEl.value = matchKey;
+          listEl.style.display = "none";
+          onSelectCallback(matchKey, uData);
+        });
+        listEl.appendChild(item);
+      });
+      listEl.style.display = "block";
+    });
+  }
+
+  setupAutocomplete("targetUsername", "transferAutocompleteList", () => {});
+
+  document.getElementById("btnConfirmTransfer").addEventListener("click", async () => {
+    const target = document.getElementById("targetUsername").value.trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
+    const amount = parseInt(document.getElementById("transferAmount").value);
+
+    if(!target) return alert("Ingresa un usuario destinatario.");
+    if(!amount || amount <= 0) return alert("Ingresa una cantidad válida.");
+    if(amount > currentBalanceValue) return alert("No tienes suficiente saldo.");
+    if(target === currentUsername) return alert("No te puedes transferir a ti mismo.");
+
+    const targetRef = ref(db, `users/${target}`);
+    const targetSnap = await get(targetRef);
+    if(!targetSnap.exists()) return alert("El usuario destinatario no existe en la base de datos.");
+
+    const targetData = targetSnap.val();
+    await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - amount);
+    await set(ref(db, `users/${currentUsername}/sent`), (currentUserDataObj.sent || 0) + amount);
+    await set(ref(db, `users/${target}/balance`), (targetData.balance || 0) + amount);
+    await set(ref(db, `users/${target}/received`), (targetData.received || 0) + amount);
+
+    alert(`¡Transferencia de ${fmt(amount)} R$ realizada con éxito a ${target}!`);
+    closeModal("transferModal");
+  });
+
+  setupAutocomplete("sidebarSearchInput", "sidebarSearchAutocomplete", (matchKey, uData) => {
+    displaySearchedUserProfile(matchKey, uData);
+  });
+
+  function displaySearchedUserProfile(targetUsername, data) {
+    const profileCard = document.getElementById("searchedUserProfileCard");
+    profileCard.style.display = "block";
+
+    document.getElementById("searchProfileAvatar").src = data.avatar || `https://robohash.org/${targetUsername}`;
+    document.getElementById("searchProfileUsername").textContent = data.displayName || targetUsername;
+    
+    const badgeContainer = document.getElementById("searchProfileBadge");
+    if(data.hasPlus) {
+      badgeContainer.innerHTML = `<span class="badge-plus-tag" style="margin-top:6px;">✓ Blue Shop</span>`;
+    } else {
+      badgeContainer.innerHTML = "";
+    }
+
+    const actionContainer = document.getElementById("searchedUserActionContainer");
+    const myFriends = currentUserDataObj.friends || {};
+    const mySentRequests = currentUserDataObj.sentRequests || {};
+    const targetRequests = data.friendRequests || {};
+
+    if(myFriends[targetUsername]) {
+      actionContainer.innerHTML = `<button class="btn-add-friend friends" disabled>✓ Amigos</button>`;
+    } else if(mySentRequests[targetUsername] || targetRequests[currentUsername]) {
+      actionContainer.innerHTML = `<button class="btn-add-friend pending" disabled>Solicitud enviada</button>`;
+    } else {
+      actionContainer.innerHTML = `<button class="btn-add-friend" onclick="sendFriendRequest('${targetUsername}')">Añadir amigo</button>`;
+    }
+
+    document.getElementById("searchValReceived").textContent = fmt(data.received || 0) + " R$";
+    document.getElementById("searchValSent").textContent = fmt(data.sent || 0) + " R$";
+    document.getElementById("searchProfileDesc").textContent = data.description || "¡Hola!";
+
+    const friendsContainer = document.getElementById("searchFriendsContainer");
+    friendsContainer.innerHTML = "";
+    const targetFriends = data.friends || {};
+    const friendKeys = Object.keys(targetFriends);
+    if(friendKeys.length === 0) {
+      friendsContainer.innerHTML = `<span style="font-size:11px; color:var(--text-muted);">Sin amistades aún</span>`;
+    } else {
+      friendKeys.forEach(fk => {
+        if(allUsersData[fk]) {
+          const item = document.createElement("div");
+          item.className = "friend-item";
+          item.innerHTML = `<img class="friend-avatar" src="${allUsersData[fk].avatar}"><span>${allUsersData[fk].displayName || fk}</span>`;
+          friendsContainer.appendChild(item);
+        }
+      });
+    }
+  }
+
+  window.sendFriendRequest = async function(targetUsername) {
+    await set(ref(db, `users/${targetUsername}/friendRequests/${currentUsername}`), {
+      username: currentUsername,
+      avatar: currentUserDataObj.avatar,
+      displayName: currentUserDataObj.displayName || currentUsername,
+      timestamp: Date.now()
+    });
+    await set(ref(db, `users/${currentUsername}/sentRequests/${targetUsername}`), true);
+    alert(`¡Solicitud de amistad enviada a ${targetUsername}!`);
+    displaySearchedUserProfile(targetUsername, allUsersData[targetUsername]);
+  };
+
+  function renderNotificationsList() {
+    const container = document.getElementById("notificationsContainer");
+    container.innerHTML = "";
+    const requests = currentUserDataObj.friendRequests || {};
+    const reqKeys = Object.keys(requests);
+
+    if(reqKeys.length === 0) {
+      container.innerHTML = `<div style="font-size:12px; color:var(--text-muted); text-align:center; padding:20px;">No tienes solicitudes pendientes.</div>`;
+      return;
+    }
+
+    reqKeys.forEach(senderKey => {
+      const req = requests[senderKey];
+      const item = document.createElement("div");
+      item.className = "notif-item";
+      item.innerHTML = `
+        <div class="notif-user-info">
+          <img src="${req.avatar || 'https://robohash.org/' + senderKey}" alt="Avatar">
+          <div>
+            <div style="font-size:13px; font-weight:800;">${req.displayName || senderKey}</div>
+            <div style="font-size:10px; color:var(--text-muted);">Quiere ser tu amigo</div>
+          </div>
+        </div>
+        <div class="notif-actions">
+          <button class="btn-accept-req" onclick="acceptFriendRequest('${senderKey}')">Aceptar</button>
+          <button class="btn-reject-req" onclick="rejectFriendRequest('${senderKey}')">Rechazar</button>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  window.acceptFriendRequest = async function(senderKey) {
+    await set(ref(db, `users/${currentUsername}/friends/${senderKey}`), true);
+    await set(ref(db, `users/${senderKey}/friends/${currentUsername}`), true);
+    await set(ref(db, `users/${currentUsername}/friendRequests/${senderKey}`), null);
+    await set(ref(db, `users/${senderKey}/sentRequests/${currentUsername}`), null);
+
+    alert(`¡Ahora eres amigo de ${senderKey}!`);
+    renderNotificationsList();
+  };
+
+  window.rejectFriendRequest = async function(senderKey) {
+    await set(ref(db, `users/${currentUsername}/friendRequests/${senderKey}`), null);
+    await set(ref(db, `users/${senderKey}/sentRequests/${currentUsername}`), null);
+    renderNotificationsList();
+  };
+
+  document.addEventListener("click", (e) => {
+    if(!e.target.closest("#robotShopPanel")) document.getElementById("sidebarSearchAutocomplete").style.display = "none";
+    if(!e.target.closest("#transferModal")) document.getElementById("transferAutocompleteList").style.display = "none";
+  });
+
+  document.getElementById("btnSubmitWithdraw").addEventListener("click", async () => {
+    const robuxVal = parseInt(document.getElementById("withdrawAmountRobux").value);
+    const targetUser = document.getElementById("withdrawTargetUser").value.trim();
+
+    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida de Robux.");
+    if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente.`);
+    if(!targetUser) return alert("Ingresa el usuario receptor.");
+
+    await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - robuxVal);
+    alert(`¡Solicitud de retiro exitosa! Se han descontado ${fmt(robuxVal)} R$.`);
+    closeAllPanels();
+  });
+
+  document.getElementById("btnSubmitConvert").addEventListener("click", async () => {
+    const robuxVal = parseInt(document.getElementById("convertAmountRobux").value);
+
+    if(!robuxVal || robuxVal <= 0) return alert("Ingresa una cantidad válida de Robux para convertir.");
+    if(robuxVal > currentBalanceValue) return alert(`Saldo insuficiente de Robux.`);
+
+    const copGained = robuxVal;
+
+    await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue - robuxVal);
+    await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue + copGained);
+
+    alert(`¡Conversión exitosa! Convertiste ${fmt(robuxVal)} Robux en $ ${fmt(copGained)} COP.`);
+    closeAllPanels();
+  });
+
+  function renderTopGlobal(metric = 'balance') {
+    currentTopMetric = metric;
+    const container = document.getElementById("topGlobalContainer");
+    container.innerHTML = "";
+
+    const userList = Object.keys(allUsersData).map(key => {
+      return {
+        username: key,
+        displayName: allUsersData[key].displayName || key,
+        avatar: allUsersData[key].avatar || `https://robohash.org/${key}`,
+        value: allUsersData[key][metric] || 0,
+        hasPlus: allUsersData[key].hasPlus || false
+      };
+    });
+
+    userList.sort((a, b) => b.value - a.value);
+
+    userList.forEach((u, index) => {
+      const row = document.createElement("div");
+      row.className = "top-item-row";
+      let suffix = (metric === 'balance' || metric === 'received' || metric === 'sent') ? " R$" : " COP";
+      let badgeHtml = u.hasPlus ? `<span class="badge-plus-tag">✓ Blue Shop</span>` : "";
+
+      row.innerHTML = `
+        <div class="top-user-info">
+          <span class="top-rank-num">#${index + 1}</span>
+          <img src="${u.avatar}" alt="Avatar">
+          <span><b>${u.displayName}</b> ${badgeHtml}</span>
+        </div>
+        <span style="font-weight:800; color:var(--green);">${fmt(u.value)}${suffix}</span>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  window.switchTopTab = function(metric, btnEl) {
+    document.querySelectorAll(".top-tab-btn").forEach(b => b.classList.remove("active"));
+    btnEl.classList.add("active");
+    renderTopGlobal(metric);
+  };
+
+  function renderMissionsList() {
+    const container = document.getElementById("missionsListContainer");
+    container.innerHTML = "";
+    const missionsData = currentUserDataObj.missions || {};
+    const now = Date.now();
+    const duration = 5 * 60 * 1000;
+
+    for(let i = 1; i <= 100; i++) {
+      const mKey = `m_${i}`;
+      const mState = missionsData[mKey] || { status: 'idle', startTime: 0 };
+      const card = document.createElement("div");
+      card.className = "mission-card";
+
+      let btnHtml = "";
+      if(mState.status === 'completed') {
+        btnHtml = `<button class="btn-action-mission completed" disabled>Completado</button>`;
+      } else if(mState.status === 'started') {
+        const elapsed = now - mState.startTime;
+        const remainingSeconds = Math.max(0, Math.ceil((duration - elapsed) / 1000));
+        if(remainingSeconds <= 0) {
+          btnHtml = `<button class="btn-action-mission claim" onclick="claimMissionReward('${mKey}')">Reclamar $ 2.000</button>`;
+        } else {
+          const m = Math.floor(remainingSeconds / 60);
+          const s = remainingSeconds % 60;
+          btnHtml = `<button class="btn-action-mission waiting" disabled>${m}:${s < 10 ? '0' : ''}${s}</button>`;
+        }
+      } else {
+        btnHtml = `<button class="btn-action-mission start" onclick="startMissionTimer('${mKey}')">Iniciar</button>`;
+      }
+
+      card.innerHTML = `<div class="mission-info"><span class="mission-title">Misión #${i}</span><span class="mission-reward">+ $ 2.000 COP</span></div>${btnHtml}`;
+      container.appendChild(card);
+    }
+  }
+
+  window.startMissionTimer = async function(mKey) {
+    await set(ref(db, `users/${currentUsername}/missions/${mKey}`), { status: 'started', startTime: Date.now() });
+  };
+
+  window.claimMissionReward = async function(mKey) {
+    await set(ref(db, `users/${currentUsername}/money`), currentMoneyValue + 2000);
+    await set(ref(db, `users/${currentUsername}/missions/${mKey}/status`), 'completed');
+    alert("💰 ¡Reclamado con éxito!");
+  };
+
+  document.getElementById("btnRedeemCode").addEventListener("click", async () => {
+    const code = document.getElementById("promoCodeInput").value.trim().toUpperCase();
+    if(promoCodes[code]) {
+      await set(ref(db, `users/${currentUsername}/balance`), currentBalanceValue + promoCodes[code]);
+      closeModal("redeemCodeModal");
+      alert(`¡Código canjeado con éxito!`);
+    } else {
+      alert("Código inválido.");
+    }
+  });
+
+  document.getElementById("loginAvatarFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      uploadedBase64Image = evt.target.result;
+      const preview = document.getElementById("avatarPreviewImg");
+      preview.src = uploadedBase64Image;
+      preview.style.display = "block";
+      document.getElementById("uploadHint").style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function restartPlusInterval() {
+    if(plusRobuxInterval) clearInterval(plusRobuxInterval);
+
+    plusRobuxInterval = setInterval(async () => {
+      const freshSnap = await get(ref(db, 'users/' + currentUsername));
+      if(freshSnap.exists()) {
+        const data = freshSnap.val();
+        if(data.hasPlus === true) {
+          const subType = data.subscriptionType || "Roblox Plus";
+          let robuxToAdd = 100;
+
+          if(subType === "Roblox Plus") robuxToAdd = 100;
+          else if(subType === "Plus 500") robuxToAdd = 200;
+          else if(subType === "Plus 1000") robuxToAdd = 300;
+          else if(subType === "Plus VIP 5M") robuxToAdd = 100000;
+
+          const currentBal = data.balance || 0;
+          const currentRec = data.received || 0;
+          
+          await set(ref(db, `users/${currentUsername}/balance`), currentBal + robuxToAdd);
+          await set(ref(db, `users/${currentUsername}/received`), currentRec + robuxToAdd);
+        }
+      }
+    }, 15000);
+  }
+
+  async function loadUserSession(username, customAvatar = null) {
+    currentUsername = username;
+    localStorage.setItem("saved_roblox_user", currentUsername);
+    const userRef = ref(db, 'users/' + currentUsername);
+    const snap = await get(userRef);
+
+    if(!snap.exists()){
+      await set(userRef, {
+        displayName: currentUsername,
+        avatar: customAvatar || `https://robohash.org/${currentUsername}.png?set=set1`,
+        balance: 0,
+        money: 0,
+        received: 0,
+        sent: 0,
+        description: "¡Hola!",
+        hasPlus: false,
+        subscriptionType: "Roblox Plus"
+      });
+    }
+
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("appContainer").style.display = "block";
+    document.getElementById("usernameText").textContent = currentUsername;
+
+    onValue(ref(db, 'users/' + currentUsername), (s) => {
+      if(s.exists()){
+        currentUserDataObj = s.val();
+        currentBalanceValue = currentUserDataObj.balance || 0;
+        currentMoneyValue = currentUserDataObj.money || 0;
+
+        document.getElementById("displayAvatar").src = currentUserDataObj.avatar;
+        document.getElementById("currentBalance").textContent = fmt(currentBalanceValue);
+        document.getElementById("currentMoney").textContent = fmt(currentMoneyValue);
+        document.getElementById("valReceived").textContent = fmt(currentUserDataObj.received || 0) + " R$";
+        document.getElementById("valSent").textContent = fmt(currentUserDataObj.sent || 0) + " R$";
+        
+        // Mostrar visualización limpia del nombre y la descripción sin inputs directos
+        document.getElementById("usernameText").textContent = currentUserDataObj.displayName || currentUsername;
+        document.getElementById("displayUserDescription").textContent = currentUserDataObj.description || "¡Hola!";
+
+        document.getElementById("withdrawModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+        document.getElementById("convertModalBalance").textContent = fmt(currentBalanceValue) + " R$";
+
+        const badgeContainer = document.getElementById("userBadgeContainer");
+        if(currentUserDataObj.hasPlus) {
+          badgeContainer.innerHTML = `<span class="badge-plus-tag">✓ Blue Shop</span>`;
+        } else {
+          badgeContainer.innerHTML = "";
+        }
+
+        const reqs = currentUserDataObj.friendRequests || {};
+        const reqCount = Object.keys(reqs).length;
+        const badgeDot = document.getElementById("notifBadgeDot");
+        if(reqCount > 0) {
+          badgeDot.textContent = reqCount;
+          badgeDot.style.display = "flex";
+        } else {
+          badgeDot.style.display = "none";
+        }
+
+        const friendsContainer = document.getElementById("friendsContainer");
+        friendsContainer.innerHTML = "";
+        const friendsMap = currentUserDataObj.friends || {};
+        const friendKeys = Object.keys(friendsMap);
+        if(friendKeys.length === 0) {
+          friendsContainer.innerHTML = `<span style="font-size:12px; color:var(--text-muted);">No tienes amistades agregadas aún.</span>`;
+        } else {
+          friendKeys.forEach(fk => {
+            if(allUsersData[fk]) {
+              const item = document.createElement("div");
+              item.className = "friend-item";
+              item.innerHTML = `<img class="friend-avatar" src="${allUsersData[fk].avatar}"><span>${allUsersData[fk].displayName || fk}</span>`;
+              friendsContainer.appendChild(item);
+            }
+          });
+        }
+      }
+    });
+
+    restartPlusInterval();
+
+    onValue(ref(db, 'users'), (s) => {
+      if(s.exists()){
+        allUsersData = s.val();
+      }
+    });
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedUser = localStorage.getItem("saved_roblox_user");
+    if(savedUser) loadUserSession(savedUser);
+  });
+
+  document.getElementById("btnLogin").addEventListener("click", () => {
+    const val = document.getElementById("loginUsername").value.trim();
+    if(!val) return alert("Ingresa un usuario");
+    loadUserSession(val.toLowerCase().replace(/[^a-z0-9]/g, "_"), uploadedBase64Image);
+  });
+
+  document.getElementById("btnLogout").addEventListener("click", () => {
+    localStorage.removeItem("saved_roblox_user");
+    location.reload();
+  });
+</script>
+
+</body>
+</html>
