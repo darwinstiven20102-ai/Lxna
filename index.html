@@ -26,7 +26,7 @@
   <!-- NAVBAR SUPERIOR -->
   <header id="mainNavbar" class="hidden border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('feed')">
         <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
           <i class="fa-solid fa-store"></i>
         </div>
@@ -39,10 +39,12 @@
       <div class="hidden md:flex items-center gap-6">
         <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-house mr-1"></i> Feed</button>
         <button onclick="switchTab('publish')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-circle-plus mr-1"></i> Publicar</button>
-        <button onclick="switchTab('messages')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-paper-plane mr-1"></i> Mensajes</button>
+        <button onclick="switchTab('messages')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer relative">
+          <i class="fa-solid fa-paper-plane mr-1"></i> Mensajes
+        </button>
       </div>
 
-      <!-- Perfil -->
+      <!-- Perfil y Menú Desplegable -->
       <div class="flex items-center gap-3 relative">
         <div class="relative">
           <button id="profileMenuBtn" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 p-1.5 pr-3 rounded-full transition cursor-pointer">
@@ -56,12 +58,20 @@
               <p id="dropdownName" class="text-xs font-bold text-slate-200">Nombre</p>
               <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
             </div>
+            
+            <!-- Opción Perfil agregada -->
+            <button onclick="switchTab('userProfile')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-user w-4 text-center"></i> Mi Perfil
+            </button>
+
             <button onclick="switchTab('posts')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
               <i class="fa-solid fa-store w-4 text-center"></i> Mis Publicaciones
             </button>
-            <button onclick="switchTab('notifications')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+            <button onclick="switchTab('notifications')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer relative">
               <i class="fa-solid fa-bell w-4 text-center"></i> Notificaciones
+              <span id="notifBadge" class="hidden absolute right-3 w-2 h-2 rounded-full bg-indigo-500"></span>
             </button>
+
             <div class="border-t border-slate-800 mt-1 pt-1">
               <button id="logoutBtn" class="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3 transition cursor-pointer">
                 <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Cerrar sesión
@@ -87,9 +97,9 @@
       <i class="fa-solid fa-paper-plane text-lg"></i>
       <span class="text-[10px] mt-1">Mensajes</span>
     </button>
-    <button onclick="switchTab('posts')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
-      <i class="fa-solid fa-store text-lg"></i>
-      <span class="text-[10px] mt-1">Mis Posts</span>
+    <button onclick="switchTab('userProfile')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
+      <i class="fa-solid fa-user text-lg"></i>
+      <span class="text-[10px] mt-1">Perfil</span>
     </button>
   </nav>
 
@@ -104,7 +114,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-bold">Moon Shop</h2>
-          <p class="text-slate-400 text-sm mt-2">Inicia sesión con Google para acceder al feed y al chat en tiempo real.</p>
+          <p class="text-slate-400 text-sm mt-2">Inicia sesión con Google para acceder al feed y a la comunidad.</p>
         </div>
         <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg cursor-pointer">
           <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -178,14 +188,11 @@
     <!-- 4. PUBLICAR TIPO FACEBOOK POST CREATOR -->
     <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-4 py-2">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 md:p-6 shadow-2xl space-y-4">
-        
-        <!-- Header tipo Modal FB -->
         <div class="text-center pb-3 border-b border-slate-800">
           <h2 class="text-base font-extrabold text-slate-100">Crear publicación</h2>
         </div>
 
         <form id="publishForm" class="space-y-4">
-          <!-- Info de Usuario -->
           <div class="flex items-center gap-3">
             <img id="formUserAvatar" src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full border border-indigo-500 object-cover">
             <div>
@@ -197,15 +204,12 @@
             </div>
           </div>
 
-          <!-- Título principal de la publicación -->
           <input type="text" id="pubTitle" placeholder="Título de la publicación (Ej. Vendo Murder Mystery 2)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
 
-          <!-- Área de texto estilo Post FB -->
           <div>
             <textarea id="pubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy? Detalla tu servicio, reglas o ítems..." required class="w-full bg-transparent text-sm text-slate-100 focus:outline-none resize-none placeholder:text-slate-500"></textarea>
           </div>
 
-          <!-- Fila Dinámica: Categoría y Nombre del Juego -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Categoría</label>
@@ -224,7 +228,6 @@
             </div>
           </div>
 
-          <!-- Campo de Precio con Moneda Flexible -->
           <div class="space-y-1">
             <label class="block text-[10px] font-bold uppercase text-slate-400">Precio y Moneda</label>
             <div class="flex gap-2">
@@ -239,11 +242,10 @@
                 <option value="CUSTOM">Otro / Libre...</option>
               </select>
 
-              <input type="text" id="pubCustomCurrency" placeholder="Moneda (Ej. Robux, USD)" class="hidden w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+              <input type="text" id="pubCustomCurrency" placeholder="Moneda (Ej. Robux)" class="hidden w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
             </div>
           </div>
 
-          <!-- Contenedor Adjuntar Foto estilo FB -->
           <div class="border border-slate-800 rounded-2xl p-3 bg-slate-950/80 flex items-center justify-between">
             <span class="text-xs font-semibold text-slate-300">Agregar foto a tu publicación</span>
             <label class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
@@ -260,7 +262,6 @@
             Publicar
           </button>
         </form>
-
       </div>
     </section>
 
@@ -275,11 +276,65 @@
       <div id="myPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 6. CHAT MEJORADO FIJO SIN DESPLAZAMIENTO LATERAL -->
+    <!-- 6. SECCIÓN PERFIL DEL USUARIO CON EDICIÓN -->
+    <section id="tabUserProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <!-- Banner/Header de Perfil -->
+        <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800">
+          <div class="relative group">
+            <img id="profilePageAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 rounded-full border-2 border-indigo-500 object-cover shadow-lg">
+            <label class="absolute bottom-0 right-0 bg-indigo-600 hover:bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-md transition">
+              <i class="fa-solid fa-camera text-xs"></i>
+              <input type="file" accept="image/*" class="hidden" onchange="window.updateProfilePhoto(this)">
+            </label>
+          </div>
+          <div class="text-center sm:text-left flex-1 space-y-1">
+            <h2 id="profilePageName" class="text-xl font-bold text-slate-100">Cargando...</h2>
+            <p id="profilePageEmail" class="text-xs text-slate-400">correo@ejemplo.com</p>
+            <p id="profilePageCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
+            
+            <div class="flex justify-center sm:justify-start gap-4 pt-3">
+              <div class="text-center">
+                <span id="profilePostsCount" class="block font-bold text-sm text-slate-100">0</span>
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Posts</span>
+              </div>
+              <div class="text-center">
+                <span id="profileFollowersCount" class="block font-bold text-sm text-slate-100">0</span>
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Seguidores</span>
+              </div>
+              <div class="text-center">
+                <span id="profileFollowingCount" class="block font-bold text-sm text-slate-100">0</span>
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Siguiendo</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="window.toggleEditNameModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-2 rounded-xl transition border border-slate-700 cursor-pointer">
+            <i class="fa-solid fa-pen mr-1"></i> Editar Perfil
+          </button>
+        </div>
+
+        <!-- Formulario para editar nombre rápido -->
+        <div id="editNameModal" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+          <h4 class="text-xs font-bold text-slate-300">Actualizar Nombre</h4>
+          <div class="flex gap-2">
+            <input type="text" id="editNameInput" placeholder="Nuevo nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+            <button onclick="window.saveNewName()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer">
+              Guardar
+            </button>
+          </div>
+        </div>
+
+        <!-- Rejilla de Publicaciones del Usuario -->
+        <div>
+          <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-grid-2 mr-1"></i> Publicaciones</h3>
+          <div id="userProfilePostsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. CHAT FIJO Y AUDIOS -->
     <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto overflow-hidden">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden md:grid md:grid-cols-3 h-[78vh] md:h-[600px] relative w-full">
-        
-        <!-- Lista de Chats -->
         <div id="chatListPanel" class="w-full md:w-auto h-full border-r border-slate-800 flex flex-col bg-slate-950/60 overflow-hidden">
           <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
             <h2 class="font-extrabold text-sm tracking-tight text-slate-100 flex items-center gap-2">
@@ -289,7 +344,6 @@
           <div id="chatList" class="flex-1 overflow-y-auto overflow-x-hidden divide-y divide-slate-900/60"></div>
         </div>
 
-        <!-- Conversación Abierta -->
         <div id="chatConversationPanel" class="hidden md:flex col-span-2 flex-col bg-slate-950/90 h-full w-full absolute md:relative inset-0 z-20 overflow-hidden">
           <div class="p-3 px-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/90 backdrop-blur">
             <div class="flex items-center gap-3">
@@ -297,9 +351,7 @@
                 <i class="fa-solid fa-arrow-left"></i>
               </button>
               <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[1.5px] flex items-center justify-center">
-                <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-indigo-400 font-bold">
-                  <i class="fa-solid fa-user text-xs"></i>
-                </div>
+                <img id="activeChatAvatar" src="https://via.placeholder.com/40" class="w-full h-full rounded-full object-cover">
               </div>
               <div>
                 <p id="activeChatName" class="text-xs font-bold text-slate-100">Selecciona un chat</p>
@@ -311,7 +363,7 @@
           </div>
 
           <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto overflow-x-hidden space-y-2.5 flex flex-col justify-end no-scrollbar">
-            <div class="text-center text-xs text-slate-500 my-auto">Toca un usuario o usa el botón "Mensaje" en cualquier publicación.</div>
+            <div class="text-center text-xs text-slate-500 my-auto">Toca un usuario para iniciar la conversación.</div>
           </div>
 
           <div class="p-3 border-t border-slate-800/80 bg-slate-900/90 backdrop-blur">
@@ -333,26 +385,28 @@
             </form>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- 7. NOTIFICACIONES -->
+    <!-- 8. NOTIFICACIONES EN TIEMPO REAL -->
     <section id="tabNotifications" class="hidden max-w-xl w-full mx-auto space-y-4 py-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-        <h2 class="text-xl font-bold flex items-center gap-2">
-          <i class="fa-solid fa-bell text-indigo-400"></i> Notificaciones
+        <h2 class="text-xl font-bold flex items-center justify-between">
+          <span class="flex items-center gap-2"><i class="fa-solid fa-bell text-indigo-400"></i> Notificaciones</span>
+          <span id="notifCount" class="text-xs font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-full">0 nuevas</span>
         </h2>
-        <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs text-slate-300">
-          <p class="font-semibold text-indigo-400">¡Bienvenido a Moon Shop!</p>
-          <p class="text-[11px] text-slate-400 mt-1">Conectado en tiempo real.</p>
+        <div id="notificationsContainer" class="space-y-2">
+          <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs text-slate-300">
+            <p class="font-semibold text-indigo-400">¡Bienvenido a Moon Shop!</p>
+            <p class="text-[11px] text-slate-400 mt-1">Conectado al servidor en tiempo real.</p>
+          </div>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y FUNCIONALIDAD -->
+  <!-- LÓGICA DE FIREBASE COMPLETA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -382,23 +436,9 @@
     const logoutBtn = document.getElementById('logoutBtn');
     const vendorForm = document.getElementById('vendorForm');
     const publishForm = document.getElementById('publishForm');
-    
-    const formCountry = document.getElementById('formCountry');
-    const otherCountryContainer = document.getElementById('otherCountryContainer');
-    const formOtherCountry = document.getElementById('formOtherCountry');
 
     let currentUser = null;
-    let currentUserName = "Usuario";
-
-    formCountry.addEventListener('change', (e) => {
-      if (e.target.value === 'Otro') {
-        otherCountryContainer.classList.remove('hidden');
-        formOtherCountry.required = true;
-      } else {
-        otherCountryContainer.classList.add('hidden');
-        formOtherCountry.required = false;
-      }
-    });
+    let currentUserData = {};
 
     googleAuthBtn.addEventListener('click', async () => {
       try {
@@ -411,7 +451,6 @@
     });
 
     logoutBtn.addEventListener('click', () => {
-      alert("Guarde toda la información");
       signOut(auth);
     });
 
@@ -420,6 +459,7 @@
         currentUser = user;
         await checkVendorRegistration(user);
         listenToPostsFB();
+        listenToNotifications();
       } else {
         currentUser = null;
         showScreen('login');
@@ -431,9 +471,8 @@
       try {
         const snapshot = await get(child(dbRef, `vendors/${user.uid}`));
         if (snapshot.exists()) {
-          const vData = snapshot.val();
-          currentUserName = vData.name;
-          updateNavUser(user, vData);
+          currentUserData = snapshot.val();
+          updateNavUser(user, currentUserData);
           showScreen('app');
           switchTab('feed');
           listenToChatsList();
@@ -451,23 +490,22 @@
       e.preventDefault();
       if (!currentUser) return;
 
-      let country = formCountry.value;
-      if (country === 'Otro') country = formOtherCountry.value;
+      let country = document.getElementById('formCountry').value;
+      if (country === 'Otro') country = document.getElementById('formOtherCountry').value;
 
-      const vendorData = {
+      currentUserData = {
         uid: currentUser.uid,
         name: document.getElementById('formName').value,
         email: currentUser.email,
         phone: document.getElementById('formPhone').value,
         country: country,
-        photoURL: currentUser.photoURL || '',
+        photoURL: currentUser.photoURL || 'https://via.placeholder.com/100',
         registeredAt: new Date().toISOString()
       };
 
       try {
-        await set(ref(db, 'vendors/' + currentUser.uid), vendorData);
-        currentUserName = vendorData.name;
-        updateNavUser(currentUser, vendorData);
+        await set(ref(db, 'vendors/' + currentUser.uid), currentUserData);
+        updateNavUser(currentUser, currentUserData);
         showScreen('app');
         switchTab('feed');
       } catch (error) {
@@ -475,30 +513,37 @@
       }
     });
 
-    // Control dinámico de moneda
-    window.handleCurrencyChange = (select) => {
-      const customInput = document.getElementById('pubCustomCurrency');
-      if (select.value === 'CUSTOM') {
-        customInput.classList.remove('hidden');
-        customInput.required = true;
-      } else {
-        customInput.classList.add('hidden');
-        customInput.required = false;
-      }
-    };
-
-    window.previewSelectedImage = (input) => {
-      if (input.files && input.files[0]) {
+    // CAMBIAR FOTO DE PERFIL
+    window.updateProfilePhoto = (input) => {
+      if (input.files && input.files[0] && currentUser) {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          document.getElementById('imagePreview').src = e.target.result;
-          document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        reader.onload = async (e) => {
+          const newPhoto = e.target.result;
+          await update(ref(db, `vendors/${currentUser.uid}`), { photoURL: newPhoto });
+          currentUserData.photoURL = newPhoto;
+          updateNavUser(currentUser, currentUserData);
         };
         reader.readAsDataURL(input.files[0]);
       }
     };
 
-    // GUARDAR PUBLICACIÓN
+    // CAMBIAR NOMBRE DE USUARIO
+    window.toggleEditNameModal = () => {
+      document.getElementById('editNameModal').classList.toggle('hidden');
+    };
+
+    window.saveNewName = async () => {
+      const newName = document.getElementById('editNameInput').value.trim();
+      if (!newName || !currentUser) return;
+
+      await update(ref(db, `vendors/${currentUser.uid}`), { name: newName });
+      currentUserData.name = newName;
+      updateNavUser(currentUser, currentUserData);
+      document.getElementById('editNameModal').classList.add('hidden');
+      document.getElementById('editNameInput').value = '';
+    };
+
+    // PUBLICAR ITEM
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -522,7 +567,8 @@
 
         const postData = {
           uid: currentUser.uid,
-          author: currentUserName,
+          author: currentUserData.name || 'Usuario',
+          authorPhoto: currentUserData.photoURL || 'https://via.placeholder.com/40',
           category: category,
           gameName: gameName,
           title: title,
@@ -555,14 +601,17 @@
       }
     });
 
-    // LISTAR PUBLICACIONES TIPO FACEBOOK
+    // LISTAR POSTS TIPO FACEBOOK CON FOTOS REALES DE PERFIL
     function listenToPostsFB() {
       const postsRef = ref(db, 'posts');
       onValue(postsRef, (snapshot) => {
         const feedContainer = document.getElementById('feedPostsContainer');
         const myPostsContainer = document.getElementById('myPostsContainer');
+        const userProfileGrid = document.getElementById('userProfilePostsGrid');
+        
         feedContainer.innerHTML = '';
         myPostsContainer.innerHTML = '';
+        userProfileGrid.innerHTML = '';
 
         if (!snapshot.exists()) {
           feedContainer.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No hay publicaciones aún. ¡Sé el primero en compartir algo!</div>`;
@@ -570,12 +619,15 @@
         }
 
         const posts = snapshot.val();
+        let myPostsCount = 0;
+
         Object.keys(posts).reverse().forEach((postId) => {
           const post = posts[postId];
           const isMine = currentUser && post.uid === currentUser.uid;
           const likesCount = post.likesCount || 0;
           const hasLiked = currentUser && post.likes && post.likes[currentUser.uid];
           const currencyLabel = post.currency || 'USD';
+          const authorAvatar = post.authorPhoto || 'https://via.placeholder.com/40';
 
           const postCard = document.createElement('div');
           postCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3";
@@ -596,7 +648,7 @@
           postCard.innerHTML = `
             <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
               <div class="flex items-center gap-2.5">
-                <img src="https://via.placeholder.com/35" class="w-8 h-8 rounded-full border border-indigo-500">
+                <img src="${authorAvatar}" class="w-8 h-8 rounded-full border border-indigo-500 object-cover">
                 <div>
                   <h4 class="text-xs font-bold text-slate-200">${post.author}</h4>
                   <span class="text-[10px] text-slate-400">${post.category} • ${post.gameName}</span>
@@ -616,13 +668,13 @@
 
             <div class="flex justify-between items-center pt-1">
               <span class="text-emerald-400 font-extrabold text-sm">$${post.price} ${currencyLabel}</span>
-              <button onclick="window.openChatWithUser('${post.uid}', '${post.author}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+              <button onclick="window.openChatWithUser('${post.uid}', '${post.author}', '${authorAvatar}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-paper-plane"></i> Mensaje
               </button>
             </div>
 
             <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
-              <button onclick="window.toggleLikeFB('${postId}', ${hasLiked})" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer ${hasLiked ? 'text-indigo-400 font-bold' : ''}">
+              <button onclick="window.toggleLikeFB('${postId}', ${hasLiked}, '${post.uid}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer ${hasLiked ? 'text-indigo-400 font-bold' : ''}">
                 <i class="fa-solid fa-thumbs-up"></i> <span>Me gusta (${likesCount})</span>
               </button>
               <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer">
@@ -636,7 +688,7 @@
               </div>
               <div class="flex gap-2">
                 <input type="text" id="comment-input-${postId}" placeholder="Escribe un comentario..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
-                <button onclick="window.addCommentFB('${postId}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+                <button onclick="window.addCommentFB('${postId}', '${post.uid}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
                   <i class="fa-solid fa-paper-plane"></i>
                 </button>
               </div>
@@ -644,14 +696,67 @@
           `;
 
           feedContainer.appendChild(postCard);
+
           if (isMine) {
+            myPostsCount++;
             myPostsContainer.appendChild(postCard.cloneNode(true));
+            userProfileGrid.appendChild(postCard.cloneNode(true));
           }
+        });
+
+        document.getElementById('profilePostsCount').textContent = myPostsCount;
+      });
+    }
+
+    // ENVIAR NOTIFICACIÓN A USUARIO
+    async function sendNotification(targetUid, title, message) {
+      if (!targetUid || targetUid === currentUser.uid) return;
+      const notifRef = ref(db, `notifications/${targetUid}`);
+      const newNotif = push(notifRef);
+      await set(newNotif, {
+        title: title,
+        message: message,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    // LISTAR NOTIFICACIONES PROPIAS
+    function listenToNotifications() {
+      if (!currentUser) return;
+      const notifRef = ref(db, `notifications/${currentUser.uid}`);
+      onValue(notifRef, (snapshot) => {
+        const container = document.getElementById('notificationsContainer');
+        const countSpan = document.getElementById('notifCount');
+        const badge = document.getElementById('notifBadge');
+        container.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          container.innerHTML = `<div class="p-4 text-xs text-slate-500 text-center">No tienes notificaciones recientes.</div>`;
+          countSpan.textContent = "0 nuevas";
+          badge.classList.add('hidden');
+          return;
+        }
+
+        const notifs = snapshot.val();
+        const keys = Object.keys(notifs).reverse();
+        countSpan.textContent = `${keys.length} nuevas`;
+        badge.classList.remove('hidden');
+
+        keys.forEach(k => {
+          const n = notifs[k];
+          const div = document.createElement('div');
+          div.className = "bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs space-y-1";
+          div.innerHTML = `
+            <p class="font-bold text-indigo-400">${n.title}</p>
+            <p class="text-slate-200">${n.message}</p>
+          `;
+          container.appendChild(div);
         });
       });
     }
 
-    window.toggleLikeFB = async (postId, currentlyLiked) => {
+    // TOGGLE LIKE
+    window.toggleLikeFB = async (postId, currentlyLiked, ownerUid) => {
       if (!currentUser) return;
       const postRef = ref(db, `posts/${postId}`);
       const snapshot = await get(postRef);
@@ -667,12 +772,14 @@
       } else {
         count += 1;
         likes[currentUser.uid] = true;
+        sendNotification(ownerUid, "❤️ Nuevo Me Gusta", `${currentUserData.name || 'Alguien'} le dio Me Gusta a tu publicación.`);
       }
 
       await update(postRef, { likesCount: count, likes: likes });
     };
 
-    window.addCommentFB = async (postId) => {
+    // AÑADIR COMENTARIO
+    window.addCommentFB = async (postId, ownerUid) => {
       if (!currentUser) return;
       const input = document.getElementById(`comment-input-${postId}`);
       const text = input.value.trim();
@@ -681,33 +788,37 @@
       const commentRef = ref(db, `posts/${postId}/comments`);
       const newCommentRef = push(commentRef);
       await set(newCommentRef, {
-        author: currentUserName,
+        author: currentUserData.name || 'Usuario',
         uid: currentUser.uid,
         text: text,
         createdAt: new Date().toISOString()
       });
 
+      sendNotification(ownerUid, "💬 Nuevo Comentario", `${currentUserData.name || 'Alguien'} comentó: "${text}"`);
       input.value = '';
     };
 
     window.toggleCommentsBox = (postId) => {
-      const box = document.getElementById(`comments-box-${postId}`);
-      box.classList.toggle('hidden');
+      document.getElementById(`comments-box-${postId}`).classList.toggle('hidden');
     };
 
+    // CHAT DIRECTO Y AUDIOS
     let targetChatUid = null;
     let targetChatName = "";
+    let targetChatPhoto = "";
 
-    window.openChatWithUser = (targetUid, targetName) => {
+    window.openChatWithUser = (targetUid, targetName, targetPhoto) => {
       if (currentUser && targetUid === currentUser.uid) {
         alert("Este es tu propio post.");
         return;
       }
       targetChatUid = targetUid;
       targetChatName = targetName;
+      targetChatPhoto = targetPhoto || 'https://via.placeholder.com/40';
 
       switchTab('messages');
       document.getElementById('activeChatName').textContent = targetName;
+      document.getElementById('activeChatAvatar').src = targetChatPhoto;
       document.getElementById('chatInput').disabled = false;
       document.getElementById('sendMsgBtn').disabled = false;
 
@@ -746,14 +857,23 @@
           const isMe = m.senderUid === currentUser.uid;
 
           const msgDiv = document.createElement('div');
-          msgDiv.className = `max-w-[78%] p-3 rounded-2xl text-xs space-y-1 ${isMe ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white ml-auto rounded-br-xs' : 'bg-slate-800/90 text-slate-100 mr-auto rounded-bl-xs'}`;
+          msgDiv.className = `max-w-[80%] p-3 rounded-2xl text-xs space-y-1 ${isMe ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white ml-auto rounded-br-xs' : 'bg-slate-800/90 text-slate-100 mr-auto rounded-bl-xs'}`;
 
           if (m.type === 'text') {
             msgDiv.textContent = m.content;
           } else if (m.type === 'image') {
             msgDiv.innerHTML = `<img src="${m.content}" class="rounded-xl max-h-48 w-full object-cover">`;
           } else if (m.type === 'audio') {
-            msgDiv.innerHTML = `<audio controls src="${m.content}" class="w-full h-8 max-w-[200px]"></audio>`;
+            // Reproductor nativo compatible para ambas partes
+            msgDiv.innerHTML = `
+              <div class="flex items-center gap-2 py-1">
+                <i class="fa-solid fa-microphone text-sm"></i>
+                <audio controls class="w-full h-8 max-w-[220px]">
+                  <source src="${m.content}" type="audio/webm">
+                  Tu navegador no soporta el audio.
+                </audio>
+              </div>
+            `;
           }
 
           box.appendChild(msgDiv);
@@ -763,6 +883,7 @@
       });
     }
 
+    // ENVIAR TEXTO CON NOTIFICACIÓN
     window.sendTextMessage = async (e) => {
       e.preventDefault();
       const input = document.getElementById('chatInput');
@@ -775,18 +896,20 @@
 
       await set(newMsgRef, {
         senderUid: currentUser.uid,
-        senderName: currentUserName,
+        senderName: currentUserData.name || 'Usuario',
         type: 'text',
         content: text,
         timestamp: new Date().toISOString()
       });
 
-      await set(ref(db, `userChats/${currentUser.uid}/${targetChatUid}`), { name: targetChatName, uid: targetChatUid });
-      await set(ref(db, `userChats/${targetChatUid}/${currentUser.uid}`), { name: currentUserName, uid: currentUser.uid });
+      await set(ref(db, `userChats/${currentUser.uid}/${targetChatUid}`), { name: targetChatName, uid: targetChatUid, photo: targetChatPhoto });
+      await set(ref(db, `userChats/${targetChatUid}/${currentUser.uid}`), { name: currentUserData.name || 'Usuario', uid: currentUser.uid, photo: currentUserData.photoURL });
 
+      sendNotification(targetChatUid, "📩 Nuevo Mensaje Directo", `${currentUserData.name || 'Alguien'}: "${text}"`);
       input.value = '';
     };
 
+    // ENVIAR FOTO AL CHAT
     window.sendChatImage = (input) => {
       if (!input.files || !input.files[0] || !targetChatUid) return;
       const reader = new FileReader();
@@ -798,15 +921,18 @@
 
         await set(newMsgRef, {
           senderUid: currentUser.uid,
-          senderName: currentUserName,
+          senderName: currentUserData.name || 'Usuario',
           type: 'image',
           content: imageUrl,
           timestamp: new Date().toISOString()
         });
+
+        sendNotification(targetChatUid, "📷 Foto recibida", `${currentUserData.name || 'Alguien'} te envió una foto.`);
       };
       reader.readAsDataURL(input.files[0]);
     };
 
+    // GRABACIÓN DE AUDIO REPRODUCIBLE
     let mediaRecorder = null;
     let audioChunks = [];
     let isRecording = false;
@@ -837,11 +963,13 @@
 
               await set(newMsgRef, {
                 senderUid: currentUser.uid,
-                senderName: currentUserName,
+                senderName: currentUserData.name || 'Usuario',
                 type: 'audio',
                 content: audioBase64,
                 timestamp: new Date().toISOString()
               });
+
+              sendNotification(targetChatUid, "🎙️ Nota de voz", `${currentUserData.name || 'Alguien'} te envió un audio.`);
             };
             reader.readAsDataURL(audioBlob);
           };
@@ -877,17 +1005,13 @@
           const item = document.createElement('div');
           item.className = "p-3.5 hover:bg-slate-900/80 cursor-pointer flex items-center gap-3 transition border-b border-slate-900/40";
           item.innerHTML = `
-            <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[1.5px] flex-shrink-0">
-              <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center text-indigo-400 font-bold">
-                <i class="fa-solid fa-user text-xs"></i>
-              </div>
-            </div>
+            <img src="${c.photo || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-full border border-indigo-500 object-cover flex-shrink-0">
             <div class="flex-1 min-w-0">
               <p class="text-xs font-bold text-slate-100 truncate">${c.name}</p>
               <p class="text-[10px] text-slate-400 truncate mt-0.5">Toca para abrir mensaje</p>
             </div>
           `;
-          item.onclick = () => window.openChatWithUser(c.uid, c.name);
+          item.onclick = () => window.openChatWithUser(c.uid, c.name, c.photo);
           chatList.appendChild(item);
         });
       });
@@ -901,6 +1025,7 @@
       document.getElementById('tabFeed').classList.add('hidden');
       document.getElementById('tabPublish').classList.add('hidden');
       document.getElementById('tabPosts').classList.add('hidden');
+      document.getElementById('tabUserProfile').classList.add('hidden');
       document.getElementById('tabMessages').classList.add('hidden');
       document.getElementById('tabNotifications').classList.add('hidden');
 
@@ -913,15 +1038,21 @@
     }
 
     function updateNavUser(user, vData) {
-      document.getElementById('navUserAvatar').src = user.photoURL || 'https://via.placeholder.com/40';
-      document.getElementById('navUserName').textContent = vData.name;
-      document.getElementById('dropdownName').textContent = vData.name;
+      const avatar = vData.photoURL || 'https://via.placeholder.com/40';
+      const name = vData.name || 'Usuario';
+
+      document.getElementById('navUserAvatar').src = avatar;
+      document.getElementById('navUserName').textContent = name;
+      document.getElementById('dropdownName').textContent = name;
       document.getElementById('dropdownEmail').textContent = user.email;
 
-      const formAvatar = document.getElementById('formUserAvatar');
-      const formName = document.getElementById('formUserName');
-      if (formAvatar) formAvatar.src = user.photoURL || 'https://via.placeholder.com/40';
-      if (formName) formName.textContent = vData.name;
+      document.getElementById('formUserAvatar').src = avatar;
+      document.getElementById('formUserName').textContent = name;
+
+      document.getElementById('profilePageAvatar').src = avatar;
+      document.getElementById('profilePageName').textContent = name;
+      document.getElementById('profilePageEmail').textContent = user.email;
+      document.getElementById('profilePageCountry').innerHTML = `<i class="fa-solid fa-location-dot mr-1"></i> ${vData.country || 'Colombia'}`;
     }
   </script>
 
@@ -946,12 +1077,14 @@
       document.getElementById('tabFeed').classList.add('hidden');
       document.getElementById('tabPublish').classList.add('hidden');
       document.getElementById('tabPosts').classList.add('hidden');
+      document.getElementById('tabUserProfile').classList.add('hidden');
       document.getElementById('tabMessages').classList.add('hidden');
       document.getElementById('tabNotifications').classList.add('hidden');
 
       if (tabName === 'feed') document.getElementById('tabFeed').classList.remove('hidden');
       if (tabName === 'publish') document.getElementById('tabPublish').classList.remove('hidden');
       if (tabName === 'posts') document.getElementById('tabPosts').classList.remove('hidden');
+      if (tabName === 'userProfile') document.getElementById('tabUserProfile').classList.remove('hidden');
       if (tabName === 'messages') {
         document.getElementById('tabMessages').classList.remove('hidden');
         if (window.innerWidth < 768) {
