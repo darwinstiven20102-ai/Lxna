@@ -24,7 +24,7 @@
           <i class="fa-solid fa-store"></i>
         </div>
         <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-          ComisionStore
+          Moon Shop - Comisiones
         </span>
       </div>
 
@@ -52,8 +52,8 @@
           <i class="fa-solid fa-user-shield"></i>
         </div>
         <div>
-          <h2 class="text-2xl font-bold">Bienvenido a la Plataforma</h2>
-          <p class="text-slate-400 text-sm mt-2">Inicia sesión con tu cuenta de Google para registrarte como vendedor o gestionar tus comisiones.</p>
+          <h2 class="text-2xl font-bold">Bienvenido a Moon Shop</h2>
+          <p class="text-slate-400 text-sm mt-2">Inicia sesión con tu cuenta de Google para registrarte como vendedor y gestionar tus comisiones.</p>
         </div>
 
         <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
@@ -74,7 +74,7 @@
         <div class="mb-6">
           <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Paso 2 de 2</span>
           <h2 class="text-2xl font-bold mt-1">Completa tu perfil de vendedor</h2>
-          <p class="text-slate-400 text-sm mt-1">Ingresa tus datos de contacto y selecciona la categoría de productos o servicios que ofrecerás.</p>
+          <p class="text-slate-400 text-sm mt-1">Ingresa tus datos y selecciona qué deseas ofrecer en la tienda.</p>
         </div>
 
         <form id="vendorForm" class="space-y-4">
@@ -128,7 +128,7 @@
 
               <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
                 <input type="checkbox" name="sellingCategory" value="Desarrollo / Programación" class="accent-indigo-500">
-                <span class="text-sm font-medium"><i class="fa-solid fa-code text-indigo-400 mr-1"></i> Desarrollo Web/Scripts</span>
+                <span class="text-sm font-medium"><i class="fa-solid fa-code text-indigo-400 mr-1"></i> Desarrollo / Scripts</span>
               </label>
             </div>
           </div>
@@ -144,49 +144,49 @@
     <section id="dashboardScreen" class="hidden space-y-6">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold">Panel de Comisiones y Ventas</h1>
-          <p class="text-slate-400 text-sm mt-1">Sincronizado en tiempo real con Firebase Database.</p>
+          <h1 class="text-2xl font-bold">Panel de Vendedor</h1>
+          <p class="text-slate-400 text-sm mt-1">Conectado a tu base de datos de Moon Shop en tiempo real.</p>
         </div>
-        <button id="addListingBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm transition">
-          <i class="fa-solid fa-plus"></i> Publicar Servicio / Ítem
-        </button>
+        <div class="flex items-center gap-3">
+          <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-xl">
+            <i class="fa-solid fa-circle text-[8px] mr-1"></i> Conectado a Firebase
+          </span>
+        </div>
       </div>
 
-      <!-- Categories Filter -->
-      <div class="flex gap-2 overflow-x-auto pb-2">
-        <span class="bg-indigo-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap">Todos</span>
-        <span class="bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer whitespace-nowrap">Dibujos</span>
-        <span class="bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer whitespace-nowrap">Ítems Videojuegos</span>
-        <span class="bg-slate-900 border border-slate-800 text-slate-400 hover:text-white text-xs font-semibold px-3 py-1.5 rounded-lg cursor-pointer whitespace-nowrap">Ropa</span>
-      </div>
-
-      <!-- Listings Grid -->
-      <div id="listingsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Rendered dynamically -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4">
+        <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-xl flex items-center justify-center mx-auto text-xl">
+          <i class="fa-solid fa-rocket"></i>
+        </div>
+        <h3 class="text-xl font-bold">¡Tu perfil está configurado correctamente!</h3>
+        <p class="text-slate-400 text-sm max-w-md mx-auto">Ya puedes empezar a recibir solicitudes y registrar tus comisiones en tiempo real.</p>
       </div>
     </section>
 
   </main>
 
-  <!-- FIREBASE SDKs (v10 Modular via CDN) -->
+  <!-- FIREBASE LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-    // 1. CONFIGURACIÓN DE TU PROYECTO FIREBASE
+    // Tu configuración oficial de Moon Shop
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_PROYECTO.firebaseapp.com",
-      databaseURL: "https://TU_PROYECTO-default-rtdb.firebaseio.com",
-      projectId: "TU_PROYECTO",
-      storageBucket: "TU_PROYECTO.appspot.com",
-      messagingSenderId: "123456789",
-      appId: "1:123456789:web:abcdef"
+      apiKey: "AIzaSyB10E5NcOAHrSWG2KYh9eYo5cKJ0uegAtk",
+      authDomain: "moon-shop-1b1ab.firebaseapp.com",
+      databaseURL: "https://moon-shop-1b1ab-default-rtdb.firebaseio.com",
+      projectId: "moon-shop-1b1ab",
+      storageBucket: "moon-shop-1b1ab.firebasestorage.app",
+      messagingSenderId: "475681178863",
+      appId: "1:475681178863:web:3838e9eb5b1427d14e071a",
+      measurementId: "G-3RXRZ5P865"
     };
 
-    // Initialize Firebase
+    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
@@ -202,7 +202,7 @@
 
     let currentUser = null;
 
-    // 2. INICIAR SESIÓN CON GOOGLE
+    // Iniciar sesión con Google
     googleAuthBtn.addEventListener('click', async () => {
       try {
         const result = await signInWithPopup(auth, provider);
@@ -210,16 +210,16 @@
         checkVendorRegistration(currentUser);
       } catch (error) {
         console.error("Error al autenticar:", error);
-        alert("Ocurrió un error al iniciar sesión con Google.");
+        alert("Ocurrió un error al iniciar sesión con Google. Revisa la consola (F12).");
       }
     });
 
-    // 3. CERRAR SESIÓN
+    // Cerrar sesión
     logoutBtn.addEventListener('click', () => {
       signOut(auth);
     });
 
-    // 4. OBSERVAR ESTADO DE AUTENTICACIÓN
+    // Observar estado de autenticación
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
@@ -231,28 +231,26 @@
       }
     });
 
-    // 5. VERIFICAR SI EL USUARIO YA COMPLETÓ EL FORMULARIO
+    // Verificar si el usuario ya guardó sus datos en Realtime Database
     async function checkVendorRegistration(user) {
       const dbRef = ref(db);
       try {
         const snapshot = await get(child(dbRef, `vendors/${user.uid}`));
         if (snapshot.exists()) {
-          // Ya está registrado -> Mostrar Panel
           const vendorData = snapshot.val();
           updateHeader(user, vendorData);
           showScreen('dashboard');
         } else {
-          // Primera vez -> Mostrar Formulario
           document.getElementById('formName').value = user.displayName || '';
           document.getElementById('formEmail').value = user.email || '';
           showScreen('onboarding');
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error leyendo base de datos:", err);
       }
     }
 
-    // 6. GUARDAR FORMULARIO EN FIREBASE REALTIME DATABASE
+    // Guardar formulario del vendedor
     vendorForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -261,7 +259,7 @@
                               .map(cb => cb.value);
 
       if (categories.length === 0) {
-        alert("Por favor selecciona al menos una categoría de lo que deseas vender.");
+        alert("Por favor selecciona al menos una opción de lo que deseas vender.");
         return;
       }
 
@@ -282,11 +280,10 @@
         showScreen('dashboard');
       } catch (error) {
         console.error("Error al guardar perfil:", error);
-        alert("Error al guardar tus datos.");
+        alert("Error al guardar tus datos en Firebase.");
       }
     });
 
-    // HELPER FUNCTIONS
     function showScreen(screen) {
       loginScreen.classList.add('hidden');
       onboardingScreen.classList.add('hidden');
