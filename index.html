@@ -16,28 +16,71 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-  <!-- NAVBAR -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+  <!-- NAVBAR (Oculto en Login) -->
+  <header id="mainNavbar" class="hidden border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
+      
+      <!-- Logo y Categoría -->
+      <div class="flex items-center gap-4">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
           <i class="fa-solid fa-store"></i>
         </div>
-        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-          Moon Shop
-        </span>
+        <div>
+          <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            Moon Shop
+          </span>
+          <select id="categorySelector" class="hidden sm:block bg-transparent text-slate-400 text-xs font-medium focus:outline-none cursor-pointer mt-0.5">
+            <option value="dibujo" class="bg-slate-900">🎨 Dibujos / Arte Digital</option>
+            <option value="videojuegos" class="bg-slate-900">🎮 Ítems de Videojuegos</option>
+            <option value="ropa" class="bg-slate-900">👕 Ropa / Ropa Virtual</option>
+            <option value="programacion" class="bg-slate-900">💻 Desarrollo / Programación</option>
+          </select>
+        </div>
       </div>
 
-      <!-- User Profile Header (Oculto hasta iniciar sesión) -->
-      <div id="navUserInfo" class="hidden items-center gap-3">
-        <img id="userAvatar" src="" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-indigo-500">
-        <div class="hidden sm:block text-left">
-          <p id="userName" class="text-sm font-semibold leading-none"></p>
-          <p id="userCategoryBadge" class="text-xs text-indigo-400 font-medium mt-1"></p>
+      <!-- Navegación y Perfil -->
+      <div class="flex items-center gap-4 relative">
+        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition hidden sm:inline">Explorar Tienda</button>
+        
+        <!-- Ícono del Perfil -->
+        <div class="relative">
+          <button id="profileMenuBtn" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 p-1.5 pr-3 rounded-full transition cursor-pointer">
+            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-8 h-8 rounded-full border border-indigo-500 object-cover">
+            <span id="navUserName" class="text-xs font-semibold text-slate-300 hidden sm:inline">Usuario</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+
+          <!-- Menú desplegable -->
+          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl py-2 z-50">
+            <div class="px-4 py-2 border-b border-slate-800 mb-1">
+              <p id="dropdownName" class="text-xs font-bold text-slate-200">Nombre</p>
+              <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
+            </div>
+
+            <button onclick="switchTab('feed')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-compass w-4 text-center"></i> Explorar Tienda
+            </button>
+            <button onclick="switchTab('notifications')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-bell w-4 text-center"></i> Notificaciones
+            </button>
+            <button onclick="switchTab('messages')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-message w-4 text-center"></i> Mensajes
+            </button>
+            <button onclick="switchTab('publish')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-circle-plus w-4 text-center"></i> Publicar
+            </button>
+            <button onclick="switchTab('posts')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-store w-4 text-center"></i> Publicaciones
+            </button>
+
+            <div class="border-t border-slate-800 mt-1 pt-1">
+              <button id="logoutBtn" class="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3 transition cursor-pointer">
+                <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Cerrar sesión
+              </button>
+            </div>
+          </div>
         </div>
-        <button id="logoutBtn" class="ml-2 bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg text-sm transition cursor-pointer">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
+
       </div>
     </div>
   </header>
@@ -45,7 +88,7 @@
   <!-- CONTENEDOR PRINCIPAL -->
   <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
 
-    <!-- PANTALLA 1: LOGIN CON GOOGLE -->
+    <!-- 1. PANTALLA DE LOGIN CON GOOGLE -->
     <section id="loginScreen" class="max-w-md w-full text-center py-12">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
         <div class="w-16 h-16 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto text-2xl border border-indigo-500/20">
@@ -68,7 +111,7 @@
       </div>
     </section>
 
-    <!-- PANTALLA 2: FORMULARIO DE REGISTRO (ONBOARDING) -->
+    <!-- 2. FORMULARIO DE REGISTRO (ONBOARDING) -->
     <section id="onboardingScreen" class="hidden max-w-xl w-full py-8">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl">
         <div class="mb-6">
@@ -108,7 +151,6 @@
             </div>
           </div>
 
-          <!-- Input condicional para País "Otro" -->
           <div id="otherCountryContainer" class="hidden">
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Especifica tu país</label>
             <input type="text" id="formOtherCountry" placeholder="Escribe el nombre de tu país" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
@@ -138,13 +180,12 @@
               </label>
 
               <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition col-span-2">
-                <input type="radio" name="sellingCategory" value="Otro" id="radioOtherCategory" class="accent-indigo-500">
+                <input type="radio" name="sellingCategory" value="Otro" class="accent-indigo-500">
                 <span class="text-sm font-medium"><i class="fa-solid fa-plus text-indigo-400 mr-1"></i> Otro</span>
               </label>
             </div>
           </div>
 
-          <!-- Input condicional para Categoría "Otro" -->
           <div id="otherCategoryContainer" class="hidden">
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">¿Qué quieres vender específicamente?</label>
             <input type="text" id="formOtherCategory" placeholder="Escribe tu categoría o servicio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
@@ -157,37 +198,186 @@
       </div>
     </section>
 
-    <!-- PANTALLA 3: PANEL DEL VENDEDOR -->
-    <section id="dashboardScreen" class="hidden w-full space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <!-- 3. EXPLORAR / FEED PRINCIPAL (INICIO) -->
+    <section id="tabFeed" class="hidden w-full space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl">
         <div>
-          <h1 class="text-2xl font-bold">Panel de Vendedor</h1>
-          <p class="text-slate-400 text-sm mt-1">Conectado a tu base de datos de Moon Shop en tiempo real.</p>
+          <h1 class="text-2xl font-bold">Explorar Comisiones</h1>
+          <p class="text-slate-400 text-sm mt-1">Descubre servicios de creadores y comunícate directamente.</p>
         </div>
-        <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-xl">
-          <i class="fa-solid fa-circle text-[8px] mr-1"></i> Conectado a Firebase
-        </span>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center space-y-4">
-        <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-xl flex items-center justify-center mx-auto text-xl">
-          <i class="fa-solid fa-rocket"></i>
+      <!-- Grid de publicaciones globales -->
+      <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <!-- Ejemplo dinámico de creador -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
+              <span class="text-xs font-semibold text-slate-200">Darwin Creador</span>
+            </div>
+            <button onclick="toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">
+              Seguir
+            </button>
+          </div>
+          
+          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 border border-slate-800 overflow-hidden">
+            <i class="fa-solid fa-image text-3xl"></i>
+          </div>
+
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">Arte Digital</span>
+            <h4 class="font-bold text-sm mt-1">Retrato Anime Personalizado</h4>
+            <p class="text-slate-400 text-xs line-clamp-2 mt-1">Ilustración digital de alta calidad con entrega en 3 días.</p>
+          </div>
+
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="font-extrabold text-emerald-400 text-sm">$25.00</span>
+            <button onclick="openChatWith('3000000000', 'Darwin Creador')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-message"></i> Mensaje
+            </button>
+          </div>
         </div>
-        <h3 class="text-xl font-bold">¡Tu perfil está activo!</h3>
-        <p class="text-slate-400 text-sm max-w-md mx-auto">Ya puedes empezar a gestionar tus comisiones y recibir solicitudes.</p>
+      </div>
+    </section>
+
+    <!-- 4. PUBLICAR COMISIÓN -->
+    <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-6 py-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Panel de Creador</span>
+          <h2 class="text-2xl font-bold mt-1">Publicar Nueva Comisión</h2>
+          <p class="text-slate-400 text-sm mt-1">Agrega una imagen de referencia, título y precio.</p>
+        </div>
+
+        <form id="publishForm" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Título del Servicio</label>
+            <input type="text" id="pubTitle" placeholder="Ej. Arte Estilo Cyberpunk" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Valor / Precio ($ USD)</label>
+            <input type="number" id="pubPrice" placeholder="30.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Enlace de Referencia (Imagen)</label>
+            <input type="url" id="pubReference" placeholder="https://ejemplo.com/foto.jpg" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Descripción Detallada</label>
+            <textarea id="pubDescription" rows="3" placeholder="Explica detalles y plazos..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
+            Publicar en la Tienda
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 5. TUS PUBLICACIONES -->
+    <section id="tabPosts" class="hidden w-full space-y-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex justify-between items-center shadow-xl">
+        <div>
+          <h1 class="text-2xl font-bold">Tus Publicaciones</h1>
+          <p class="text-slate-400 text-sm mt-1">Administra tus servicios activos.</p>
+        </div>
+        <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer">
+          <i class="fa-solid fa-plus mr-1"></i> Nueva
+        </button>
+      </div>
+
+      <div id="myPostsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- 6. MENSAJES (TIPO CHAT DE WHATSAPP) -->
+    <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto space-y-4 py-2">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[550px]">
+        
+        <!-- Panel izquierdo: Buscar y Chats -->
+        <div class="border-r border-slate-800 flex flex-col bg-slate-950/40">
+          <div class="p-4 border-b border-slate-800 space-y-3">
+            <h2 class="font-bold text-sm text-indigo-400"><i class="fa-solid fa-comments mr-2"></i> Mensajes</h2>
+            <!-- Buscador por número de teléfono -->
+            <div class="flex gap-2">
+              <input type="tel" id="searchPhoneInput" placeholder="Buscar por teléfono (0000...)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+              <button onclick="startChatByPhone()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="chatList" class="flex-1 overflow-y-auto divide-y divide-slate-900">
+            <!-- Chat inicial de ejemplo -->
+            <div onclick="selectChat('3000000000', 'Darwin Creador')" class="p-3.5 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition">
+              <div class="w-10 h-10 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-bold text-slate-200 truncate">Darwin Creador</p>
+                <p class="text-[10px] text-slate-400 truncate">¡Hola! Me interesa tu comisión.</p>
+              </div>
+              <span class="text-[10px] text-slate-500">3000000000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel derecho: Conversación Estilo WhatsApp -->
+        <div class="col-span-2 flex flex-col bg-slate-900/50 justify-between">
+          <!-- Cabecera del chat activo -->
+          <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div>
+                <p id="activeChatName" class="text-xs font-bold text-slate-200">Selecciona un chat</p>
+                <p id="activeChatPhone" class="text-[10px] text-slate-400">Teléfono: ---</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mensajes -->
+          <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col justify-end">
+            <div class="text-center text-xs text-slate-500 my-auto">Selecciona una conversación o busca un número de teléfono para chatear.</div>
+          </div>
+
+          <!-- Input de enviar mensaje -->
+          <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-3 border-t border-slate-800 bg-slate-900 flex gap-2">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500" disabled>
+            <button type="submit" id="sendMsgBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50" disabled>
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 7. NOTIFICACIONES -->
+    <section id="tabNotifications" class="hidden max-w-xl w-full mx-auto space-y-4 py-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <i class="fa-solid fa-bell text-indigo-400"></i> Notificaciones
+        </h2>
+        <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs text-slate-300">
+          <p class="font-semibold text-indigo-400">¡Bienvenido a Moon Shop!</p>
+          <p class="text-[11px] text-slate-400 mt-1">Tu cuenta está conectada correctamente.</p>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y CONTROL DINÁMICO -->
+  <!-- LÓGICA DE FIREBASE Y FUNCIONALIDAD COMPLETA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-    // Configuración del proyecto "Tienda"
     const firebaseConfig = {
       apiKey: "AIzaSyByGaZHa8KJjFsfVgF6G1eLFmW70dielc4",
       authDomain: "tienda-33972.firebaseapp.com",
@@ -195,40 +385,33 @@
       projectId: "tienda-33972",
       storageBucket: "tienda-33972.firebasestorage.app",
       messagingSenderId: "348867313665",
-      appId: "1:348867313665:web:f05c56d1a1fad029484000",
-      measurementId: "G-98PREF547Q"
+      appId: "1:348867313665:web:f05c56d1a1fad029484000"
     };
 
-    // Inicializar Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     auth.useDeviceLanguage();
-    
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
-    // Elementos del DOM
+    // Elementos DOM
     const loginScreen = document.getElementById('loginScreen');
     const onboardingScreen = document.getElementById('onboardingScreen');
-    const dashboardScreen = document.getElementById('dashboardScreen');
-    const navUserInfo = document.getElementById('navUserInfo');
+    const mainNavbar = document.getElementById('mainNavbar');
     const googleAuthBtn = document.getElementById('googleAuthBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const vendorForm = document.getElementById('vendorForm');
-
-    // Elementos dinámicos (Otro país y Otra categoría)
+    
     const formCountry = document.getElementById('formCountry');
     const otherCountryContainer = document.getElementById('otherCountryContainer');
     const formOtherCountry = document.getElementById('formOtherCountry');
-
     const categoryRadios = document.querySelectorAll('input[name="sellingCategory"]');
     const otherCategoryContainer = document.getElementById('otherCategoryContainer');
     const formOtherCategory = document.getElementById('formOtherCategory');
 
     let currentUser = null;
 
-    // Mostrar/Ocultar campo de país "Otro"
+    // Control de selección "Otro" en País
     formCountry.addEventListener('change', (e) => {
       if (e.target.value === 'Otro') {
         otherCountryContainer.classList.remove('hidden');
@@ -236,11 +419,10 @@
       } else {
         otherCountryContainer.classList.add('hidden');
         formOtherCountry.required = false;
-        formOtherCountry.value = '';
       }
     });
 
-    // Mostrar/Ocultar campo de categoría "Otro"
+    // Control de selección "Otro" en Categoría
     categoryRadios.forEach(radio => {
       radio.addEventListener('change', (e) => {
         if (e.target.value === 'Otro') {
@@ -249,33 +431,29 @@
         } else {
           otherCategoryContainer.classList.add('hidden');
           formOtherCategory.required = false;
-          formOtherCategory.value = '';
         }
       });
     });
 
-    // 1. INICIAR SESIÓN CON GOOGLE
+    // Login con Google
     googleAuthBtn.addEventListener('click', async () => {
       try {
         const result = await signInWithPopup(auth, provider);
         currentUser = result.user;
         await checkVendorRegistration(currentUser);
       } catch (error) {
-        console.error("Error en autenticación:", error);
-        alert("Error al iniciar sesión con Google: " + error.message);
+        console.error("Error al autenticar:", error);
+        alert("Error de autenticación: " + error.message);
       }
     });
 
-    // 2. CERRAR SESIÓN CON MENSAJE DE AVISO
+    // Cerrar sesión con alerta
     logoutBtn.addEventListener('click', () => {
       alert("Guarde toda la información");
-      signOut(auth).then(() => {
-        showScreen('login');
-        navUserInfo.classList.add('hidden');
-      });
+      signOut(auth);
     });
 
-    // 3. MONITOR DE SESIÓN EN TIEMPO REAL
+    // Observador de Auth
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -283,98 +461,233 @@
       } else {
         currentUser = null;
         showScreen('login');
-        navUserInfo.classList.add('hidden');
       }
     });
 
-    // 4. VERIFICAR SI YA LLENÓ EL FORMULARIO EN LA BASE DE DATOS
     async function checkVendorRegistration(user) {
       const dbRef = ref(db);
       try {
         const snapshot = await get(child(dbRef, `vendors/${user.uid}`));
         if (snapshot.exists()) {
-          const vendorData = snapshot.val();
-          updateHeader(user, vendorData);
-          showScreen('dashboard');
+          const vData = snapshot.val();
+          updateNavUser(user, vData);
+          showScreen('app');
+          switchTab('feed');
         } else {
           document.getElementById('formName').value = user.displayName || '';
           document.getElementById('formEmail').value = user.email || '';
           showScreen('onboarding');
         }
       } catch (err) {
-        console.error("Error leyendo base de datos:", err);
+        console.error(err);
       }
     }
 
-    // 5. GUARDAR DATOS DEL FORMULARIO EN FIREBASE
+    // Guardar formulario de vendedor
     vendorForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentUser) return;
 
-      // Obtener categoría seleccionada
-      const selectedCategoryRadio = document.querySelector('input[name="sellingCategory"]:checked');
-      if (!selectedCategoryRadio) {
-        alert("Por favor selecciona qué deseas vender.");
-        return;
-      }
+      const catRadio = document.querySelector('input[name="sellingCategory"]:checked');
+      if (!catRadio) { alert("Selecciona qué deseas vender."); return; }
 
-      let finalCategory = selectedCategoryRadio.value;
-      if (finalCategory === 'Otro') {
-        finalCategory = formOtherCategory.value.trim();
-        if (!finalCategory) {
-          alert("Por favor especifica qué deseas vender en la opción Otro.");
-          return;
-        }
-      }
+      let category = catRadio.value;
+      if (category === 'Otro') category = formOtherCategory.value;
 
-      // Obtener país
-      let finalCountry = formCountry.value;
-      if (finalCountry === 'Otro') {
-        finalCountry = formOtherCountry.value.trim();
-        if (!finalCountry) {
-          alert("Por favor escribe el nombre de tu país.");
-          return;
-        }
-      }
+      let country = formCountry.value;
+      if (country === 'Otro') country = formOtherCountry.value;
 
       const vendorData = {
         uid: currentUser.uid,
         name: document.getElementById('formName').value,
         email: currentUser.email,
         phone: document.getElementById('formPhone').value,
-        country: finalCountry,
-        category: finalCategory,
+        country: country,
+        category: category,
         photoURL: currentUser.photoURL || '',
         registeredAt: new Date().toISOString()
       };
 
       try {
         await set(ref(db, 'vendors/' + currentUser.uid), vendorData);
-        updateHeader(currentUser, vendorData);
-        showScreen('dashboard');
+        updateNavUser(currentUser, vendorData);
+        showScreen('app');
+        switchTab('feed');
       } catch (error) {
-        console.error("Error al guardar:", error);
-        alert("No se pudieron guardar tus datos.");
+        alert("Error al guardar en Firebase.");
       }
     });
 
-    // FUNCIONES DE CONTROL DE PANTALLAS
     function showScreen(screen) {
       loginScreen.classList.add('hidden');
       onboardingScreen.classList.add('hidden');
-      dashboardScreen.classList.add('hidden');
+      mainNavbar.classList.add('hidden');
+      document.getElementById('tabFeed').classList.add('hidden');
+      document.getElementById('tabPublish').classList.add('hidden');
+      document.getElementById('tabPosts').classList.add('hidden');
+      document.getElementById('tabMessages').classList.add('hidden');
+      document.getElementById('tabNotifications').classList.add('hidden');
 
       if (screen === 'login') loginScreen.classList.remove('hidden');
       if (screen === 'onboarding') onboardingScreen.classList.remove('hidden');
-      if (screen === 'dashboard') dashboardScreen.classList.remove('hidden');
+      if (screen === 'app') {
+        mainNavbar.classList.remove('hidden');
+      }
     }
 
-    function updateHeader(user, vendorData) {
-      navUserInfo.classList.remove('hidden');
-      navUserInfo.classList.add('flex');
-      document.getElementById('userAvatar').src = user.photoURL || 'https://via.placeholder.com/40';
-      document.getElementById('userName').textContent = vendorData.name;
-      document.getElementById('userCategoryBadge').textContent = vendorData.category || 'Vendedor';
+    function updateNavUser(user, vData) {
+      document.getElementById('navUserAvatar').src = user.photoURL || 'https://via.placeholder.com/40';
+      document.getElementById('navUserName').textContent = vData.name;
+      document.getElementById('dropdownName').textContent = vData.name;
+      document.getElementById('dropdownEmail').textContent = user.email;
+    }
+  </script>
+
+  <!-- LÓGICA DE NAVEGACIÓN, MENÚS Y CHAT -->
+  <script>
+    const profileMenuBtn = document.getElementById('profileMenuBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    profileMenuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', () => {
+      profileDropdown.classList.add('hidden');
+    });
+
+    function switchTab(tabName) {
+      profileDropdown.classList.add('hidden');
+      document.getElementById('tabFeed').classList.add('hidden');
+      document.getElementById('tabPublish').classList.add('hidden');
+      document.getElementById('tabPosts').classList.add('hidden');
+      document.getElementById('tabMessages').classList.add('hidden');
+      document.getElementById('tabNotifications').classList.add('hidden');
+
+      if (tabName === 'feed') document.getElementById('tabFeed').classList.remove('hidden');
+      if (tabName === 'publish') document.getElementById('tabPublish').classList.remove('hidden');
+      if (tabName === 'posts') document.getElementById('tabPosts').classList.remove('hidden');
+      if (tabName === 'messages') document.getElementById('tabMessages').classList.remove('hidden');
+      if (tabName === 'notifications') document.getElementById('tabNotifications').classList.remove('hidden');
+    }
+
+    // Seguir / Dejar de seguir creador
+    function toggleFollow(btn) {
+      if (btn.textContent.trim() === 'Seguir') {
+        btn.textContent = 'Siguiendo';
+        btn.className = "bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer";
+      } else {
+        btn.textContent = 'Seguir';
+        btn.className = "bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer";
+      }
+    }
+
+    // Publicar comisión
+    const publishForm = document.getElementById('publishForm');
+    const feedGrid = document.getElementById('feedGrid');
+    const myPostsGrid = document.getElementById('myPostsGrid');
+
+    publishForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const title = document.getElementById('pubTitle').value;
+      const price = document.getElementById('pubPrice').value;
+      const desc = document.getElementById('pubDescription').value;
+
+      const cardHTML = `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+            <div class="flex items-center gap-2">
+              <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
+              <span class="text-xs font-semibold text-slate-200">Tú</span>
+            </div>
+            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>
+          </div>
+          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 border border-slate-800">
+            <i class="fa-solid fa-image text-3xl"></i>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm mt-1">${title}</h4>
+            <p class="text-slate-400 text-xs line-clamp-2 mt-1">${desc}</p>
+          </div>
+          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+            <span class="font-extrabold text-emerald-400 text-sm">$${Number(price).toFixed(2)}</span>
+            <button onclick="openChatWith('0000000000', 'Tú')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-message"></i> Mensaje
+            </button>
+          </div>
+        </div>
+      `;
+
+      feedGrid.insertAdjacentHTML('afterbegin', cardHTML);
+      myPostsGrid.insertAdjacentHTML('afterbegin', cardHTML);
+      publishForm.reset();
+      switchTab('posts');
+    });
+
+    // SISTEMA DE CHAT TIPO WHATSAPP
+    let activePhone = null;
+    const chatStorage = {}; // { "3000000000": [{sender: 'other', text: 'Hola'}] }
+
+    function openChatWith(phone, name) {
+      switchTab('messages');
+      selectChat(phone, name);
+    }
+
+    function selectChat(phone, name) {
+      activePhone = phone;
+      document.getElementById('activeChatName').textContent = name;
+      document.getElementById('activeChatPhone').textContent = "Teléfono: " + phone;
+      
+      document.getElementById('chatInput').disabled = false;
+      document.getElementById('sendMsgBtn').disabled = false;
+
+      renderMessages();
+    }
+
+    function startChatByPhone() {
+      const phoneInput = document.getElementById('searchPhoneInput').value.trim();
+      if (!phoneInput) {
+        alert("Ingresa un número de teléfono válido.");
+        return;
+      }
+      openChatWith(phoneInput, "Usuario (" + phoneInput + ")");
+      document.getElementById('searchPhoneInput').value = '';
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || !activePhone) return;
+
+      if (!chatStorage[activePhone]) {
+        chatStorage[activePhone] = [];
+      }
+
+      chatStorage[activePhone].push({ sender: 'me', text: text });
+      input.value = '';
+      renderMessages();
+    }
+
+    function renderMessages() {
+      const box = document.getElementById('chatMessagesBox');
+      box.innerHTML = '';
+
+      if (!activePhone || !chatStorage[activePhone] || chatStorage[activePhone].length === 0) {
+        box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto">Inicia la conversación enviando un mensaje.</div>`;
+        return;
+      }
+
+      chatStorage[activePhone].forEach(msg => {
+        const isMe = msg.sender === 'me';
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `max-w-[75%] p-3 rounded-2xl text-xs ${isMe ? 'bg-indigo-600 text-white ml-auto rounded-br-none' : 'bg-slate-800 text-slate-200 mr-auto rounded-bl-none'}`;
+        msgDiv.textContent = msg.text;
+        box.appendChild(msgDiv);
+      });
+
+      box.scrollTop = box.scrollHeight;
     }
   </script>
 </body>
