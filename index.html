@@ -28,7 +28,7 @@
         </span>
       </div>
 
-      <!-- User Profile Header Info (Hidden when logged out) -->
+      <!-- User Profile Header Info -->
       <div id="navUserInfo" class="hidden items-center gap-3">
         <img id="userAvatar" src="" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-indigo-500">
         <div class="hidden sm:block text-left">
@@ -56,7 +56,7 @@
           <p class="text-slate-400 text-sm mt-2">Inicia sesión con tu cuenta de Google para registrarte como vendedor y gestionar tus comisiones.</p>
         </div>
 
-        <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg">
+        <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg cursor-pointer">
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -133,7 +133,7 @@
             </div>
           </div>
 
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-4">
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-4 cursor-pointer">
             Guardar Perfil y Continuar
           </button>
         </form>
@@ -168,7 +168,7 @@
   <!-- FIREBASE LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
@@ -188,6 +188,8 @@
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const auth = getAuth(app);
+    auth.useDeviceLanguage(); // Usa el idioma del navegador para el popup de Google
+    
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
@@ -202,33 +204,24 @@
 
     let currentUser = null;
 
-    // Iniciar sesión con Google usando redirección (ideal para tablets/móviles y GitHub Pages)
+    // Iniciar sesión con Google usando Popup
     googleAuthBtn.addEventListener('click', async () => {
       try {
-        await signInWithRedirect(auth, provider);
+        const result = await signInWithPopup(auth, provider);
+        currentUser = result.user;
+        checkVendorRegistration(currentUser);
       } catch (error) {
         console.error("Error al autenticar:", error);
-        alert("Ocurrió un error al redirigir a Google.");
+        alert("Error de autenticación: " + error.message);
       }
     });
-
-    // Procesar el resultado cuando Google redirige de vuelta a la página
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result && result.user) {
-          currentUser = result.user;
-          checkVendorRegistration(currentUser);
-        }
-      }).catch((error) => {
-        console.error("Error en el resultado de redirección:", error);
-      });
 
     // Cerrar sesión
     logoutBtn.addEventListener('click', () => {
       signOut(auth);
     });
 
-    // Observar estado de autenticación de forma continua
+    // Observar estado de autenticación
     onAuthStateChanged(auth, (user) => {
       if (user) {
         currentUser = user;
