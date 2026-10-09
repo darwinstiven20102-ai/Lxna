@@ -16,31 +16,23 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
 
-  <!-- NAVBAR (Oculto en Login) -->
+  <!-- NAVBAR -->
   <header id="mainNavbar" class="hidden border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
       
-      <!-- Logo y Categoría -->
+      <!-- Logo -->
       <div class="flex items-center gap-4">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
           <i class="fa-solid fa-store"></i>
         </div>
-        <div>
-          <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            Moon Shop
-          </span>
-          <select id="categorySelector" class="hidden sm:block bg-transparent text-slate-400 text-xs font-medium focus:outline-none cursor-pointer mt-0.5">
-            <option value="dibujo" class="bg-slate-900">🎨 Dibujos / Arte Digital</option>
-            <option value="videojuegos" class="bg-slate-900">🎮 Ítems de Videojuegos</option>
-            <option value="ropa" class="bg-slate-900">👕 Ropa / Ropa Virtual</option>
-            <option value="programacion" class="bg-slate-900">💻 Desarrollo / Programación</option>
-          </select>
-        </div>
+        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+          Moon Shop
+        </span>
       </div>
 
       <!-- Navegación y Perfil -->
       <div class="flex items-center gap-4 relative">
-        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition hidden sm:inline">Explorar Tienda</button>
+        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition hidden sm:inline cursor-pointer">Explorar Tienda</button>
         
         <!-- Ícono del Perfil -->
         <div class="relative">
@@ -96,7 +88,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-bold">Bienvenido a Moon Shop</h2>
-          <p class="text-slate-400 text-sm mt-2">Inicia sesión con tu cuenta de Google para registrarte como vendedor y gestionar tus comisiones.</p>
+          <p class="text-slate-400 text-sm mt-2">Inicia sesión con tu cuenta de Google para registrarte y vender tus ítems.</p>
         </div>
 
         <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg cursor-pointer">
@@ -117,7 +109,6 @@
         <div class="mb-6">
           <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Paso 2 de 2</span>
           <h2 class="text-2xl font-bold mt-1">Completa tu perfil de vendedor</h2>
-          <p class="text-slate-400 text-sm mt-1">Ingresa tus datos y selecciona qué deseas ofrecer en la tienda.</p>
         </div>
 
         <form id="vendorForm" class="space-y-4">
@@ -153,42 +144,7 @@
 
           <div id="otherCountryContainer" class="hidden">
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Especifica tu país</label>
-            <input type="text" id="formOtherCountry" placeholder="Escribe el nombre de tu país" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-2">¿Qué quieres vender?</label>
-            <div class="grid grid-cols-2 gap-3">
-              <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="radio" name="sellingCategory" value="Dibujos / Arte Digital" class="accent-indigo-500">
-                <span class="text-sm font-medium"><i class="fa-solid fa-palette text-indigo-400 mr-1"></i> Dibujos / Arte</span>
-              </label>
-
-              <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="radio" name="sellingCategory" value="Ítems de Videojuegos" class="accent-indigo-500">
-                <span class="text-sm font-medium"><i class="fa-solid fa-gamepad text-indigo-400 mr-1"></i> Ítems Videojuegos</span>
-              </label>
-
-              <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="radio" name="sellingCategory" value="Ropa / Ropa Virtual" class="accent-indigo-500">
-                <span class="text-sm font-medium"><i class="fa-solid fa-shirt text-indigo-400 mr-1"></i> Ropa / Diseños</span>
-              </label>
-
-              <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="radio" name="sellingCategory" value="Desarrollo / Programación" class="accent-indigo-500">
-                <span class="text-sm font-medium"><i class="fa-solid fa-code text-indigo-400 mr-1"></i> Desarrollo / Scripts</span>
-              </label>
-
-              <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition col-span-2">
-                <input type="radio" name="sellingCategory" value="Otro" class="accent-indigo-500">
-                <span class="text-sm font-medium"><i class="fa-solid fa-plus text-indigo-400 mr-1"></i> Otro</span>
-              </label>
-            </div>
-          </div>
-
-          <div id="otherCategoryContainer" class="hidden">
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">¿Qué quieres vender específicamente?</label>
-            <input type="text" id="formOtherCategory" placeholder="Escribe tu categoría o servicio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            <input type="text" id="formOtherCountry" placeholder="Escribe tu país" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
 
           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-4 cursor-pointer">
@@ -198,23 +154,23 @@
       </div>
     </section>
 
-    <!-- 3. EXPLORAR / FEED PRINCIPAL (INICIO) -->
+    <!-- 3. EXPLORAR / FEED PRINCIPAL (TODAS LAS PUBLICACIONES) -->
     <section id="tabFeed" class="hidden w-full space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold">Explorar Comisiones</h1>
-          <p class="text-slate-400 text-sm mt-1">Descubre servicios de creadores y comunícate directamente.</p>
+          <h1 class="text-2xl font-bold">Explorar Tienda</h1>
+          <p class="text-slate-400 text-sm mt-1">Todas las publicaciones recientes de la comunidad.</p>
         </div>
       </div>
 
-      <!-- Grid de publicaciones globales -->
+      <!-- Grid de todas las publicaciones -->
       <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <!-- Ejemplo dinámico de creador -->
+        <!-- Ejemplo inicial en el feed -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
           <div class="flex items-center justify-between pb-2 border-b border-slate-800">
             <div class="flex items-center gap-2">
               <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
-              <span class="text-xs font-semibold text-slate-200">Darwin Creador</span>
+              <span class="text-xs font-semibold text-slate-200">Darwin Rincon</span>
             </div>
             <button onclick="toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">
               Seguir
@@ -222,18 +178,21 @@
           </div>
           
           <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 border border-slate-800 overflow-hidden">
-            <i class="fa-solid fa-image text-3xl"></i>
+            <i class="fa-solid fa-gamepad text-3xl"></i>
           </div>
 
           <div>
-            <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">Arte Digital</span>
-            <h4 class="font-bold text-sm mt-1">Retrato Anime Personalizado</h4>
-            <p class="text-slate-400 text-xs line-clamp-2 mt-1">Ilustración digital de alta calidad con entrega en 3 días.</p>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">Videojuego</span>
+              <span class="text-[10px] text-slate-400">Roblox (MM2)</span>
+            </div>
+            <h4 class="font-bold text-sm">Godly Item Pack</h4>
+            <p class="text-slate-400 text-xs line-clamp-2 mt-1">Ítem exclusivo con entrega inmediata en servidor privado.</p>
           </div>
 
           <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-            <span class="font-extrabold text-emerald-400 text-sm">$25.00</span>
-            <button onclick="openChatWith('3000000000', 'Darwin Creador')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+            <span class="font-extrabold text-emerald-400 text-sm">$15.00</span>
+            <button onclick="openChatDirectly('Darwin Rincon', '3000000000')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
               <i class="fa-solid fa-message"></i> Mensaje
             </button>
           </div>
@@ -241,34 +200,52 @@
       </div>
     </section>
 
-    <!-- 4. PUBLICAR COMISIÓN -->
+    <!-- 4. PUBLICAR ÍTEM CON FOTO DE DISPOSITIVO, CATEGORÍA Y JUEGO -->
     <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-6 py-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Panel de Creador</span>
-          <h2 class="text-2xl font-bold mt-1">Publicar Nueva Comisión</h2>
-          <p class="text-slate-400 text-sm mt-1">Agrega una imagen de referencia, título y precio.</p>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Panel de Vendedor</span>
+          <h2 class="text-2xl font-bold mt-1">Publicar Nuevo Ítem</h2>
+          <p class="text-slate-400 text-sm mt-1">Sube una foto desde tu dispositivo e indica los detalles.</p>
         </div>
 
         <form id="publishForm" class="space-y-4">
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Título del Servicio</label>
-            <input type="text" id="pubTitle" placeholder="Ej. Arte Estilo Cyberpunk" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Categoría del Ítem / Servicio</label>
+            <select id="pubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+              <option value="">Selecciona una categoría...</option>
+              <option value="Arte / Dibujo">Arte / Dibujo</option>
+              <option value="Videojuegos">Videojuegos</option>
+              <option value="Ropa Virtual">Ropa Virtual</option>
+              <option value="Programación / Scripts">Programación / Scripts</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombre del Juego (O servicio)</label>
+            <input type="text" id="pubGameName" placeholder="Ej. Roblox, Brawl Stars, Ninguno..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Título de la Publicación</label>
+            <input type="text" id="pubTitle" placeholder="Ej. Espada Legendaria / Retrato" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
 
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Valor / Precio ($ USD)</label>
-            <input type="number" id="pubPrice" placeholder="30.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            <input type="number" id="pubPrice" placeholder="10.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <!-- Subir foto desde el dispositivo -->
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Subir Foto desde el Dispositivo</label>
+            <input type="file" id="pubImageFile" accept="image/*" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-300 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
           </div>
 
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Enlace de Referencia (Imagen)</label>
-            <input type="url" id="pubReference" placeholder="https://ejemplo.com/foto.jpg" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Descripción Detallada</label>
-            <textarea id="pubDescription" rows="3" placeholder="Explica detalles y plazos..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Descripción</label>
+            <textarea id="pubDescription" rows="3" placeholder="Detalles de entrega..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
           </div>
 
           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
@@ -283,7 +260,7 @@
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex justify-between items-center shadow-xl">
         <div>
           <h1 class="text-2xl font-bold">Tus Publicaciones</h1>
-          <p class="text-slate-400 text-sm mt-1">Administra tus servicios activos.</p>
+          <p class="text-slate-400 text-sm mt-1">Administra tus artículos publicados.</p>
         </div>
         <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer">
           <i class="fa-solid fa-plus mr-1"></i> Nueva
@@ -293,41 +270,22 @@
       <div id="myPostsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- 6. MENSAJES (TIPO CHAT DE WHATSAPP) -->
+    <!-- 6. CHAT DIRECTO TIPO WHATSAPP -->
     <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto space-y-4 py-2">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[550px]">
         
-        <!-- Panel izquierdo: Buscar y Chats -->
+        <!-- Lista de Chats -->
         <div class="border-r border-slate-800 flex flex-col bg-slate-950/40">
-          <div class="p-4 border-b border-slate-800 space-y-3">
-            <h2 class="font-bold text-sm text-indigo-400"><i class="fa-solid fa-comments mr-2"></i> Mensajes</h2>
-            <!-- Buscador por número de teléfono -->
-            <div class="flex gap-2">
-              <input type="tel" id="searchPhoneInput" placeholder="Buscar por teléfono (0000...)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
-              <button onclick="startChatByPhone()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </button>
-            </div>
+          <div class="p-4 border-b border-slate-800">
+            <h2 class="font-bold text-sm text-indigo-400"><i class="fa-solid fa-comments mr-2"></i> Mensajes Directos</h2>
           </div>
-
           <div id="chatList" class="flex-1 overflow-y-auto divide-y divide-slate-900">
-            <!-- Chat inicial de ejemplo -->
-            <div onclick="selectChat('3000000000', 'Darwin Creador')" class="p-3.5 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition">
-              <div class="w-10 h-10 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
-                <i class="fa-solid fa-user"></i>
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-xs font-bold text-slate-200 truncate">Darwin Creador</p>
-                <p class="text-[10px] text-slate-400 truncate">¡Hola! Me interesa tu comisión.</p>
-              </div>
-              <span class="text-[10px] text-slate-500">3000000000</span>
-            </div>
+            <!-- Se llena dinámicamente -->
           </div>
         </div>
 
-        <!-- Panel derecho: Conversación Estilo WhatsApp -->
+        <!-- Ventana de Chat Específica -->
         <div class="col-span-2 flex flex-col bg-slate-900/50 justify-between">
-          <!-- Cabecera del chat activo -->
           <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
@@ -335,17 +293,15 @@
               </div>
               <div>
                 <p id="activeChatName" class="text-xs font-bold text-slate-200">Selecciona un chat</p>
-                <p id="activeChatPhone" class="text-[10px] text-slate-400">Teléfono: ---</p>
+                <p id="activeChatPhone" class="text-[10px] text-slate-400">Chat activo</p>
               </div>
             </div>
           </div>
 
-          <!-- Mensajes -->
           <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col justify-end">
-            <div class="text-center text-xs text-slate-500 my-auto">Selecciona una conversación o busca un número de teléfono para chatear.</div>
+            <div class="text-center text-xs text-slate-500 my-auto">Haz clic en el botón "Mensaje" de cualquier publicación para chatear directamente.</div>
           </div>
 
-          <!-- Input de enviar mensaje -->
           <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-3 border-t border-slate-800 bg-slate-900 flex gap-2">
             <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500" disabled>
             <button type="submit" id="sendMsgBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50" disabled>
@@ -365,7 +321,7 @@
         </h2>
         <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs text-slate-300">
           <p class="font-semibold text-indigo-400">¡Bienvenido a Moon Shop!</p>
-          <p class="text-[11px] text-slate-400 mt-1">Tu cuenta está conectada correctamente.</p>
+          <p class="text-[11px] text-slate-400 mt-1">Conectado y listo para vender.</p>
         </div>
       </div>
     </section>
@@ -394,7 +350,6 @@
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
-    // Elementos DOM
     const loginScreen = document.getElementById('loginScreen');
     const onboardingScreen = document.getElementById('onboardingScreen');
     const mainNavbar = document.getElementById('mainNavbar');
@@ -405,13 +360,10 @@
     const formCountry = document.getElementById('formCountry');
     const otherCountryContainer = document.getElementById('otherCountryContainer');
     const formOtherCountry = document.getElementById('formOtherCountry');
-    const categoryRadios = document.querySelectorAll('input[name="sellingCategory"]');
-    const otherCategoryContainer = document.getElementById('otherCategoryContainer');
-    const formOtherCategory = document.getElementById('formOtherCategory');
 
     let currentUser = null;
+    let currentUserName = "Usuario";
 
-    // Control de selección "Otro" en País
     formCountry.addEventListener('change', (e) => {
       if (e.target.value === 'Otro') {
         otherCountryContainer.classList.remove('hidden');
@@ -422,38 +374,21 @@
       }
     });
 
-    // Control de selección "Otro" en Categoría
-    categoryRadios.forEach(radio => {
-      radio.addEventListener('change', (e) => {
-        if (e.target.value === 'Otro') {
-          otherCategoryContainer.classList.remove('hidden');
-          formOtherCategory.required = true;
-        } else {
-          otherCategoryContainer.classList.add('hidden');
-          formOtherCategory.required = false;
-        }
-      });
-    });
-
-    // Login con Google
     googleAuthBtn.addEventListener('click', async () => {
       try {
         const result = await signInWithPopup(auth, provider);
         currentUser = result.user;
         await checkVendorRegistration(currentUser);
       } catch (error) {
-        console.error("Error al autenticar:", error);
         alert("Error de autenticación: " + error.message);
       }
     });
 
-    // Cerrar sesión con alerta
     logoutBtn.addEventListener('click', () => {
       alert("Guarde toda la información");
       signOut(auth);
     });
 
-    // Observador de Auth
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
@@ -470,6 +405,7 @@
         const snapshot = await get(child(dbRef, `vendors/${user.uid}`));
         if (snapshot.exists()) {
           const vData = snapshot.val();
+          currentUserName = vData.name;
           updateNavUser(user, vData);
           showScreen('app');
           switchTab('feed');
@@ -483,16 +419,9 @@
       }
     }
 
-    // Guardar formulario de vendedor
     vendorForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!currentUser) return;
-
-      const catRadio = document.querySelector('input[name="sellingCategory"]:checked');
-      if (!catRadio) { alert("Selecciona qué deseas vender."); return; }
-
-      let category = catRadio.value;
-      if (category === 'Otro') category = formOtherCategory.value;
 
       let country = formCountry.value;
       if (country === 'Otro') country = formOtherCountry.value;
@@ -503,13 +432,13 @@
         email: currentUser.email,
         phone: document.getElementById('formPhone').value,
         country: country,
-        category: category,
         photoURL: currentUser.photoURL || '',
         registeredAt: new Date().toISOString()
       };
 
       try {
         await set(ref(db, 'vendors/' + currentUser.uid), vendorData);
+        currentUserName = vendorData.name;
         updateNavUser(currentUser, vendorData);
         showScreen('app');
         switchTab('feed');
@@ -530,9 +459,7 @@
 
       if (screen === 'login') loginScreen.classList.remove('hidden');
       if (screen === 'onboarding') onboardingScreen.classList.remove('hidden');
-      if (screen === 'app') {
-        mainNavbar.classList.remove('hidden');
-      }
+      if (screen === 'app') mainNavbar.classList.remove('hidden');
     }
 
     function updateNavUser(user, vData) {
@@ -541,9 +468,12 @@
       document.getElementById('dropdownName').textContent = vData.name;
       document.getElementById('dropdownEmail').textContent = user.email;
     }
+
+    // Exponer nombre de usuario globalmente
+    window.getCurrentUserName = () => currentUserName;
   </script>
 
-  <!-- LÓGICA DE NAVEGACIÓN, MENÚS Y CHAT -->
+  <!-- NAVEGACIÓN Y CHAT DIRECTO -->
   <script>
     const profileMenuBtn = document.getElementById('profileMenuBtn');
     const profileDropdown = document.getElementById('profileDropdown');
@@ -572,7 +502,6 @@
       if (tabName === 'notifications') document.getElementById('tabNotifications').classList.remove('hidden');
     }
 
-    // Seguir / Dejar de seguir creador
     function toggleFollow(btn) {
       if (btn.textContent.trim() === 'Seguir') {
         btn.textContent = 'Siguiendo';
@@ -583,103 +512,129 @@
       }
     }
 
-    // Publicar comisión
+    // Publicar ítem con foto del dispositivo
     const publishForm = document.getElementById('publishForm');
     const feedGrid = document.getElementById('feedGrid');
     const myPostsGrid = document.getElementById('myPostsGrid');
 
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
+      const category = document.getElementById('pubCategory').value;
+      const gameName = document.getElementById('pubGameName').value;
       const title = document.getElementById('pubTitle').value;
       const price = document.getElementById('pubPrice').value;
       const desc = document.getElementById('pubDescription').value;
+      const fileInput = document.getElementById('pubImageFile');
 
-      const cardHTML = `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div class="flex items-center gap-2">
-              <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
-              <span class="text-xs font-semibold text-slate-200">Tú</span>
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const imageUrl = event.target.result;
+        const author = window.getCurrentUserName ? window.getCurrentUserName() : "Tú";
+
+        const cardHTML = `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
+                <span class="text-xs font-semibold text-slate-200">${author}</span>
+              </div>
+              <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>
             </div>
-            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>
-          </div>
-          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 border border-slate-800">
-            <i class="fa-solid fa-image text-3xl"></i>
-          </div>
-          <div>
-            <h4 class="font-bold text-sm mt-1">${title}</h4>
-            <p class="text-slate-400 text-xs line-clamp-2 mt-1">${desc}</p>
-          </div>
-          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-            <span class="font-extrabold text-emerald-400 text-sm">$${Number(price).toFixed(2)}</span>
-            <button onclick="openChatWith('0000000000', 'Tú')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
-              <i class="fa-solid fa-message"></i> Mensaje
-            </button>
-          </div>
-        </div>
-      `;
+            
+            <div class="h-40 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+              <img src="${imageUrl}" class="w-full h-full object-cover">
+            </div>
 
-      feedGrid.insertAdjacentHTML('afterbegin', cardHTML);
-      myPostsGrid.insertAdjacentHTML('afterbegin', cardHTML);
-      publishForm.reset();
-      switchTab('posts');
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">${category}</span>
+                <span class="text-[10px] text-slate-400">${gameName}</span>
+              </div>
+              <h4 class="font-bold text-sm">${title}</h4>
+              <p class="text-slate-400 text-xs line-clamp-2 mt-1">${desc}</p>
+            </div>
+
+            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+              <span class="font-extrabold text-emerald-400 text-sm">$${Number(price).toFixed(2)}</span>
+              <button onclick="openChatDirectly('${author}', '0000000000')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-message"></i> Mensaje
+              </button>
+            </div>
+          </div>
+        `;
+
+        feedGrid.insertAdjacentHTML('afterbegin', cardHTML);
+        myPostsGrid.insertAdjacentHTML('afterbegin', cardHTML);
+        publishForm.reset();
+        switchTab('feed');
+      };
+
+      if (fileInput.files && fileInput.files[0]) {
+        reader.readAsDataURL(fileInput.files[0]);
+      }
     });
 
-    // SISTEMA DE CHAT TIPO WHATSAPP
-    let activePhone = null;
-    const chatStorage = {}; // { "3000000000": [{sender: 'other', text: 'Hola'}] }
+    // SISTEMA DE CHAT ESPECÍFICO CON ESA PERSONA
+    let activeChatUser = null;
+    const chatStorage = {};
 
-    function openChatWith(phone, name) {
+    function openChatDirectly(userName, phone) {
+      activeChatUser = userName;
       switchTab('messages');
-      selectChat(phone, name);
-    }
 
-    function selectChat(phone, name) {
-      activePhone = phone;
-      document.getElementById('activeChatName').textContent = name;
-      document.getElementById('activeChatPhone').textContent = "Teléfono: " + phone;
+      document.getElementById('activeChatName').textContent = userName;
+      document.getElementById('activeChatPhone').textContent = "Vendedor / Creador";
       
       document.getElementById('chatInput').disabled = false;
       document.getElementById('sendMsgBtn').disabled = false;
 
-      renderMessages();
-    }
-
-    function startChatByPhone() {
-      const phoneInput = document.getElementById('searchPhoneInput').value.trim();
-      if (!phoneInput) {
-        alert("Ingresa un número de teléfono válido.");
-        return;
+      // Actualizar lista lateral de chats
+      const chatList = document.getElementById('chatList');
+      if (!document.getElementById('chat-item-' + userName)) {
+        const item = document.createElement('div');
+        item.id = 'chat-item-' + userName;
+        item.className = "p-3.5 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition bg-slate-800/30";
+        item.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-bold text-slate-200 truncate">${userName}</p>
+            <p class="text-[10px] text-slate-400 truncate">Chat directo</p>
+          </div>
+        `;
+        item.onclick = () => openChatDirectly(userName, phone);
+        chatList.appendChild(item);
       }
-      openChatWith(phoneInput, "Usuario (" + phoneInput + ")");
-      document.getElementById('searchPhoneInput').value = '';
+
+      renderChatMessages();
     }
 
     function sendChatMessage(e) {
       e.preventDefault();
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
-      if (!text || !activePhone) return;
+      if (!text || !activeChatUser) return;
 
-      if (!chatStorage[activePhone]) {
-        chatStorage[activePhone] = [];
+      if (!chatStorage[activeChatUser]) {
+        chatStorage[activeChatUser] = [];
       }
 
-      chatStorage[activePhone].push({ sender: 'me', text: text });
+      chatStorage[activeChatUser].push({ sender: 'me', text: text });
       input.value = '';
-      renderMessages();
+      renderChatMessages();
     }
 
-    function renderMessages() {
+    function renderChatMessages() {
       const box = document.getElementById('chatMessagesBox');
       box.innerHTML = '';
 
-      if (!activePhone || !chatStorage[activePhone] || chatStorage[activePhone].length === 0) {
-        box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto">Inicia la conversación enviando un mensaje.</div>`;
+      if (!activeChatUser || !chatStorage[activeChatUser] || chatStorage[activeChatUser].length === 0) {
+        box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto">Envía un mensaje para iniciar la conversación con ${activeChatUser}.</div>`;
         return;
       }
 
-      chatStorage[activePhone].forEach(msg => {
+      chatStorage[activeChatUser].forEach(msg => {
         const isMe = msg.sender === 'me';
         const msgDiv = document.createElement('div');
         msgDiv.className = `max-w-[75%] p-3 rounded-2xl text-xs ${isMe ? 'bg-indigo-600 text-white ml-auto rounded-br-none' : 'bg-slate-800 text-slate-200 mr-auto rounded-bl-none'}`;
