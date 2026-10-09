@@ -90,8 +90,8 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Número de Teléfono / WhatsApp</label>
-              <input type="tel" id="formPhone" placeholder="+57 300 000 0000" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+              <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Número de Teléfono</label>
+              <input type="tel" id="formPhone" placeholder="0000000000" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
             </div>
             <div>
               <label class="block text-xs font-bold uppercase text-slate-400 mb-1">País</label>
@@ -108,29 +108,46 @@
             </div>
           </div>
 
+          <!-- Input condicional para País "Otro" -->
+          <div id="otherCountryContainer" class="hidden">
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Especifica tu país</label>
+            <input type="text" id="formOtherCountry" placeholder="Escribe el nombre de tu país" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-2">¿Qué quieres vender?</label>
             <div class="grid grid-cols-2 gap-3">
               <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="checkbox" name="sellingCategory" value="Dibujos / Arte Digital" class="accent-indigo-500">
+                <input type="radio" name="sellingCategory" value="Dibujos / Arte Digital" class="accent-indigo-500">
                 <span class="text-sm font-medium"><i class="fa-solid fa-palette text-indigo-400 mr-1"></i> Dibujos / Arte</span>
               </label>
 
               <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="checkbox" name="sellingCategory" value="Ítems de Videojuegos" class="accent-indigo-500">
+                <input type="radio" name="sellingCategory" value="Ítems de Videojuegos" class="accent-indigo-500">
                 <span class="text-sm font-medium"><i class="fa-solid fa-gamepad text-indigo-400 mr-1"></i> Ítems Videojuegos</span>
               </label>
 
               <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="checkbox" name="sellingCategory" value="Ropa / Ropa Virtual" class="accent-indigo-500">
+                <input type="radio" name="sellingCategory" value="Ropa / Ropa Virtual" class="accent-indigo-500">
                 <span class="text-sm font-medium"><i class="fa-solid fa-shirt text-indigo-400 mr-1"></i> Ropa / Diseños</span>
               </label>
 
               <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition">
-                <input type="checkbox" name="sellingCategory" value="Desarrollo / Programación" class="accent-indigo-500">
+                <input type="radio" name="sellingCategory" value="Desarrollo / Programación" class="accent-indigo-500">
                 <span class="text-sm font-medium"><i class="fa-solid fa-code text-indigo-400 mr-1"></i> Desarrollo / Scripts</span>
               </label>
+
+              <label class="border border-slate-800 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500/50 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500/10 transition col-span-2">
+                <input type="radio" name="sellingCategory" value="Otro" id="radioOtherCategory" class="accent-indigo-500">
+                <span class="text-sm font-medium"><i class="fa-solid fa-plus text-indigo-400 mr-1"></i> Otro</span>
+              </label>
             </div>
+          </div>
+
+          <!-- Input condicional para Categoría "Otro" -->
+          <div id="otherCategoryContainer" class="hidden">
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">¿Qué quieres vender específicamente?</label>
+            <input type="text" id="formOtherCategory" placeholder="Escribe tu categoría o servicio" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
 
           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-4 cursor-pointer">
@@ -163,14 +180,14 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE CON TUS NUEVAS CREDENCIALES -->
+  <!-- LÓGICA DE FIREBASE Y CONTROL DINÁMICO -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-    // Tus nuevas credenciales del proyecto "Tienda"
+    // Configuración del proyecto "Tienda"
     const firebaseConfig = {
       apiKey: "AIzaSyByGaZHa8KJjFsfVgF6G1eLFmW70dielc4",
       authDomain: "tienda-33972.firebaseapp.com",
@@ -200,7 +217,42 @@
     const logoutBtn = document.getElementById('logoutBtn');
     const vendorForm = document.getElementById('vendorForm');
 
+    // Elementos dinámicos (Otro país y Otra categoría)
+    const formCountry = document.getElementById('formCountry');
+    const otherCountryContainer = document.getElementById('otherCountryContainer');
+    const formOtherCountry = document.getElementById('formOtherCountry');
+
+    const categoryRadios = document.querySelectorAll('input[name="sellingCategory"]');
+    const otherCategoryContainer = document.getElementById('otherCategoryContainer');
+    const formOtherCategory = document.getElementById('formOtherCategory');
+
     let currentUser = null;
+
+    // Mostrar/Ocultar campo de país "Otro"
+    formCountry.addEventListener('change', (e) => {
+      if (e.target.value === 'Otro') {
+        otherCountryContainer.classList.remove('hidden');
+        formOtherCountry.required = true;
+      } else {
+        otherCountryContainer.classList.add('hidden');
+        formOtherCountry.required = false;
+        formOtherCountry.value = '';
+      }
+    });
+
+    // Mostrar/Ocultar campo de categoría "Otro"
+    categoryRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'Otro') {
+          otherCategoryContainer.classList.remove('hidden');
+          formOtherCategory.required = true;
+        } else {
+          otherCategoryContainer.classList.add('hidden');
+          formOtherCategory.required = false;
+          formOtherCategory.value = '';
+        }
+      });
+    });
 
     // 1. INICIAR SESIÓN CON GOOGLE
     googleAuthBtn.addEventListener('click', async () => {
@@ -214,8 +266,9 @@
       }
     });
 
-    // 2. CERRAR SESIÓN
+    // 2. CERRAR SESIÓN CON MENSAJE DE AVISO
     logoutBtn.addEventListener('click', () => {
+      alert("Guarde toda la información");
       signOut(auth).then(() => {
         showScreen('login');
         navUserInfo.classList.add('hidden');
@@ -258,12 +311,30 @@
       e.preventDefault();
       if (!currentUser) return;
 
-      const categories = Array.from(document.querySelectorAll('input[name="sellingCategory"]:checked'))
-                              .map(cb => cb.value);
-
-      if (categories.length === 0) {
-        alert("Por favor selecciona al menos una categoría.");
+      // Obtener categoría seleccionada
+      const selectedCategoryRadio = document.querySelector('input[name="sellingCategory"]:checked');
+      if (!selectedCategoryRadio) {
+        alert("Por favor selecciona qué deseas vender.");
         return;
+      }
+
+      let finalCategory = selectedCategoryRadio.value;
+      if (finalCategory === 'Otro') {
+        finalCategory = formOtherCategory.value.trim();
+        if (!finalCategory) {
+          alert("Por favor especifica qué deseas vender en la opción Otro.");
+          return;
+        }
+      }
+
+      // Obtener país
+      let finalCountry = formCountry.value;
+      if (finalCountry === 'Otro') {
+        finalCountry = formOtherCountry.value.trim();
+        if (!finalCountry) {
+          alert("Por favor escribe el nombre de tu país.");
+          return;
+        }
       }
 
       const vendorData = {
@@ -271,8 +342,8 @@
         name: document.getElementById('formName').value,
         email: currentUser.email,
         phone: document.getElementById('formPhone').value,
-        country: document.getElementById('formCountry').value,
-        categories: categories,
+        country: finalCountry,
+        category: finalCategory,
         photoURL: currentUser.photoURL || '',
         registeredAt: new Date().toISOString()
       };
@@ -303,7 +374,7 @@
       navUserInfo.classList.add('flex');
       document.getElementById('userAvatar').src = user.photoURL || 'https://via.placeholder.com/40';
       document.getElementById('userName').textContent = vendorData.name;
-      document.getElementById('userCategoryBadge').textContent = vendorData.categories ? vendorData.categories.join(', ') : 'Vendedor';
+      document.getElementById('userCategoryBadge').textContent = vendorData.category || 'Vendedor';
     }
   </script>
 </body>
