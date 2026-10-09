@@ -275,87 +275,124 @@
       <div id="myPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 6. SECCIÓN PERFIL DEL USUARIO AUTÉNTICO -->
+    <!-- 6. SECCIÓN PERFIL CON BANNER Y DATOS -->
     <section id="tabUserProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-        <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800">
-          <div class="relative group">
-            <img id="profilePageAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 rounded-full border-2 border-indigo-500 object-cover shadow-lg">
-            <label class="absolute bottom-0 right-0 bg-indigo-600 hover:bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-md transition">
-              <i class="fa-solid fa-camera text-xs"></i>
-              <input type="file" accept="image/*" class="hidden" onchange="window.updateProfilePhoto(this)">
-            </label>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+        
+        <!-- Contenedor de Banner de Perfil -->
+        <div id="profileBannerBox" class="h-32 sm:h-44 w-full bg-gradient-to-r from-slate-800 to-indigo-950 relative bg-cover bg-center"></div>
+
+        <div class="p-6 relative pt-0">
+          <div class="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 -mt-12 sm:-mt-16 pb-6 border-b border-slate-800">
+            <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
+              <div class="relative group">
+                <img id="profilePageAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-slate-900 object-cover shadow-2xl bg-slate-950">
+                <label class="absolute bottom-1 right-1 bg-indigo-600 hover:bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-md transition">
+                  <i class="fa-solid fa-camera text-xs"></i>
+                  <input type="file" accept="image/*" class="hidden" onchange="window.updateProfilePhoto(this)">
+                </label>
+              </div>
+
+              <div class="space-y-1">
+                <h2 id="profilePageName" class="text-xl sm:text-2xl font-bold text-slate-100">Cargando...</h2>
+                <p id="profilePageEmail" class="text-xs text-slate-400">correo@ejemplo.com</p>
+                <p id="profilePageCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
+              </div>
+            </div>
+
+            <button onclick="window.toggleEditNameModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl transition border border-slate-700 cursor-pointer shadow-lg">
+              <i class="fa-solid fa-pen mr-1"></i> Editar Perfil
+            </button>
           </div>
-          <div class="text-center sm:text-left flex-1 space-y-1">
-            <h2 id="profilePageName" class="text-xl font-bold text-slate-100">Cargando...</h2>
-            <p id="profilePageEmail" class="text-xs text-slate-400">correo@ejemplo.com</p>
-            <p id="profilePageCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
+
+          <!-- Contadores de Seguidores Totales y Posts -->
+          <div class="flex justify-center sm:justify-start gap-6 py-4 border-b border-slate-800/80">
+            <div class="text-center sm:text-left">
+              <span id="profilePostsCount" class="block font-extrabold text-base text-slate-100">0</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Posts</span>
+            </div>
+            <div class="text-center sm:text-left">
+              <span id="profileFollowersCount" class="block font-extrabold text-base text-indigo-400">0</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Seguidores</span>
+            </div>
+            <div class="text-center sm:text-left">
+              <span id="profileFollowingCount" class="block font-extrabold text-base text-slate-100">0</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Siguiendo</span>
+            </div>
+          </div>
+
+          <!-- Modal de Edición de Nombre y Banner -->
+          <div id="editNameModal" class="hidden my-4 bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-4">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Ajustes de Perfil</h4>
             
-            <div class="flex justify-center sm:justify-start gap-4 pt-3">
-              <div class="text-center">
-                <span id="profilePostsCount" class="block font-bold text-sm text-slate-100">0</span>
-                <span class="text-[10px] text-slate-400 uppercase font-semibold">Posts</span>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">Nombre Completo</label>
+                <input type="text" id="editNameInput" placeholder="Nuevo nombre" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
               </div>
-              <div class="text-center">
-                <span id="profileFollowersCount" class="block font-bold text-sm text-slate-100">0</span>
-                <span class="text-[10px] text-slate-400 uppercase font-semibold">Seguidores</span>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-400 mb-1">Imagen de Banner</label>
+                <label class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 cursor-pointer hover:border-indigo-500 transition">
+                  <span id="bannerFileName">Subir imagen de fondo...</span>
+                  <i class="fa-solid fa-image text-indigo-400"></i>
+                  <input type="file" id="editBannerInput" accept="image/*" class="hidden" onchange="document.getElementById('bannerFileName').textContent = this.files[0]?.name || 'Subir imagen de fondo...'">
+                </label>
               </div>
-              <div class="text-center">
-                <span id="profileFollowingCount" class="block font-bold text-sm text-slate-100">0</span>
-                <span class="text-[10px] text-slate-400 uppercase font-semibold">Siguiendo</span>
+
+              <div class="flex justify-end gap-2 pt-1">
+                <button onclick="window.toggleEditNameModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition">Cancelar</button>
+                <button onclick="window.saveNewProfileData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer">
+                  Guardar Cambios
+                </button>
               </div>
             </div>
           </div>
-          <button onclick="window.toggleEditNameModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3.5 py-2 rounded-xl transition border border-slate-700 cursor-pointer">
-            <i class="fa-solid fa-pen mr-1"></i> Editar Perfil
-          </button>
-        </div>
 
-        <div id="editNameModal" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-          <h4 class="text-xs font-bold text-slate-300">Actualizar Nombre</h4>
-          <div class="flex gap-2">
-            <input type="text" id="editNameInput" placeholder="Nuevo nombre" class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
-            <button onclick="window.saveNewName()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer">
-              Guardar
-            </button>
+          <div class="pt-4">
+            <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-grid-2 mr-1"></i> Publicaciones</h3>
+            <div id="userProfilePostsGrid" class="space-y-4"></div>
           </div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-grid-2 mr-1"></i> Publicaciones</h3>
-          <div id="userProfilePostsGrid" class="space-y-4"></div>
         </div>
       </div>
     </section>
 
-    <!-- 6.5 VISTA PÚBLICA DE PERFIL DE OTRO USUARIO (SIN EDICIÓN) -->
+    <!-- 6.5 VISTA PÚBLICA DE PERFIL DE OTRO USUARIO CON BANNER Y DATOS -->
     <section id="tabPublicProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-        <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800">
-          <img id="pubProfileAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 rounded-full border-2 border-indigo-500 object-cover shadow-lg">
-          <div class="text-center sm:text-left flex-1 space-y-1">
-            <h2 id="pubProfileName" class="text-xl font-bold text-slate-100">Nombre del Usuario</h2>
-            <p id="pubProfileCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
-            
-            <div class="flex justify-center sm:justify-start gap-4 pt-2">
-              <div class="text-center">
-                <span id="pubProfilePostsCount" class="block font-bold text-sm text-slate-100">0</span>
-                <span class="text-[10px] text-slate-400 uppercase font-semibold">Posts</span>
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+        
+        <!-- Banner del Perfil Público -->
+        <div id="pubProfileBannerBox" class="h-32 sm:h-44 w-full bg-gradient-to-r from-slate-800 to-indigo-950 relative bg-cover bg-center"></div>
+
+        <div class="p-6 relative pt-0">
+          <div class="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 -mt-12 sm:-mt-16 pb-6 border-b border-slate-800">
+            <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
+              <img id="pubProfileAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-slate-900 object-cover shadow-2xl bg-slate-950">
+              <div class="space-y-1">
+                <h2 id="pubProfileName" class="text-xl sm:text-2xl font-bold text-slate-100">Nombre del Usuario</h2>
+                <p id="pubProfileCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
               </div>
-              <div class="text-center">
-                <span id="pubProfileFollowersCount" class="block font-bold text-sm text-slate-100">0</span>
-                <span class="text-[10px] text-slate-400 uppercase font-semibold">Seguidores</span>
-              </div>
+            </div>
+
+            <!-- Acciones de Perfil de Otro Usuario -->
+            <div id="pubProfileActions" class="flex gap-2"></div>
+          </div>
+
+          <div class="flex justify-center sm:justify-start gap-6 py-4 border-b border-slate-800/80">
+            <div class="text-center sm:text-left">
+              <span id="pubProfilePostsCount" class="block font-extrabold text-base text-slate-100">0</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Posts</span>
+            </div>
+            <div class="text-center sm:text-left">
+              <span id="pubProfileFollowersCount" class="block font-extrabold text-base text-indigo-400">0</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Seguidores</span>
             </div>
           </div>
 
-          <!-- Acciones de Perfil de Otro Usuario -->
-          <div id="pubProfileActions" class="flex gap-2"></div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-newspaper mr-1"></i> Publicaciones</h3>
-          <div id="pubProfilePostsGrid" class="space-y-4"></div>
+          <div class="pt-4">
+            <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-newspaper mr-1"></i> Publicaciones</h3>
+            <div id="pubProfilePostsGrid" class="space-y-4"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -470,7 +507,7 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y SEGUIMIENTO PERSISTENTE -->
+  <!-- LÓGICA COMPLETA DE FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -506,7 +543,7 @@
     let allPostsData = {};
     let allUsersData = {};
     let myFollowsMap = {};
-    let followsMeMap = {};
+    let globalFollowsData = {};
 
     googleAuthBtn.addEventListener('click', async () => {
       try {
@@ -548,24 +585,26 @@
       });
     }
 
-    // MAPA EN TIEMPO REAL DE SEGUIDOS Y SEGUIDORES (PERSISTENTE)
+    // LISTAR Y CALCULAR SEGUIDORES TOTALES EN TIEMPO REAL
     function listenToFollows() {
       if (!currentUser) return;
-      onValue(ref(db, `follows/${currentUser.uid}`), (snapshot) => {
-        myFollowsMap = snapshot.exists() ? snapshot.val() : {};
-        listenToPostsFB();
-      });
 
       onValue(ref(db, 'follows'), (snapshot) => {
-        followsMeMap = {};
-        if (snapshot.exists()) {
-          const allFollows = snapshot.val();
-          Object.keys(allFollows).forEach(fromUid => {
-            if (allFollows[fromUid][currentUser.uid]) {
-              followsMeMap[fromUid] = true;
-            }
-          });
-        }
+        globalFollowsData = snapshot.exists() ? snapshot.val() : {};
+        
+        myFollowsMap = globalFollowsData[currentUser.uid] || {};
+
+        // Calcular cuántos usuarios me siguen a mí
+        let myFollowersCount = 0;
+        Object.keys(globalFollowsData).forEach(fromUid => {
+          if (globalFollowsData[fromUid][currentUser.uid]) {
+            myFollowersCount++;
+          }
+        });
+
+        document.getElementById('profileFollowersCount').textContent = myFollowersCount;
+        document.getElementById('profileFollowingCount').textContent = Object.keys(myFollowsMap).length;
+
         listenToPostsFB();
       });
     }
@@ -604,6 +643,7 @@
         phone: document.getElementById('formPhone').value,
         country: country,
         photoURL: currentUser.photoURL || 'https://via.placeholder.com/100',
+        bannerURL: '',
         registeredAt: new Date().toISOString()
       };
 
@@ -634,15 +674,33 @@
       document.getElementById('editNameModal').classList.toggle('hidden');
     };
 
-    window.saveNewName = async () => {
+    // GUARDAR NOMBRE Y BANNER
+    window.saveNewProfileData = async () => {
+      if (!currentUser) return;
       const newName = document.getElementById('editNameInput').value.trim();
-      if (!newName || !currentUser) return;
+      const bannerFile = document.getElementById('editBannerInput').files[0];
 
-      await update(ref(db, `vendors/${currentUser.uid}`), { name: newName });
-      currentUserData.name = newName;
-      updateNavUser(currentUser, currentUserData);
-      document.getElementById('editNameModal').classList.add('hidden');
-      document.getElementById('editNameInput').value = '';
+      let updates = {};
+      if (newName) updates.name = newName;
+
+      if (bannerFile) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          updates.bannerURL = e.target.result;
+          await update(ref(db, `vendors/${currentUser.uid}`), updates);
+          currentUserData = { ...currentUserData, ...updates };
+          updateNavUser(currentUser, currentUserData);
+          document.getElementById('editNameModal').classList.add('hidden');
+        };
+        reader.readAsDataURL(bannerFile);
+      } else {
+        if (Object.keys(updates).length > 0) {
+          await update(ref(db, `vendors/${currentUser.uid}`), updates);
+          currentUserData = { ...currentUserData, ...updates };
+          updateNavUser(currentUser, currentUserData);
+        }
+        document.getElementById('editNameModal').classList.add('hidden');
+      }
     };
 
     publishForm.addEventListener('submit', (e) => {
@@ -700,7 +758,6 @@
       }
     });
 
-    // SISTEMA DE SEGUIR / DEJAR DE SEGUIR / AMIGOS
     window.toggleFollowUser = async (targetUid) => {
       if (!currentUser || !targetUid || targetUid === currentUser.uid) return;
 
@@ -714,7 +771,6 @@
       }
     };
 
-    // ABRIR PERFIL PÚBLICO DE OTRO USUARIO
     window.openPublicProfile = async (targetUid) => {
       if (currentUser && targetUid === currentUser.uid) {
         switchTab('userProfile');
@@ -725,17 +781,24 @@
       const targetName = userObj.name || 'Usuario';
       const targetPhoto = userObj.photoURL || 'https://via.placeholder.com/100';
       const targetCountry = userObj.country || 'Colombia';
+      const targetBanner = userObj.bannerURL || '';
 
       document.getElementById('pubProfileAvatar').src = targetPhoto;
       document.getElementById('pubProfileName').textContent = targetName;
       document.getElementById('pubProfileCountry').innerHTML = `<i class="fa-solid fa-location-dot mr-1"></i> ${targetCountry}`;
 
-      // Botones de Acción (Seguir / Amigos + Mensaje)
+      const bannerBox = document.getElementById('pubProfileBannerBox');
+      if (targetBanner) {
+        bannerBox.style.backgroundImage = `url('${targetBanner}')`;
+      } else {
+        bannerBox.style.backgroundImage = 'none';
+      }
+
       const actionsBox = document.getElementById('pubProfileActions');
       actionsBox.innerHTML = '';
 
       const isFollowing = myFollowsMap[targetUid];
-      const followsMe = followsMeMap[targetUid];
+      const followsMe = globalFollowsData[targetUid] && globalFollowsData[targetUid][currentUser.uid];
 
       let btnClass = "bg-indigo-600 hover:bg-indigo-500 text-white";
       let btnText = "Seguir";
@@ -757,7 +820,6 @@
         </button>
       `;
 
-      // Cargar Posts del usuario
       const grid = document.getElementById('pubProfilePostsGrid');
       grid.innerHTML = '';
       let postCount = 0;
@@ -767,19 +829,23 @@
           const post = allPostsData[pId];
           if (post.uid === targetUid) {
             postCount++;
-            const card = buildPostCard(pId, post, userObj);
-            grid.appendChild(card);
+            grid.appendChild(buildPostCard(pId, post, userObj));
           }
         });
       }
 
+      // Contar seguidores del usuario ajeno
+      let targetFollowersCount = 0;
+      Object.keys(globalFollowsData).forEach(fUid => {
+        if (globalFollowsData[fUid][targetUid]) targetFollowersCount++;
+      });
+
       document.getElementById('pubProfilePostsCount').textContent = postCount;
-      document.getElementById('pubProfileFollowersCount').textContent = Object.keys(followsMeMap).length;
+      document.getElementById('pubProfileFollowersCount').textContent = targetFollowersCount;
 
       switchTab('publicProfile');
     };
 
-    // GENERADOR UNIVERSAL DE TARGETA DE POST
     function buildPostCard(postId, post, authorUser) {
       const isMine = currentUser && post.uid === currentUser.uid;
       const likesCount = post.likesCount || 0;
@@ -790,7 +856,7 @@
       const authorAvatar = authorUser.photoURL || post.authorPhoto || 'https://via.placeholder.com/40';
 
       const isFollowing = myFollowsMap[post.uid];
-      const followsMe = followsMeMap[post.uid];
+      const followsMe = globalFollowsData[post.uid] && globalFollowsData[post.uid][currentUser?.uid];
 
       let followBtnHTML = '';
       if (!isMine) {
@@ -921,7 +987,6 @@
           const authorUser = allUsersData[post.uid] || {};
 
           const card = buildPostCard(postId, post, authorUser);
-
           feedContainer.appendChild(card);
 
           if (isMine) {
@@ -932,8 +997,6 @@
         });
 
         document.getElementById('profilePostsCount').textContent = myPostsCount;
-        document.getElementById('profileFollowersCount').textContent = Object.keys(followsMeMap).length;
-        document.getElementById('profileFollowingCount').textContent = Object.keys(myFollowsMap).length;
       });
     }
 
@@ -1317,6 +1380,7 @@
     function updateNavUser(user, vData) {
       const avatar = vData.photoURL || 'https://via.placeholder.com/40';
       const name = vData.name || 'Usuario';
+      const banner = vData.bannerURL || '';
 
       document.getElementById('navUserAvatar').src = avatar;
       document.getElementById('navUserName').textContent = name;
@@ -1330,6 +1394,13 @@
       document.getElementById('profilePageName').textContent = name;
       document.getElementById('profilePageEmail').textContent = user.email;
       document.getElementById('profilePageCountry').innerHTML = `<i class="fa-solid fa-location-dot mr-1"></i> ${vData.country || 'Colombia'}`;
+
+      const bannerBox = document.getElementById('profileBannerBox');
+      if (banner) {
+        bannerBox.style.backgroundImage = `url('${banner}')`;
+      } else {
+        bannerBox.style.backgroundImage = 'none';
+      }
     }
   </script>
 
