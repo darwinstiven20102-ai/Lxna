@@ -275,7 +275,7 @@
       <div id="myPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 6. SECCIÓN PERFIL DEL USUARIO -->
+    <!-- 6. SECCIÓN PERFIL DEL USUARIO AUTÉNTICO -->
     <section id="tabUserProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
         <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800">
@@ -324,6 +324,38 @@
         <div>
           <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-grid-2 mr-1"></i> Publicaciones</h3>
           <div id="userProfilePostsGrid" class="space-y-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6.5 VISTA PÚBLICA DE PERFIL DE OTRO USUARIO (SIN EDICIÓN) -->
+    <section id="tabPublicProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800">
+          <img id="pubProfileAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 rounded-full border-2 border-indigo-500 object-cover shadow-lg">
+          <div class="text-center sm:text-left flex-1 space-y-1">
+            <h2 id="pubProfileName" class="text-xl font-bold text-slate-100">Nombre del Usuario</h2>
+            <p id="pubProfileCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
+            
+            <div class="flex justify-center sm:justify-start gap-4 pt-2">
+              <div class="text-center">
+                <span id="pubProfilePostsCount" class="block font-bold text-sm text-slate-100">0</span>
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Posts</span>
+              </div>
+              <div class="text-center">
+                <span id="pubProfileFollowersCount" class="block font-bold text-sm text-slate-100">0</span>
+                <span class="text-[10px] text-slate-400 uppercase font-semibold">Seguidores</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones de Perfil de Otro Usuario -->
+          <div id="pubProfileActions" class="flex gap-2"></div>
+        </div>
+
+        <div>
+          <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-newspaper mr-1"></i> Publicaciones</h3>
+          <div id="pubProfilePostsGrid" class="space-y-4"></div>
         </div>
       </div>
     </section>
@@ -438,7 +470,7 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE COMPLETA -->
+  <!-- LÓGICA DE FIREBASE Y SEGUIMIENTO PERSISTENTE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -473,6 +505,8 @@
     let currentUserData = {};
     let allPostsData = {};
     let allUsersData = {};
+    let myFollowsMap = {};
+    let followsMeMap = {};
 
     googleAuthBtn.addEventListener('click', async () => {
       try {
@@ -493,6 +527,7 @@
         currentUser = user;
         await checkVendorRegistration(user);
         listenToVendors();
+        listenToFollows();
         listenToPostsFB();
         listenToNotifications();
       } else {
@@ -501,7 +536,6 @@
       }
     });
 
-    // Cargar mapa de usuarios para fotos y nombres actualizados en tiempo real
     function listenToVendors() {
       onValue(ref(db, 'vendors'), (snapshot) => {
         if (snapshot.exists()) {
@@ -511,6 +545,28 @@
             updateNavUser(currentUser, currentUserData);
           }
         }
+      });
+    }
+
+    // MAPA EN TIEMPO REAL DE SEGUIDOS Y SEGUIDORES (PERSISTENTE)
+    function listenToFollows() {
+      if (!currentUser) return;
+      onValue(ref(db, `follows/${currentUser.uid}`), (snapshot) => {
+        myFollowsMap = snapshot.exists() ? snapshot.val() : {};
+        listenToPostsFB();
+      });
+
+      onValue(ref(db, 'follows'), (snapshot) => {
+        followsMeMap = {};
+        if (snapshot.exists()) {
+          const allFollows = snapshot.val();
+          Object.keys(allFollows).forEach(fromUid => {
+            if (allFollows[fromUid][currentUser.uid]) {
+              followsMeMap[fromUid] = true;
+            }
+          });
+        }
+        listenToPostsFB();
       });
     }
 
@@ -644,7 +700,202 @@
       }
     });
 
-    // LISTAR POSTS EN TODAS LAS VISTAS
+    // SISTEMA DE SEGUIR / DEJAR DE SEGUIR / AMIGOS
+    window.toggleFollowUser = async (targetUid) => {
+      if (!currentUser || !targetUid || targetUid === currentUser.uid) return;
+
+      const followRef = ref(db, `follows/${currentUser.uid}/${targetUid}`);
+
+      if (myFollowsMap[targetUid]) {
+        await remove(followRef);
+      } else {
+        await set(followRef, true);
+        sendNotification(targetUid, "👤 Nuevo Seguidor", `${currentUserData.name || 'Alguien'} comenzó a seguirte.`);
+      }
+    };
+
+    // ABRIR PERFIL PÚBLICO DE OTRO USUARIO
+    window.openPublicProfile = async (targetUid) => {
+      if (currentUser && targetUid === currentUser.uid) {
+        switchTab('userProfile');
+        return;
+      }
+
+      const userObj = allUsersData[targetUid] || {};
+      const targetName = userObj.name || 'Usuario';
+      const targetPhoto = userObj.photoURL || 'https://via.placeholder.com/100';
+      const targetCountry = userObj.country || 'Colombia';
+
+      document.getElementById('pubProfileAvatar').src = targetPhoto;
+      document.getElementById('pubProfileName').textContent = targetName;
+      document.getElementById('pubProfileCountry').innerHTML = `<i class="fa-solid fa-location-dot mr-1"></i> ${targetCountry}`;
+
+      // Botones de Acción (Seguir / Amigos + Mensaje)
+      const actionsBox = document.getElementById('pubProfileActions');
+      actionsBox.innerHTML = '';
+
+      const isFollowing = myFollowsMap[targetUid];
+      const followsMe = followsMeMap[targetUid];
+
+      let btnClass = "bg-indigo-600 hover:bg-indigo-500 text-white";
+      let btnText = "Seguir";
+
+      if (isFollowing && followsMe) {
+        btnClass = "bg-emerald-600 hover:bg-emerald-500 text-white";
+        btnText = "Amigos";
+      } else if (isFollowing) {
+        btnClass = "bg-slate-800 text-slate-300";
+        btnText = "Siguiendo";
+      }
+
+      actionsBox.innerHTML = `
+        <button onclick="window.toggleFollowUser('${targetUid}')" class="${btnClass} text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">
+          ${btnText}
+        </button>
+        <button onclick="window.openChatWithUser('${targetUid}', '${targetName}', '${targetPhoto}')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-paper-plane"></i> Mensaje
+        </button>
+      `;
+
+      // Cargar Posts del usuario
+      const grid = document.getElementById('pubProfilePostsGrid');
+      grid.innerHTML = '';
+      let postCount = 0;
+
+      if (allPostsData) {
+        Object.keys(allPostsData).reverse().forEach(pId => {
+          const post = allPostsData[pId];
+          if (post.uid === targetUid) {
+            postCount++;
+            const card = buildPostCard(pId, post, userObj);
+            grid.appendChild(card);
+          }
+        });
+      }
+
+      document.getElementById('pubProfilePostsCount').textContent = postCount;
+      document.getElementById('pubProfileFollowersCount').textContent = Object.keys(followsMeMap).length;
+
+      switchTab('publicProfile');
+    };
+
+    // GENERADOR UNIVERSAL DE TARGETA DE POST
+    function buildPostCard(postId, post, authorUser) {
+      const isMine = currentUser && post.uid === currentUser.uid;
+      const likesCount = post.likesCount || 0;
+      const hasLiked = currentUser && post.likes && post.likes[currentUser.uid];
+      const currencyLabel = post.currency || 'USD';
+
+      const authorName = authorUser.name || post.author || 'Usuario';
+      const authorAvatar = authorUser.photoURL || post.authorPhoto || 'https://via.placeholder.com/40';
+
+      const isFollowing = myFollowsMap[post.uid];
+      const followsMe = followsMeMap[post.uid];
+
+      let followBtnHTML = '';
+      if (!isMine) {
+        let btnStyle = "bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white";
+        let btnText = "Seguir";
+
+        if (isFollowing && followsMe) {
+          btnStyle = "bg-emerald-600/20 text-emerald-400 border border-emerald-500/30";
+          btnText = "Amigos";
+        } else if (isFollowing) {
+          btnStyle = "bg-slate-800 text-slate-300";
+          btnText = "Siguiendo";
+        }
+
+        followBtnHTML = `
+          <button onclick="window.toggleFollowUser('${post.uid}')" class="${btnStyle} text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">
+            ${btnText}
+          </button>
+        `;
+      }
+
+      const dotsMenuHTML = isMine ? `
+        <div class="relative">
+          <button onclick="window.togglePostOptions('${postId}', event)" class="text-slate-400 hover:text-white p-1 text-xs cursor-pointer">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+          </button>
+          <div id="post-options-${postId}" class="post-options-dropdown hidden absolute right-0 mt-1 w-36 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl py-1 z-30">
+            <button onclick="window.openEditPostModal('${postId}')" class="w-full text-left px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-800 flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-pen text-indigo-400"></i> Editar
+            </button>
+            <button onclick="window.deletePost('${postId}')" class="w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 flex items-center gap-2 cursor-pointer">
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+          </div>
+        </div>
+      ` : followBtnHTML;
+
+      const postCard = document.createElement('div');
+      postCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 relative";
+      
+      let commentsHTML = '';
+      if (post.comments) {
+        Object.keys(post.comments).forEach(cId => {
+          const c = post.comments[cId];
+          commentsHTML += `
+            <div class="bg-slate-950 p-2.5 rounded-xl text-xs space-y-0.5">
+              <span class="font-bold text-indigo-400">${c.author}:</span>
+              <p class="text-slate-300">${c.text}</p>
+            </div>
+          `;
+        });
+      }
+
+      postCard.innerHTML = `
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+          <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.openPublicProfile('${post.uid}')">
+            <img src="${authorAvatar}" class="w-8 h-8 rounded-full border border-indigo-500 object-cover">
+            <div>
+              <h4 class="text-xs font-bold text-slate-200 hover:text-indigo-400 transition">${authorName}</h4>
+              <span class="text-[10px] text-slate-400">${post.category} • ${post.gameName}</span>
+            </div>
+          </div>
+          ${dotsMenuHTML}
+        </div>
+
+        <div>
+          <h3 class="font-bold text-sm text-slate-100">${post.title}</h3>
+          <p class="text-slate-300 text-xs mt-1 leading-relaxed">${post.description}</p>
+        </div>
+
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 max-h-96 flex items-center justify-center">
+          <img src="${post.image}" class="w-full object-cover">
+        </div>
+
+        <div class="flex justify-between items-center pt-1">
+          <span class="text-emerald-400 font-extrabold text-sm">$${post.price} ${currencyLabel}</span>
+          <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+            <i class="fa-solid fa-paper-plane"></i> Mensaje
+          </button>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
+          <button onclick="window.toggleLikeFB('${postId}', ${hasLiked}, '${post.uid}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer ${hasLiked ? 'text-indigo-400 font-bold' : ''}">
+            <i class="fa-solid fa-thumbs-up"></i> <span>Me gusta (${likesCount})</span>
+          </button>
+          <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer">
+            <i class="fa-solid fa-comment"></i> <span>Comentar</span>
+          </button>
+        </div>
+
+        <div id="comments-box-${postId}" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
+          <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+            ${commentsHTML || '<p class="text-[11px] text-slate-500">Sé el primero en comentar.</p>'}
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="comment-input-${postId}" placeholder="Escribe un comentario..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+            <button onclick="window.addCommentFB('${postId}', '${post.uid}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      `;
+      return postCard;
+    }
+
     function listenToPostsFB() {
       const postsRef = ref(db, 'posts');
       onValue(postsRef, (snapshot) => {
@@ -667,116 +918,25 @@
         Object.keys(allPostsData).reverse().forEach((postId) => {
           const post = allPostsData[postId];
           const isMine = currentUser && post.uid === currentUser.uid;
-          const likesCount = post.likesCount || 0;
-          const hasLiked = currentUser && post.likes && post.likes[currentUser.uid];
-          const currencyLabel = post.currency || 'USD';
-
-          // FOTO Y NOMBRE SIEMPRE ACTUALIZADOS EN TIEMPO REAL DESDE USUARIOS
           const authorUser = allUsersData[post.uid] || {};
-          const authorName = authorUser.name || post.author || 'Usuario';
-          const authorAvatar = authorUser.photoURL || post.authorPhoto || 'https://via.placeholder.com/40';
 
-          // Menú de 3 puntos en CUALQUIER sección si el post es tuyo
-          const dotsMenuHTML = isMine ? `
-            <div class="relative">
-              <button onclick="window.togglePostOptions('${postId}', event)" class="text-slate-400 hover:text-white p-1 text-xs cursor-pointer">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-              </button>
-              <div id="post-options-${postId}" class="post-options-dropdown hidden absolute right-0 mt-1 w-36 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl py-1 z-30">
-                <button onclick="window.openEditPostModal('${postId}')" class="w-full text-left px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-800 flex items-center gap-2 cursor-pointer">
-                  <i class="fa-solid fa-pen text-indigo-400"></i> Editar
-                </button>
-                <button onclick="window.deletePost('${postId}')" class="w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 flex items-center gap-2 cursor-pointer">
-                  <i class="fa-solid fa-trash"></i> Eliminar
-                </button>
-              </div>
-            </div>
-          ` : `<button onclick="window.toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">Seguir</button>`;
+          const card = buildPostCard(postId, post, authorUser);
 
-          // Generador de tarjeta de post
-          function buildCard() {
-            const postCard = document.createElement('div');
-            postCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 relative";
-            
-            let commentsHTML = '';
-            if (post.comments) {
-              Object.keys(post.comments).forEach(cId => {
-                const c = post.comments[cId];
-                commentsHTML += `
-                  <div class="bg-slate-950 p-2.5 rounded-xl text-xs space-y-0.5">
-                    <span class="font-bold text-indigo-400">${c.author}:</span>
-                    <p class="text-slate-300">${c.text}</p>
-                  </div>
-                `;
-              });
-            }
-
-            postCard.innerHTML = `
-              <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                <div class="flex items-center gap-2.5">
-                  <img src="${authorAvatar}" class="w-8 h-8 rounded-full border border-indigo-500 object-cover">
-                  <div>
-                    <h4 class="text-xs font-bold text-slate-200">${authorName}</h4>
-                    <span class="text-[10px] text-slate-400">${post.category} • ${post.gameName}</span>
-                  </div>
-                </div>
-                ${dotsMenuHTML}
-              </div>
-
-              <div>
-                <h3 class="font-bold text-sm text-slate-100">${post.title}</h3>
-                <p class="text-slate-300 text-xs mt-1 leading-relaxed">${post.description}</p>
-              </div>
-
-              <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 max-h-96 flex items-center justify-center">
-                <img src="${post.image}" class="w-full object-cover">
-              </div>
-
-              <div class="flex justify-between items-center pt-1">
-                <span class="text-emerald-400 font-extrabold text-sm">$${post.price} ${currencyLabel}</span>
-                <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
-                  <i class="fa-solid fa-paper-plane"></i> Mensaje
-                </button>
-              </div>
-
-              <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
-                <button onclick="window.toggleLikeFB('${postId}', ${hasLiked}, '${post.uid}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer ${hasLiked ? 'text-indigo-400 font-bold' : ''}">
-                  <i class="fa-solid fa-thumbs-up"></i> <span>Me gusta (${likesCount})</span>
-                </button>
-                <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer">
-                  <i class="fa-solid fa-comment"></i> <span>Comentar</span>
-                </button>
-              </div>
-
-              <div id="comments-box-${postId}" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
-                <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
-                  ${commentsHTML || '<p class="text-[11px] text-slate-500">Sé el primero en comentar.</p>'}
-                </div>
-                <div class="flex gap-2">
-                  <input type="text" id="comment-input-${postId}" placeholder="Escribe un comentario..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
-                  <button onclick="window.addCommentFB('${postId}', '${post.uid}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
-                    <i class="fa-solid fa-paper-plane"></i>
-                  </button>
-                </div>
-              </div>
-            `;
-            return postCard;
-          }
-
-          feedContainer.appendChild(buildCard());
+          feedContainer.appendChild(card);
 
           if (isMine) {
             myPostsCount++;
-            myPostsContainer.appendChild(buildCard());
-            userProfileGrid.appendChild(buildCard());
+            myPostsContainer.appendChild(buildPostCard(postId, post, authorUser));
+            userProfileGrid.appendChild(buildPostCard(postId, post, authorUser));
           }
         });
 
         document.getElementById('profilePostsCount').textContent = myPostsCount;
+        document.getElementById('profileFollowersCount').textContent = Object.keys(followsMeMap).length;
+        document.getElementById('profileFollowingCount').textContent = Object.keys(myFollowsMap).length;
       });
     }
 
-    // TOGGLE MENU OPCIONES
     window.togglePostOptions = (postId, event) => {
       if (event) event.stopPropagation();
       document.querySelectorAll('.post-options-dropdown').forEach(el => {
@@ -1142,6 +1302,7 @@
       document.getElementById('tabPublish').classList.add('hidden');
       document.getElementById('tabPosts').classList.add('hidden');
       document.getElementById('tabUserProfile').classList.add('hidden');
+      document.getElementById('tabPublicProfile').classList.add('hidden');
       document.getElementById('tabMessages').classList.add('hidden');
       document.getElementById('tabNotifications').classList.add('hidden');
 
@@ -1194,6 +1355,7 @@
       document.getElementById('tabPublish').classList.add('hidden');
       document.getElementById('tabPosts').classList.add('hidden');
       document.getElementById('tabUserProfile').classList.add('hidden');
+      document.getElementById('tabPublicProfile').classList.add('hidden');
       document.getElementById('tabMessages').classList.add('hidden');
       document.getElementById('tabNotifications').classList.add('hidden');
 
@@ -1201,6 +1363,7 @@
       if (tabName === 'publish') document.getElementById('tabPublish').classList.remove('hidden');
       if (tabName === 'posts') document.getElementById('tabPosts').classList.remove('hidden');
       if (tabName === 'userProfile') document.getElementById('tabUserProfile').classList.remove('hidden');
+      if (tabName === 'publicProfile') document.getElementById('tabPublicProfile').classList.remove('hidden');
       if (tabName === 'messages') {
         document.getElementById('tabMessages').classList.remove('hidden');
         if (window.innerWidth < 768) {
@@ -1213,18 +1376,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function toggleFollow(btn) {
-      if (btn.textContent.trim() === 'Seguir') {
-        btn.textContent = 'Siguiendo';
-        btn.className = "bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer";
-      } else {
-        btn.textContent = 'Seguir';
-        btn.className = "bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer";
-      }
-    }
-
     window.switchTab = switchTab;
-    window.toggleFollow = toggleFollow;
   </script>
 </body>
 </html>
