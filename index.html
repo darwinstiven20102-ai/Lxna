@@ -12,59 +12,49 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pb-20 md:pb-0">
 
-  <!-- NAVBAR -->
-  <header id="mainNavbar" class="hidden border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+  <!-- NAVBAR SUPERIOR -->
+  <header id="mainNavbar" class="hidden border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      
-      <!-- Logo -->
-      <div class="flex items-center gap-4">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
           <i class="fa-solid fa-store"></i>
         </div>
-        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+        <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
           Moon Shop
         </span>
       </div>
 
-      <!-- Navegación y Perfil -->
-      <div class="flex items-center gap-4 relative">
-        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition hidden sm:inline cursor-pointer">Explorar Tienda</button>
-        
-        <!-- Ícono del Perfil -->
+      <div class="hidden md:flex items-center gap-6">
+        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-compass mr-1"></i> Explorar</button>
+        <button onclick="switchTab('publish')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-circle-plus mr-1"></i> Publicar</button>
+        <button onclick="switchTab('messages')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-message mr-1"></i> Mensajes</button>
+      </div>
+
+      <div class="flex items-center gap-3 relative">
         <div class="relative">
           <button id="profileMenuBtn" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 p-1.5 pr-3 rounded-full transition cursor-pointer">
-            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-8 h-8 rounded-full border border-indigo-500 object-cover">
+            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-7 h-7 rounded-full border border-indigo-500 object-cover">
             <span id="navUserName" class="text-xs font-semibold text-slate-300 hidden sm:inline">Usuario</span>
             <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
           </button>
 
-          <!-- Menú desplegable -->
           <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl py-2 z-50">
             <div class="px-4 py-2 border-b border-slate-800 mb-1">
               <p id="dropdownName" class="text-xs font-bold text-slate-200">Nombre</p>
               <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
             </div>
-
-            <button onclick="switchTab('feed')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
-              <i class="fa-solid fa-compass w-4 text-center"></i> Explorar Tienda
+            <button onclick="switchTab('posts')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
+              <i class="fa-solid fa-store w-4 text-center"></i> Mis Publicaciones
             </button>
             <button onclick="switchTab('notifications')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
               <i class="fa-solid fa-bell w-4 text-center"></i> Notificaciones
             </button>
-            <button onclick="switchTab('messages')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
-              <i class="fa-solid fa-message w-4 text-center"></i> Mensajes
-            </button>
-            <button onclick="switchTab('publish')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
-              <i class="fa-solid fa-circle-plus w-4 text-center"></i> Publicar
-            </button>
-            <button onclick="switchTab('posts')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
-              <i class="fa-solid fa-store w-4 text-center"></i> Publicaciones
-            </button>
-
             <div class="border-t border-slate-800 mt-1 pt-1">
               <button id="logoutBtn" class="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3 transition cursor-pointer">
                 <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Cerrar sesión
@@ -72,25 +62,43 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </header>
 
-  <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center items-center">
+  <!-- NAVBAR INFERIOR MÓVIL -->
+  <nav id="mobileBottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 h-16 z-50 px-4 justify-around items-center md:hidden">
+    <button onclick="switchTab('feed')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
+      <i class="fa-solid fa-compass text-lg"></i>
+      <span class="text-[10px] mt-1">Explorar</span>
+    </button>
+    <button onclick="switchTab('publish')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
+      <i class="fa-solid fa-circle-plus text-lg"></i>
+      <span class="text-[10px] mt-1">Publicar</span>
+    </button>
+    <button onclick="switchTab('messages')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
+      <i class="fa-solid fa-message text-lg"></i>
+      <span class="text-[10px] mt-1">Mensajes</span>
+    </button>
+    <button onclick="switchTab('posts')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
+      <i class="fa-solid fa-store text-lg"></i>
+      <span class="text-[10px] mt-1">Tus Ítems</span>
+    </button>
+  </nav>
 
-    <!-- 1. PANTALLA DE LOGIN CON GOOGLE -->
-    <section id="loginScreen" class="max-w-md w-full text-center py-12">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center">
+
+    <!-- 1. LOGIN CON GOOGLE -->
+    <section id="loginScreen" class="max-w-md w-full text-center py-12 px-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
         <div class="w-16 h-16 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto text-2xl border border-indigo-500/20">
           <i class="fa-solid fa-user-shield"></i>
         </div>
         <div>
-          <h2 class="text-2xl font-bold">Bienvenido a Moon Shop</h2>
-          <p class="text-slate-400 text-sm mt-2">Inicia sesión con tu cuenta de Google para registrarte y vender tus ítems.</p>
+          <h2 class="text-2xl font-bold">Moon Shop</h2>
+          <p class="text-slate-400 text-sm mt-2">Inicia sesión con Google para acceder a la tienda en tiempo real.</p>
         </div>
-
         <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg cursor-pointer">
           <svg class="w-5 h-5" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -103,25 +111,22 @@
       </div>
     </section>
 
-    <!-- 2. FORMULARIO DE REGISTRO (ONBOARDING) -->
-    <section id="onboardingScreen" class="hidden max-w-xl w-full py-8">
+    <!-- 2. ONBOARDING -->
+    <section id="onboardingScreen" class="hidden max-w-xl w-full py-4 px-2">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-2xl">
         <div class="mb-6">
           <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Paso 2 de 2</span>
-          <h2 class="text-2xl font-bold mt-1">Completa tu perfil de vendedor</h2>
+          <h2 class="text-2xl font-bold mt-1">Completa tu perfil</h2>
         </div>
-
         <form id="vendorForm" class="space-y-4">
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombre Completo</label>
             <input type="text" id="formName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
-
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Correo Electrónico</label>
             <input type="email" id="formEmail" readonly class="w-full bg-slate-950/60 border border-slate-800/80 text-slate-400 rounded-xl px-4 py-3 text-sm cursor-not-allowed">
           </div>
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Número de Teléfono</label>
@@ -141,12 +146,10 @@
               </select>
             </div>
           </div>
-
           <div id="otherCountryContainer" class="hidden">
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Especifica tu país</label>
             <input type="text" id="formOtherCountry" placeholder="Escribe tu país" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
-
           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-4 cursor-pointer">
             Guardar Perfil y Continuar
           </button>
@@ -154,157 +157,112 @@
       </div>
     </section>
 
-    <!-- 3. EXPLORAR / FEED PRINCIPAL (TODAS LAS PUBLICACIONES) -->
-    <section id="tabFeed" class="hidden w-full space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl flex justify-between items-center">
+    <!-- 3. EXPLORAR / FEED GENERAL -->
+    <section id="tabFeed" class="hidden w-full space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
         <div>
-          <h1 class="text-2xl font-bold">Explorar Tienda</h1>
-          <p class="text-slate-400 text-sm mt-1">Todas las publicaciones recientes de la comunidad.</p>
+          <h1 class="text-xl md:text-2xl font-bold">Explorar Tienda</h1>
+          <p class="text-slate-400 text-xs md:text-sm mt-0.5">Todas las publicaciones en tiempo real.</p>
         </div>
       </div>
-
-      <!-- Grid de todas las publicaciones -->
-      <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <!-- Ejemplo inicial en el feed -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div class="flex items-center gap-2">
-              <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
-              <span class="text-xs font-semibold text-slate-200">Darwin Rincon</span>
-            </div>
-            <button onclick="toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">
-              Seguir
-            </button>
-          </div>
-          
-          <div class="h-40 bg-slate-950 rounded-xl flex items-center justify-center text-slate-600 border border-slate-800 overflow-hidden">
-            <i class="fa-solid fa-gamepad text-3xl"></i>
-          </div>
-
-          <div>
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">Videojuego</span>
-              <span class="text-[10px] text-slate-400">Roblox (MM2)</span>
-            </div>
-            <h4 class="font-bold text-sm">Godly Item Pack</h4>
-            <p class="text-slate-400 text-xs line-clamp-2 mt-1">Ítem exclusivo con entrega inmediata en servidor privado.</p>
-          </div>
-
-          <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-            <span class="font-extrabold text-emerald-400 text-sm">$15.00</span>
-            <button onclick="openChatDirectly('Darwin Rincon', '3000000000')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
-              <i class="fa-solid fa-message"></i> Mensaje
-            </button>
-          </div>
-        </div>
+      <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- Las publicaciones se cargan automáticamente desde Firebase -->
       </div>
     </section>
 
-    <!-- 4. PUBLICAR ÍTEM CON FOTO DE DISPOSITIVO, CATEGORÍA Y JUEGO -->
-    <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-6 py-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8 shadow-xl space-y-6">
+    <!-- 4. PUBLICAR ÍTEM -->
+    <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-4 py-2">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-8 shadow-xl space-y-4">
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Panel de Vendedor</span>
-          <h2 class="text-2xl font-bold mt-1">Publicar Nuevo Ítem</h2>
-          <p class="text-slate-400 text-sm mt-1">Sube una foto desde tu dispositivo e indica los detalles.</p>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Nuevo Ítem</span>
+          <h2 class="text-xl md:text-2xl font-bold mt-1">Publicar en la Tienda</h2>
         </div>
-
-        <form id="publishForm" class="space-y-4">
+        <form id="publishForm" class="space-y-3">
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Categoría del Ítem / Servicio</label>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Categoría</label>
             <select id="pubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
-              <option value="">Selecciona una categoría...</option>
+              <option value="">Selecciona...</option>
               <option value="Arte / Dibujo">Arte / Dibujo</option>
               <option value="Videojuegos">Videojuegos</option>
               <option value="Ropa Virtual">Ropa Virtual</option>
-              <option value="Programación / Scripts">Programación / Scripts</option>
+              <option value="Programación">Programación</option>
               <option value="Otro">Otro</option>
             </select>
           </div>
-
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombre del Juego (O servicio)</label>
-            <input type="text" id="pubGameName" placeholder="Ej. Roblox, Brawl Stars, Ninguno..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Nombre del Juego / Servicio</label>
+            <input type="text" id="pubGameName" placeholder="Ej. Roblox, Brawl Stars..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
-
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Título de la Publicación</label>
-            <input type="text" id="pubTitle" placeholder="Ej. Espada Legendaria / Retrato" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            <input type="text" id="pubTitle" placeholder="Ej. Espada Legendaria" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
-
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Valor / Precio ($ USD)</label>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Precio ($ USD)</label>
             <input type="number" id="pubPrice" placeholder="10.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
-
-          <!-- Subir foto desde el dispositivo -->
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Subir Foto desde el Dispositivo</label>
-            <input type="file" id="pubImageFile" accept="image/*" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-300 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Foto desde el Dispositivo</label>
+            <input type="file" id="pubImageFile" accept="image/*" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white cursor-pointer">
           </div>
-
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Descripción</label>
-            <textarea id="pubDescription" rows="3" placeholder="Detalles de entrega..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+            <textarea id="pubDescription" rows="2" placeholder="Detalles de entrega..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
           </div>
-
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
-            Publicar en la Tienda
+          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
+            Publicar en la Nube
           </button>
         </form>
       </div>
     </section>
 
     <!-- 5. TUS PUBLICACIONES -->
-    <section id="tabPosts" class="hidden w-full space-y-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex justify-between items-center shadow-xl">
+    <section id="tabPosts" class="hidden w-full space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex justify-between items-center shadow-xl">
         <div>
-          <h1 class="text-2xl font-bold">Tus Publicaciones</h1>
-          <p class="text-slate-400 text-sm mt-1">Administra tus artículos publicados.</p>
+          <h1 class="text-xl md:text-2xl font-bold">Tus Publicaciones</h1>
+          <p class="text-slate-400 text-xs md:text-sm mt-0.5">Artículos subidos a tu cuenta.</p>
         </div>
-        <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition cursor-pointer">
-          <i class="fa-solid fa-plus mr-1"></i> Nueva
+        <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+          <i class="fa-solid fa-plus"></i> Nueva
         </button>
       </div>
-
-      <div id="myPostsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+      <div id="myPostsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- Se cargan dinámicamente -->
+      </div>
     </section>
 
-    <!-- 6. CHAT DIRECTO TIPO WHATSAPP -->
-    <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto space-y-4 py-2">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[550px]">
+    <!-- 6. CHAT MÓVIL ESTILO WHATSAPP -->
+    <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto space-y-2">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[80vh] md:h-[550px]">
         
-        <!-- Lista de Chats -->
-        <div class="border-r border-slate-800 flex flex-col bg-slate-950/40">
-          <div class="p-4 border-b border-slate-800">
-            <h2 class="font-bold text-sm text-indigo-400"><i class="fa-solid fa-comments mr-2"></i> Mensajes Directos</h2>
+        <div class="border-r border-slate-800 flex flex-col bg-slate-950/40 h-1/3 md:h-full">
+          <div class="p-3 border-b border-slate-800">
+            <h2 class="font-bold text-xs text-indigo-400"><i class="fa-solid fa-comments mr-2"></i> Mensajes Directos</h2>
           </div>
-          <div id="chatList" class="flex-1 overflow-y-auto divide-y divide-slate-900">
-            <!-- Se llena dinámicamente -->
-          </div>
+          <div id="chatList" class="flex-1 overflow-y-auto divide-y divide-slate-900"></div>
         </div>
 
-        <!-- Ventana de Chat Específica -->
-        <div class="col-span-2 flex flex-col bg-slate-900/50 justify-between">
-          <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900">
-            <div class="flex items-center gap-3">
-              <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
-                <i class="fa-solid fa-user"></i>
+        <div class="col-span-2 flex flex-col bg-slate-900/50 justify-between h-2/3 md:h-full">
+          <div class="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
+                <i class="fa-solid fa-user text-xs"></i>
               </div>
               <div>
                 <p id="activeChatName" class="text-xs font-bold text-slate-200">Selecciona un chat</p>
-                <p id="activeChatPhone" class="text-[10px] text-slate-400">Chat activo</p>
+                <p id="activeChatPhone" class="text-[9px] text-slate-400">Chat activo</p>
               </div>
             </div>
           </div>
 
-          <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto space-y-3 flex flex-col justify-end">
-            <div class="text-center text-xs text-slate-500 my-auto">Haz clic en el botón "Mensaje" de cualquier publicación para chatear directamente.</div>
+          <div id="chatMessagesBox" class="flex-1 p-3 overflow-y-auto space-y-2 flex flex-col justify-end">
+            <div class="text-center text-xs text-slate-500 my-auto">Presiona el botón "Mensaje" en cualquier tarjeta para chatear.</div>
           </div>
 
-          <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-3 border-t border-slate-800 bg-slate-900 flex gap-2">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500" disabled>
-            <button type="submit" id="sendMsgBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50" disabled>
+          <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-2 border-t border-slate-800 bg-slate-900 flex gap-2">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500" disabled>
+            <button type="submit" id="sendMsgBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50" disabled>
               <i class="fa-solid fa-paper-plane"></i>
             </button>
           </form>
@@ -321,18 +279,18 @@
         </h2>
         <div class="bg-slate-950 border border-slate-800 p-3.5 rounded-xl text-xs text-slate-300">
           <p class="font-semibold text-indigo-400">¡Bienvenido a Moon Shop!</p>
-          <p class="text-[11px] text-slate-400 mt-1">Conectado y listo para vender.</p>
+          <p class="text-[11px] text-slate-400 mt-1">Conectado a Firebase Realtime Database.</p>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y FUNCIONALIDAD COMPLETA -->
+  <!-- LÓGICA DE FIREBASE Y PERSISTENCIA DE DATOS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, push, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyByGaZHa8KJjFsfVgF6G1eLFmW70dielc4",
@@ -353,9 +311,11 @@
     const loginScreen = document.getElementById('loginScreen');
     const onboardingScreen = document.getElementById('onboardingScreen');
     const mainNavbar = document.getElementById('mainNavbar');
+    const mobileBottomNav = document.getElementById('mobileBottomNav');
     const googleAuthBtn = document.getElementById('googleAuthBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const vendorForm = document.getElementById('vendorForm');
+    const publishForm = document.getElementById('publishForm');
     
     const formCountry = document.getElementById('formCountry');
     const otherCountryContainer = document.getElementById('otherCountryContainer');
@@ -393,6 +353,7 @@
       if (user) {
         currentUser = user;
         await checkVendorRegistration(user);
+        listenToPosts(); // Escuchar publicaciones en tiempo real de Firebase
       } else {
         currentUser = null;
         showScreen('login');
@@ -447,10 +408,112 @@
       }
     });
 
+    // PUBLICAR EN FIREBASE REALTIME DATABASE
+    publishForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const category = document.getElementById('pubCategory').value;
+      const gameName = document.getElementById('pubGameName').value;
+      const title = document.getElementById('pubTitle').value;
+      const price = document.getElementById('pubPrice').value;
+      const desc = document.getElementById('pubDescription').value;
+      const fileInput = document.getElementById('pubImageFile');
+
+      const reader = new FileReader();
+      reader.onload = async function(event) {
+        const imageUrl = event.target.result;
+
+        const postData = {
+          uid: currentUser.uid,
+          author: currentUserName,
+          category: category,
+          gameName: gameName,
+          title: title,
+          price: price,
+          description: desc,
+          image: imageUrl,
+          createdAt: new Date().toISOString()
+        };
+
+        try {
+          const postsRef = ref(db, 'posts');
+          const newPostRef = push(postsRef);
+          await set(newPostRef, postData);
+
+          publishForm.reset();
+          switchTab('feed');
+        } catch (error) {
+          alert("Error al publicar en la base de datos.");
+        }
+      };
+
+      if (fileInput.files && fileInput.files[0]) {
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    });
+
+    // ESCUCHAR PUBLICACIONES EN TIEMPO REAL DESDE FIREBASE
+    function listenToPosts() {
+      const postsRef = ref(db, 'posts');
+      onValue(postsRef, (snapshot) => {
+        const feedGrid = document.getElementById('feedGrid');
+        const myPostsGrid = document.getElementById('myPostsGrid');
+        feedGrid.innerHTML = '';
+        myPostsGrid.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          feedGrid.innerHTML = `<div class="col-span-full text-center text-xs text-slate-500 py-6">No hay publicaciones todavía. ¡Sé el primero en publicar!</div>`;
+          return;
+        }
+
+        const posts = snapshot.val();
+        Object.keys(posts).forEach((key) => {
+          const post = posts[key];
+          const isMine = currentUser && post.uid === currentUser.uid;
+
+          const cardHTML = `
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
+                  <span class="text-xs font-semibold text-slate-200">${post.author}</span>
+                </div>
+                ${isMine ? '<span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>' : `<button onclick="toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">Seguir</button>`}
+              </div>
+              <div class="h-40 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+                <img src="${post.image}" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">${post.category}</span>
+                  <span class="text-[10px] text-slate-400">${post.gameName}</span>
+                </div>
+                <h4 class="font-bold text-sm">${post.title}</h4>
+                <p class="text-slate-400 text-xs line-clamp-2 mt-1">${post.description}</p>
+              </div>
+              <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+                <span class="font-extrabold text-emerald-400 text-sm">$${Number(post.price).toFixed(2)}</span>
+                <button onclick="openChatDirectly('${post.author}', '0000000000')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                  <i class="fa-solid fa-message"></i> Mensaje
+                </button>
+              </div>
+            </div>
+          `;
+
+          feedGrid.insertAdjacentHTML('afterbegin', cardHTML);
+          if (isMine) {
+            myPostsGrid.insertAdjacentHTML('afterbegin', cardHTML);
+          }
+        });
+      });
+    }
+
     function showScreen(screen) {
       loginScreen.classList.add('hidden');
       onboardingScreen.classList.add('hidden');
       mainNavbar.classList.add('hidden');
+      mobileBottomNav.classList.add('hidden');
       document.getElementById('tabFeed').classList.add('hidden');
       document.getElementById('tabPublish').classList.add('hidden');
       document.getElementById('tabPosts').classList.add('hidden');
@@ -459,7 +522,10 @@
 
       if (screen === 'login') loginScreen.classList.remove('hidden');
       if (screen === 'onboarding') onboardingScreen.classList.remove('hidden');
-      if (screen === 'app') mainNavbar.classList.remove('hidden');
+      if (screen === 'app') {
+        mainNavbar.classList.remove('hidden');
+        mobileBottomNav.style.display = 'flex';
+      }
     }
 
     function updateNavUser(user, vData) {
@@ -468,9 +534,6 @@
       document.getElementById('dropdownName').textContent = vData.name;
       document.getElementById('dropdownEmail').textContent = user.email;
     }
-
-    // Exponer nombre de usuario globalmente
-    window.getCurrentUserName = () => currentUserName;
   </script>
 
   <!-- NAVEGACIÓN Y CHAT DIRECTO -->
@@ -478,17 +541,19 @@
     const profileMenuBtn = document.getElementById('profileMenuBtn');
     const profileDropdown = document.getElementById('profileDropdown');
 
-    profileMenuBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      profileDropdown.classList.toggle('hidden');
-    });
+    if (profileMenuBtn) {
+      profileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+      });
+    }
 
     window.addEventListener('click', () => {
-      profileDropdown.classList.add('hidden');
+      if (profileDropdown) profileDropdown.classList.add('hidden');
     });
 
     function switchTab(tabName) {
-      profileDropdown.classList.add('hidden');
+      if (profileDropdown) profileDropdown.classList.add('hidden');
       document.getElementById('tabFeed').classList.add('hidden');
       document.getElementById('tabPublish').classList.add('hidden');
       document.getElementById('tabPosts').classList.add('hidden');
@@ -500,6 +565,8 @@
       if (tabName === 'posts') document.getElementById('tabPosts').classList.remove('hidden');
       if (tabName === 'messages') document.getElementById('tabMessages').classList.remove('hidden');
       if (tabName === 'notifications') document.getElementById('tabNotifications').classList.remove('hidden');
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function toggleFollow(btn) {
@@ -512,69 +579,6 @@
       }
     }
 
-    // Publicar ítem con foto del dispositivo
-    const publishForm = document.getElementById('publishForm');
-    const feedGrid = document.getElementById('feedGrid');
-    const myPostsGrid = document.getElementById('myPostsGrid');
-
-    publishForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const category = document.getElementById('pubCategory').value;
-      const gameName = document.getElementById('pubGameName').value;
-      const title = document.getElementById('pubTitle').value;
-      const price = document.getElementById('pubPrice').value;
-      const desc = document.getElementById('pubDescription').value;
-      const fileInput = document.getElementById('pubImageFile');
-
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const imageUrl = event.target.result;
-        const author = window.getCurrentUserName ? window.getCurrentUserName() : "Tú";
-
-        const cardHTML = `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
-            <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-              <div class="flex items-center gap-2">
-                <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
-                <span class="text-xs font-semibold text-slate-200">${author}</span>
-              </div>
-              <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>
-            </div>
-            
-            <div class="h-40 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-              <img src="${imageUrl}" class="w-full h-full object-cover">
-            </div>
-
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">${category}</span>
-                <span class="text-[10px] text-slate-400">${gameName}</span>
-              </div>
-              <h4 class="font-bold text-sm">${title}</h4>
-              <p class="text-slate-400 text-xs line-clamp-2 mt-1">${desc}</p>
-            </div>
-
-            <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-              <span class="font-extrabold text-emerald-400 text-sm">$${Number(price).toFixed(2)}</span>
-              <button onclick="openChatDirectly('${author}', '0000000000')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
-                <i class="fa-solid fa-message"></i> Mensaje
-              </button>
-            </div>
-          </div>
-        `;
-
-        feedGrid.insertAdjacentHTML('afterbegin', cardHTML);
-        myPostsGrid.insertAdjacentHTML('afterbegin', cardHTML);
-        publishForm.reset();
-        switchTab('feed');
-      };
-
-      if (fileInput.files && fileInput.files[0]) {
-        reader.readAsDataURL(fileInput.files[0]);
-      }
-    });
-
-    // SISTEMA DE CHAT ESPECÍFICO CON ESA PERSONA
     let activeChatUser = null;
     const chatStorage = {};
 
@@ -588,19 +592,18 @@
       document.getElementById('chatInput').disabled = false;
       document.getElementById('sendMsgBtn').disabled = false;
 
-      // Actualizar lista lateral de chats
       const chatList = document.getElementById('chatList');
       if (!document.getElementById('chat-item-' + userName)) {
         const item = document.createElement('div');
         item.id = 'chat-item-' + userName;
-        item.className = "p-3.5 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition bg-slate-800/30";
+        item.className = "p-3 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition bg-slate-800/30";
         item.innerHTML = `
-          <div class="w-10 h-10 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
-            <i class="fa-solid fa-user"></i>
+          <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
+            <i class="fa-solid fa-user text-xs"></i>
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-xs font-bold text-slate-200 truncate">${userName}</p>
-            <p class="text-[10px] text-slate-400 truncate">Chat directo</p>
+            <p class="text-[9px] text-slate-400 truncate">Chat directo</p>
           </div>
         `;
         item.onclick = () => openChatDirectly(userName, phone);
@@ -637,7 +640,7 @@
       chatStorage[activeChatUser].forEach(msg => {
         const isMe = msg.sender === 'me';
         const msgDiv = document.createElement('div');
-        msgDiv.className = `max-w-[75%] p-3 rounded-2xl text-xs ${isMe ? 'bg-indigo-600 text-white ml-auto rounded-br-none' : 'bg-slate-800 text-slate-200 mr-auto rounded-bl-none'}`;
+        msgDiv.className = `max-w-[75%] p-2.5 rounded-2xl text-xs ${isMe ? 'bg-indigo-600 text-white ml-auto rounded-br-none' : 'bg-slate-800 text-slate-200 mr-auto rounded-bl-none'}`;
         msgDiv.textContent = msg.text;
         box.appendChild(msgDiv);
       });
