@@ -59,7 +59,6 @@
               <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
             </div>
             
-            <!-- Opción Perfil agregada -->
             <button onclick="switchTab('userProfile')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-400 flex items-center gap-3 transition cursor-pointer">
               <i class="fa-solid fa-user w-4 text-center"></i> Mi Perfil
             </button>
@@ -276,10 +275,9 @@
       <div id="myPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 6. SECCIÓN PERFIL DEL USUARIO CON EDICIÓN -->
+    <!-- 6. SECCIÓN PERFIL DEL USUARIO -->
     <section id="tabUserProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-        <!-- Banner/Header de Perfil -->
         <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-800">
           <div class="relative group">
             <img id="profilePageAvatar" src="https://via.placeholder.com/100" class="w-24 h-24 rounded-full border-2 border-indigo-500 object-cover shadow-lg">
@@ -313,7 +311,6 @@
           </button>
         </div>
 
-        <!-- Formulario para editar nombre rápido -->
         <div id="editNameModal" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <h4 class="text-xs font-bold text-slate-300">Actualizar Nombre</h4>
           <div class="flex gap-2">
@@ -324,13 +321,48 @@
           </div>
         </div>
 
-        <!-- Rejilla de Publicaciones del Usuario -->
         <div>
           <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-grid-2 mr-1"></i> Publicaciones</h3>
-          <div id="userProfilePostsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          <div id="userProfilePostsGrid" class="space-y-4"></div>
         </div>
       </div>
     </section>
+
+    <!-- MODAL EDITAR PUBLICACIÓN -->
+    <div id="editPostModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur flex items-center justify-center p-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-lg w-full space-y-4 shadow-2xl">
+        <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+          <h3 class="font-bold text-sm text-slate-100">Editar Publicación</h3>
+          <button onclick="window.closeEditPostModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <form id="editPostForm" class="space-y-3">
+          <input type="hidden" id="editPostId">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Título</label>
+            <input type="text" id="editPostTitle" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Descripción</label>
+            <textarea id="editPostDesc" rows="3" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Servicio</label>
+              <input type="text" id="editPostGame" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio</label>
+              <input type="number" step="any" id="editPostPrice" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+            </div>
+          </div>
+          <div class="flex justify-end gap-2 pt-2">
+            <button type="button" onclick="window.closeEditPostModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">Cancelar</button>
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer">Guardar Cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- 7. CHAT FIJO Y AUDIOS -->
     <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto overflow-hidden">
@@ -406,11 +438,11 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE COMPLETA -->
+  <!-- LÓGICA DE FIREBASE COMPLETA CON EDICIÓN DE POSTS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, push, get, child, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, push, get, child, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyByGaZHa8KJjFsfVgF6G1eLFmW70dielc4",
@@ -439,6 +471,7 @@
 
     let currentUser = null;
     let currentUserData = {};
+    let allPostsData = {};
 
     googleAuthBtn.addEventListener('click', async () => {
       try {
@@ -513,7 +546,6 @@
       }
     });
 
-    // CAMBIAR FOTO DE PERFIL
     window.updateProfilePhoto = (input) => {
       if (input.files && input.files[0] && currentUser) {
         const reader = new FileReader();
@@ -527,7 +559,6 @@
       }
     };
 
-    // CAMBIAR NOMBRE DE USUARIO
     window.toggleEditNameModal = () => {
       document.getElementById('editNameModal').classList.toggle('hidden');
     };
@@ -543,7 +574,6 @@
       document.getElementById('editNameInput').value = '';
     };
 
-    // PUBLICAR ITEM
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -601,7 +631,7 @@
       }
     });
 
-    // LISTAR POSTS TIPO FACEBOOK CON FOTOS REALES DE PERFIL
+    // LISTAR Y GESTIONAR TRES PUNTICOS DE EDICIÓN
     function listenToPostsFB() {
       const postsRef = ref(db, 'posts');
       onValue(postsRef, (snapshot) => {
@@ -614,23 +644,40 @@
         userProfileGrid.innerHTML = '';
 
         if (!snapshot.exists()) {
-          feedContainer.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No hay publicaciones aún. ¡Sé el primero en compartir algo!</div>`;
+          feedContainer.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No hay publicaciones aún.</div>`;
           return;
         }
 
-        const posts = snapshot.val();
+        allPostsData = snapshot.val();
         let myPostsCount = 0;
 
-        Object.keys(posts).reverse().forEach((postId) => {
-          const post = posts[postId];
+        Object.keys(allPostsData).reverse().forEach((postId) => {
+          const post = allPostsData[postId];
           const isMine = currentUser && post.uid === currentUser.uid;
           const likesCount = post.likesCount || 0;
           const hasLiked = currentUser && post.likes && post.likes[currentUser.uid];
           const currencyLabel = post.currency || 'USD';
           const authorAvatar = post.authorPhoto || 'https://via.placeholder.com/40';
 
+          // Menú de 3 puntos para posts propios
+          const dotsMenuHTML = isMine ? `
+            <div class="relative">
+              <button onclick="window.togglePostOptions('${postId}')" class="text-slate-400 hover:text-white p-1 text-xs cursor-pointer">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+              <div id="post-options-${postId}" class="hidden absolute right-0 mt-1 w-36 bg-slate-950 border border-slate-800 rounded-xl shadow-2xl py-1 z-30">
+                <button onclick="window.openEditPostModal('${postId}')" class="w-full text-left px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-800 flex items-center gap-2 cursor-pointer">
+                  <i class="fa-solid fa-pen text-indigo-400"></i> Editar
+                </button>
+                <button onclick="window.deletePost('${postId}')" class="w-full text-left px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 flex items-center gap-2 cursor-pointer">
+                  <i class="fa-solid fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          ` : `<button onclick="window.toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">Seguir</button>`;
+
           const postCard = document.createElement('div');
-          postCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3";
+          postCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3 relative";
           
           let commentsHTML = '';
           if (post.comments) {
@@ -654,7 +701,7 @@
                   <span class="text-[10px] text-slate-400">${post.category} • ${post.gameName}</span>
                 </div>
               </div>
-              ${isMine ? '<span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>' : `<button onclick="window.toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">Seguir</button>`}
+              ${dotsMenuHTML}
             </div>
 
             <div>
@@ -708,7 +755,52 @@
       });
     }
 
-    // ENVIAR NOTIFICACIÓN A USUARIO
+    // TOGGLE MENU OPCIONES
+    window.togglePostOptions = (postId) => {
+      const el = document.getElementById(`post-options-${postId}`);
+      if (el) el.classList.toggle('hidden');
+    };
+
+    // ABRIR Y GUARDAR MODAL EDITAR
+    window.openEditPostModal = (postId) => {
+      const post = allPostsData[postId];
+      if (!post) return;
+
+      document.getElementById('editPostId').value = postId;
+      document.getElementById('editPostTitle').value = post.title || '';
+      document.getElementById('editPostDesc').value = post.description || '';
+      document.getElementById('editPostGame').value = post.gameName || '';
+      document.getElementById('editPostPrice').value = post.price || '';
+
+      document.getElementById('editPostModal').classList.remove('hidden');
+    };
+
+    window.closeEditPostModal = () => {
+      document.getElementById('editPostModal').classList.add('hidden');
+    };
+
+    document.getElementById('editPostForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pId = document.getElementById('editPostId').value;
+      if (!pId) return;
+
+      const updated = {
+        title: document.getElementById('editPostTitle').value,
+        description: document.getElementById('editPostDesc').value,
+        gameName: document.getElementById('editPostGame').value,
+        price: document.getElementById('editPostPrice').value
+      };
+
+      await update(ref(db, `posts/${pId}`), updated);
+      window.closeEditPostModal();
+    });
+
+    window.deletePost = async (postId) => {
+      if (confirm("¿Estás seguro de eliminar esta publicación?")) {
+        await remove(ref(db, `posts/${postId}`));
+      }
+    };
+
     async function sendNotification(targetUid, title, message) {
       if (!targetUid || targetUid === currentUser.uid) return;
       const notifRef = ref(db, `notifications/${targetUid}`);
@@ -720,7 +812,6 @@
       });
     }
 
-    // LISTAR NOTIFICACIONES PROPIAS
     function listenToNotifications() {
       if (!currentUser) return;
       const notifRef = ref(db, `notifications/${currentUser.uid}`);
@@ -755,7 +846,6 @@
       });
     }
 
-    // TOGGLE LIKE
     window.toggleLikeFB = async (postId, currentlyLiked, ownerUid) => {
       if (!currentUser) return;
       const postRef = ref(db, `posts/${postId}`);
@@ -778,7 +868,6 @@
       await update(postRef, { likesCount: count, likes: likes });
     };
 
-    // AÑADIR COMENTARIO
     window.addCommentFB = async (postId, ownerUid) => {
       if (!currentUser) return;
       const input = document.getElementById(`comment-input-${postId}`);
@@ -802,7 +891,6 @@
       document.getElementById(`comments-box-${postId}`).classList.toggle('hidden');
     };
 
-    // CHAT DIRECTO Y AUDIOS
     let targetChatUid = null;
     let targetChatName = "";
     let targetChatPhoto = "";
@@ -864,7 +952,6 @@
           } else if (m.type === 'image') {
             msgDiv.innerHTML = `<img src="${m.content}" class="rounded-xl max-h-48 w-full object-cover">`;
           } else if (m.type === 'audio') {
-            // Reproductor nativo compatible para ambas partes
             msgDiv.innerHTML = `
               <div class="flex items-center gap-2 py-1">
                 <i class="fa-solid fa-microphone text-sm"></i>
@@ -883,7 +970,6 @@
       });
     }
 
-    // ENVIAR TEXTO CON NOTIFICACIÓN
     window.sendTextMessage = async (e) => {
       e.preventDefault();
       const input = document.getElementById('chatInput');
@@ -909,7 +995,6 @@
       input.value = '';
     };
 
-    // ENVIAR FOTO AL CHAT
     window.sendChatImage = (input) => {
       if (!input.files || !input.files[0] || !targetChatUid) return;
       const reader = new FileReader();
@@ -932,7 +1017,6 @@
       reader.readAsDataURL(input.files[0]);
     };
 
-    // GRABACIÓN DE AUDIO REPRODUCIBLE
     let mediaRecorder = null;
     let audioChunks = [];
     let isRecording = false;
