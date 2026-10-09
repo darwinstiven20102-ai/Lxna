@@ -30,14 +30,14 @@
         </span>
       </div>
 
-      <!-- Navegación de Escritorio / Tablet -->
+      <!-- Navegación de Escritorio -->
       <div class="hidden md:flex items-center gap-6">
-        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-compass mr-1"></i> Explorar</button>
+        <button onclick="switchTab('feed')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-house mr-1"></i> Feed</button>
         <button onclick="switchTab('publish')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-circle-plus mr-1"></i> Publicar</button>
         <button onclick="switchTab('messages')" class="text-xs font-semibold text-slate-300 hover:text-indigo-400 transition cursor-pointer"><i class="fa-solid fa-message mr-1"></i> Mensajes</button>
       </div>
 
-      <!-- Menú de Perfil -->
+      <!-- Perfil -->
       <div class="flex items-center gap-3 relative">
         <div class="relative">
           <button id="profileMenuBtn" class="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 p-1.5 pr-3 rounded-full transition cursor-pointer">
@@ -68,11 +68,11 @@
     </div>
   </header>
 
-  <!-- NAVBAR INFERIOR MÓVIL (Solo aparece en celulares reales mediante clases responsive max-md) -->
+  <!-- NAVBAR INFERIOR MÓVIL -->
   <nav id="mobileBottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-slate-800 h-16 z-50 px-4 justify-around items-center md:hidden">
     <button onclick="switchTab('feed')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
-      <i class="fa-solid fa-compass text-lg"></i>
-      <span class="text-[10px] mt-1">Explorar</span>
+      <i class="fa-solid fa-house text-lg"></i>
+      <span class="text-[10px] mt-1">Feed</span>
     </button>
     <button onclick="switchTab('publish')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
       <i class="fa-solid fa-circle-plus text-lg"></i>
@@ -84,7 +84,7 @@
     </button>
     <button onclick="switchTab('posts')" class="flex flex-col items-center justify-center text-slate-400 hover:text-indigo-400 transition cursor-pointer py-1">
       <i class="fa-solid fa-store text-lg"></i>
-      <span class="text-[10px] mt-1">Tus Ítems</span>
+      <span class="text-[10px] mt-1">Mis Posts</span>
     </button>
   </nav>
 
@@ -99,7 +99,7 @@
         </div>
         <div>
           <h2 class="text-2xl font-bold">Moon Shop</h2>
-          <p class="text-slate-400 text-sm mt-2">Inicia sesión con Google para acceder a la tienda en tiempo real.</p>
+          <p class="text-slate-400 text-sm mt-2">Inicia sesión con Google para acceder al feed y al chat en tiempo real.</p>
         </div>
         <button id="googleAuthBtn" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-3 transition shadow-lg cursor-pointer">
           <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -159,25 +159,25 @@
       </div>
     </section>
 
-    <!-- 3. EXPLORAR / FEED GENERAL -->
-    <section id="tabFeed" class="hidden w-full space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex justify-between items-center">
-        <div>
-          <h1 class="text-xl md:text-2xl font-bold">Explorar Tienda</h1>
-          <p class="text-slate-400 text-xs md:text-sm mt-0.5">Todas las publicaciones en tiempo real.</p>
-        </div>
+    <!-- 3. FEED ESTILO FACEBOOK -->
+    <section id="tabFeed" class="hidden w-full max-w-2xl mx-auto space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex items-center justify-between">
+        <h1 class="text-lg md:text-xl font-bold"><i class="fa-solid fa-newspaper text-indigo-500 mr-2"></i> Feed de la Comunidad</h1>
+        <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition cursor-pointer">
+          <i class="fa-solid fa-plus mr-1"></i> Crear Post
+        </button>
       </div>
-      <div id="feedGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <!-- Las publicaciones se cargan automáticamente desde Firebase -->
-      </div>
+
+      <!-- Feed dinámico con posts estilo FB -->
+      <div id="feedPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 4. PUBLICAR ÍTEM -->
+    <!-- 4. PUBLICAR ÍTEM/POST -->
     <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-4 py-2">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 md:p-8 shadow-xl space-y-4">
         <div>
-          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Nuevo Ítem</span>
-          <h2 class="text-xl md:text-2xl font-bold mt-1">Publicar en la Tienda</h2>
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">Nueva Publicación</span>
+          <h2 class="text-xl md:text-2xl font-bold mt-1">Crear una publicación</h2>
         </div>
         <form id="publishForm" class="space-y-3">
           <div>
@@ -196,55 +196,52 @@
             <input type="text" id="pubGameName" placeholder="Ej. Roblox, Brawl Stars..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Título de la Publicación</label>
-            <input type="text" id="pubTitle" placeholder="Ej. Espada Legendaria" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Título</label>
+            <input type="text" id="pubTitle" placeholder="Ej. Comisiones Abiertas" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
           <div>
             <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Precio ($ USD)</label>
             <input type="number" id="pubPrice" placeholder="10.00" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Foto desde el Dispositivo</label>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Foto o Muestra</label>
             <input type="file" id="pubImageFile" accept="image/*" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white cursor-pointer">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Descripción</label>
-            <textarea id="pubDescription" rows="2" placeholder="Detalles de entrega..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
+            <label class="block text-xs font-bold uppercase text-slate-400 mb-1">Descripción / Estado</label>
+            <textarea id="pubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy?..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"></textarea>
           </div>
           <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-600/30 cursor-pointer">
-            Publicar en la Nube
+            Publicar en el Feed
           </button>
         </form>
       </div>
     </section>
 
-    <!-- 5. TUS PUBLICACIONES -->
-    <section id="tabPosts" class="hidden w-full space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex justify-between items-center shadow-xl">
-        <div>
-          <h1 class="text-xl md:text-2xl font-bold">Tus Publicaciones</h1>
-          <p class="text-slate-400 text-xs md:text-sm mt-0.5">Artículos subidos a tu cuenta.</p>
-        </div>
+    <!-- 5. MIS PUBLICACIONES -->
+    <section id="tabPosts" class="hidden w-full max-w-2xl mx-auto space-y-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex justify-between items-center shadow-xl">
+        <h1 class="text-xl font-bold">Mis Publicaciones</h1>
         <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
           <i class="fa-solid fa-plus"></i> Nueva
         </button>
       </div>
-      <div id="myPostsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <!-- Se cargan dinámicamente -->
-      </div>
+      <div id="myPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 6. CHAT TIPO WHATSAPP -->
+    <!-- 6. CHAT MEJORADO CON AUDIOS Y FOTOS -->
     <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto space-y-2">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[80vh] md:h-[550px]">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-3 h-[82vh] md:h-[600px]">
         
+        <!-- Lista de Chats -->
         <div class="border-r border-slate-800 flex flex-col bg-slate-950/40 h-1/3 md:h-full">
-          <div class="p-3 border-b border-slate-800">
+          <div class="p-3 border-b border-slate-800 flex items-center justify-between">
             <h2 class="font-bold text-xs text-indigo-400"><i class="fa-solid fa-comments mr-2"></i> Mensajes Directos</h2>
           </div>
           <div id="chatList" class="flex-1 overflow-y-auto divide-y divide-slate-900"></div>
         </div>
 
+        <!-- Chat Activo -->
         <div class="col-span-2 flex flex-col bg-slate-900/50 justify-between h-2/3 md:h-full">
           <div class="p-3 border-b border-slate-800 flex items-center justify-between bg-slate-900">
             <div class="flex items-center gap-2">
@@ -253,21 +250,37 @@
               </div>
               <div>
                 <p id="activeChatName" class="text-xs font-bold text-slate-200">Selecciona un chat</p>
-                <p id="activeChatPhone" class="text-[9px] text-slate-400">Chat activo</p>
+                <p id="activeChatPhone" class="text-[9px] text-emerald-400">En línea</p>
               </div>
             </div>
           </div>
 
+          <!-- Mensajes de la conversación -->
           <div id="chatMessagesBox" class="flex-1 p-3 overflow-y-auto space-y-2 flex flex-col justify-end">
-            <div class="text-center text-xs text-slate-500 my-auto">Presiona el botón "Mensaje" en cualquier tarjeta para chatear.</div>
+            <div class="text-center text-xs text-slate-500 my-auto">Selecciona una conversación o usa el botón "Mensaje" en cualquier publicación.</div>
           </div>
 
-          <form id="chatForm" onsubmit="sendChatMessage(event)" class="p-2 border-t border-slate-800 bg-slate-900 flex gap-2">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500" disabled>
-            <button type="submit" id="sendMsgBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50" disabled>
-              <i class="fa-solid fa-paper-plane"></i>
+          <!-- Barra de entrada con adjuntos de foto y nota de voz -->
+          <div class="p-2 border-t border-slate-800 bg-slate-900 flex items-center gap-2">
+            <!-- Botón de subir foto -->
+            <label class="p-2.5 text-slate-400 hover:text-indigo-400 cursor-pointer transition rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center">
+              <i class="fa-solid fa-image text-sm"></i>
+              <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="sendChatImage(this)">
+            </label>
+
+            <!-- Botón de grabar audio -->
+            <button id="micBtn" onclick="toggleAudioRecording()" class="p-2.5 text-slate-400 hover:text-red-400 cursor-pointer transition rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center">
+              <i class="fa-solid fa-microphone text-sm"></i>
             </button>
-          </form>
+
+            <!-- Campo de texto de mensaje -->
+            <form id="chatForm" onsubmit="sendTextMessage(event)" class="flex-1 flex gap-2">
+              <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500" disabled>
+              <button type="submit" id="sendMsgBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer disabled:opacity-50" disabled>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </form>
+          </div>
         </div>
 
       </div>
@@ -288,11 +301,11 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y PERSISTENCIA -->
+  <!-- LÓGICA CONECTADA A FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, push, get, child, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, push, get, child, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyByGaZHa8KJjFsfVgF6G1eLFmW70dielc4",
@@ -355,7 +368,7 @@
       if (user) {
         currentUser = user;
         await checkVendorRegistration(user);
-        listenToPosts();
+        listenToPostsFB();
       } else {
         currentUser = null;
         showScreen('login');
@@ -372,6 +385,7 @@
           updateNavUser(user, vData);
           showScreen('app');
           switchTab('feed');
+          listenToChatsList();
         } else {
           document.getElementById('formName').value = user.displayName || '';
           document.getElementById('formEmail').value = user.email || '';
@@ -410,6 +424,7 @@
       }
     });
 
+    // PUBLICAR ITEM
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -434,6 +449,9 @@
           price: price,
           description: desc,
           image: imageUrl,
+          likesCount: 0,
+          likes: {},
+          comments: {},
           createdAt: new Date().toISOString()
         };
 
@@ -445,7 +463,7 @@
           publishForm.reset();
           switchTab('feed');
         } catch (error) {
-          alert("Error al publicar en la base de datos.");
+          alert("Error al publicar.");
         }
       };
 
@@ -454,57 +472,344 @@
       }
     });
 
-    function listenToPosts() {
+    // LISTAR POSTS TIPO FACEBOOK
+    function listenToPostsFB() {
       const postsRef = ref(db, 'posts');
       onValue(postsRef, (snapshot) => {
-        const feedGrid = document.getElementById('feedGrid');
-        const myPostsGrid = document.getElementById('myPostsGrid');
-        feedGrid.innerHTML = '';
-        myPostsGrid.innerHTML = '';
+        const feedContainer = document.getElementById('feedPostsContainer');
+        const myPostsContainer = document.getElementById('myPostsContainer');
+        feedContainer.innerHTML = '';
+        myPostsContainer.innerHTML = '';
 
         if (!snapshot.exists()) {
-          feedGrid.innerHTML = `<div class="col-span-full text-center text-xs text-slate-500 py-6">No hay publicaciones todavía. ¡Sé el primero en publicar!</div>`;
+          feedContainer.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">No hay publicaciones aún. ¡Sé el primero en compartir algo!</div>`;
           return;
         }
 
         const posts = snapshot.val();
-        Object.keys(posts).forEach((key) => {
-          const post = posts[key];
+        Object.keys(posts).reverse().forEach((postId) => {
+          const post = posts[postId];
           const isMine = currentUser && post.uid === currentUser.uid;
+          const likesCount = post.likesCount || 0;
+          const hasLiked = currentUser && post.likes && post.likes[currentUser.uid];
 
-          const cardHTML = `
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-xl">
-              <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-                <div class="flex items-center gap-2">
-                  <img src="https://via.placeholder.com/30" class="w-7 h-7 rounded-full border border-indigo-500">
-                  <span class="text-xs font-semibold text-slate-200">${post.author}</span>
+          // Post HTML tipo Facebook
+          const postCard = document.createElement('div');
+          postCard.className = "bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3";
+          
+          let commentsHTML = '';
+          if (post.comments) {
+            Object.keys(post.comments).forEach(cId => {
+              const c = post.comments[cId];
+              commentsHTML += `
+                <div class="bg-slate-950 p-2.5 rounded-xl text-xs space-y-0.5">
+                  <span class="font-bold text-indigo-400">${c.author}:</span>
+                  <p class="text-slate-300">${c.text}</p>
                 </div>
-                ${isMine ? '<span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>' : `<button onclick="toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">Seguir</button>`}
-              </div>
-              <div class="h-40 bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-                <img src="${post.image}" class="w-full h-full object-cover">
-              </div>
-              <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">${post.category}</span>
-                  <span class="text-[10px] text-slate-400">${post.gameName}</span>
+              `;
+            });
+          }
+
+          postCard.innerHTML = `
+            <!-- Header del Post -->
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
+              <div class="flex items-center gap-2.5">
+                <img src="https://via.placeholder.com/35" class="w-8 h-8 rounded-full border border-indigo-500">
+                <div>
+                  <h4 class="text-xs font-bold text-slate-200">${post.author}</h4>
+                  <span class="text-[10px] text-slate-400">${post.category} • ${post.gameName}</span>
                 </div>
-                <h4 class="font-bold text-sm">${post.title}</h4>
-                <p class="text-slate-400 text-xs line-clamp-2 mt-1">${post.description}</p>
               </div>
-              <div class="flex justify-between items-center pt-2 border-t border-slate-800">
-                <span class="font-extrabold text-emerald-400 text-sm">$${Number(post.price).toFixed(2)}</span>
-                <button onclick="openChatDirectly('${post.author}', '0000000000')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
-                  <i class="fa-solid fa-message"></i> Mensaje
+              ${isMine ? '<span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded font-semibold">Tuyo</span>' : `<button onclick="window.toggleFollow(this)" class="bg-indigo-600/20 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold px-3 py-1 rounded-full transition cursor-pointer">Seguir</button>`}
+            </div>
+
+            <!-- Contenido / Texto -->
+            <div>
+              <h3 class="font-bold text-sm text-slate-100">${post.title}</h3>
+              <p class="text-slate-300 text-xs mt-1 leading-relaxed">${post.description}</p>
+            </div>
+
+            <!-- Foto del Post -->
+            <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 max-h-96 flex items-center justify-center">
+              <img src="${post.image}" class="w-full object-cover">
+            </div>
+
+            <!-- Precio y Botón de Mensaje Directo -->
+            <div class="flex justify-between items-center pt-1">
+              <span class="text-emerald-400 font-extrabold text-sm">$${Number(post.price).toFixed(2)} USD</span>
+              <button onclick="window.openChatWithUser('${post.uid}', '${post.author}')" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-message"></i> Mensaje
+              </button>
+            </div>
+
+            <!-- Barra de Reacciones estilo Facebook -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
+              <button onclick="window.toggleLikeFB('${postId}', ${hasLiked})" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer ${hasLiked ? 'text-indigo-400 font-bold' : ''}">
+                <i class="fa-solid fa-thumbs-up"></i> <span>Me gusta (${likesCount})</span>
+              </button>
+              <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer">
+                <i class="fa-solid fa-comment"></i> <span>Comentar</span>
+              </button>
+            </div>
+
+            <!-- Área de Comentarios Desplegable -->
+            <div id="comments-box-${postId}" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
+              <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                ${commentsHTML || '<p class="text-[11px] text-slate-500">Sé el primero en comentar.</p>'}
+              </div>
+
+              <div class="flex gap-2">
+                <input type="text" id="comment-input-${postId}" placeholder="Escribe un comentario..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
+                <button onclick="window.addCommentFB('${postId}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+                  <i class="fa-solid fa-paper-plane"></i>
                 </button>
               </div>
             </div>
           `;
 
-          feedGrid.insertAdjacentHTML('afterbegin', cardHTML);
+          feedContainer.appendChild(postCard);
           if (isMine) {
-            myPostsGrid.insertAdjacentHTML('afterbegin', cardHTML);
+            myPostsContainer.appendChild(postCard.cloneNode(true));
           }
+        });
+      });
+    }
+
+    // TOGGLE LIKE EN FIREBASE
+    window.toggleLikeFB = async (postId, currentlyLiked) => {
+      if (!currentUser) return;
+      const postRef = ref(db, `posts/${postId}`);
+      const snapshot = await get(postRef);
+      if (!snapshot.exists()) return;
+
+      const postData = snapshot.val();
+      let count = postData.likesCount || 0;
+      const likes = postData.likes || {};
+
+      if (currentlyLiked) {
+        count = Math.max(0, count - 1);
+        delete likes[currentUser.uid];
+      } else {
+        count += 1;
+        likes[currentUser.uid] = true;
+      }
+
+      await update(postRef, { likesCount: count, likes: likes });
+    };
+
+    // COMENTAR EN FIREBASE
+    window.addCommentFB = async (postId) => {
+      if (!currentUser) return;
+      const input = document.getElementById(`comment-input-${postId}`);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const commentRef = ref(db, `posts/${postId}/comments`);
+      const newCommentRef = push(commentRef);
+      await set(newCommentRef, {
+        author: currentUserName,
+        uid: currentUser.uid,
+        text: text,
+        createdAt: new Date().toISOString()
+      });
+
+      input.value = '';
+    };
+
+    window.toggleCommentsBox = (postId) => {
+      const box = document.getElementById(`comments-box-${postId}`);
+      box.classList.toggle('hidden');
+    };
+
+    // CHAT EN TIEMPO REAL REALTIME DATABASE
+    let targetChatUid = null;
+    let targetChatName = "";
+
+    window.openChatWithUser = (targetUid, targetName) => {
+      if (targetUid === currentUser.uid) {
+        alert("Este es tu propio post.");
+        return;
+      }
+      targetChatUid = targetUid;
+      targetChatName = targetName;
+
+      switchTab('messages');
+      document.getElementById('activeChatName').textContent = targetName;
+      document.getElementById('chatInput').disabled = false;
+      document.getElementById('sendMsgBtn').disabled = false;
+
+      listenToChatMessages();
+    };
+
+    function getChatKey(uid1, uid2) {
+      return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+    }
+
+    function listenToChatMessages() {
+      if (!currentUser || !targetChatUid) return;
+      const chatKey = getChatKey(currentUser.uid, targetChatUid);
+      const messagesRef = ref(db, `chats/${chatKey}/messages`);
+
+      onValue(messagesRef, (snapshot) => {
+        const box = document.getElementById('chatMessagesBox');
+        box.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto">Di hola a ${targetChatName} e inicia el chat.</div>`;
+          return;
+        }
+
+        const msgs = snapshot.val();
+        Object.keys(msgs).forEach(mId => {
+          const m = msgs[mId];
+          const isMe = m.senderUid === currentUser.uid;
+
+          const msgDiv = document.createElement('div');
+          msgDiv.className = `max-w-[80%] p-3 rounded-2xl text-xs space-y-1 ${isMe ? 'bg-indigo-600 text-white ml-auto rounded-br-none' : 'bg-slate-800 text-slate-200 mr-auto rounded-bl-none'}`;
+
+          if (m.type === 'text') {
+            msgDiv.textContent = m.content;
+          } else if (m.type === 'image') {
+            msgDiv.innerHTML = `<img src="${m.content}" class="rounded-xl max-h-48 w-full object-cover">`;
+          } else if (m.type === 'audio') {
+            msgDiv.innerHTML = `<audio controls src="${m.content}" class="w-full h-8 max-w-[200px]"></audio>`;
+          }
+
+          box.appendChild(msgDiv);
+        });
+
+        box.scrollTop = box.scrollHeight;
+      });
+    }
+
+    // ENVIAR TEXTO AL CHAT
+    window.sendTextMessage = async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || !targetChatUid || !currentUser) return;
+
+      const chatKey = getChatKey(currentUser.uid, targetChatUid);
+      const messagesRef = ref(db, `chats/${chatKey}/messages`);
+      const newMsgRef = push(messagesRef);
+
+      await set(newMsgRef, {
+        senderUid: currentUser.uid,
+        senderName: currentUserName,
+        type: 'text',
+        content: text,
+        timestamp: new Date().toISOString()
+      });
+
+      // Guardar contacto en lista
+      await set(ref(db, `userChats/${currentUser.uid}/${targetChatUid}`), { name: targetChatName, uid: targetChatUid });
+      await set(ref(db, `userChats/${targetChatUid}/${currentUser.uid}`), { name: currentUserName, uid: currentUser.uid });
+
+      input.value = '';
+    };
+
+    // ENVIAR FOTO AL CHAT
+    window.sendChatImage = (input) => {
+      if (!input.files || !input.files[0] || !targetChatUid) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const imageUrl = e.target.result;
+        const chatKey = getChatKey(currentUser.uid, targetChatUid);
+        const messagesRef = ref(db, `chats/${chatKey}/messages`);
+        const newMsgRef = push(messagesRef);
+
+        await set(newMsgRef, {
+          senderUid: currentUser.uid,
+          senderName: currentUserName,
+          type: 'image',
+          content: imageUrl,
+          timestamp: new Date().toISOString()
+        });
+      };
+      reader.readAsDataURL(input.files[0]);
+    };
+
+    // GRABAR AUDIO/NOTA DE VOZ AL CHAT
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+
+    window.toggleAudioRecording = async () => {
+      if (!targetChatUid) {
+        alert("Abre una conversación para enviar notas de voz.");
+        return;
+      }
+
+      const micBtn = document.getElementById('micBtn');
+
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+              const audioBase64 = reader.result;
+              const chatKey = getChatKey(currentUser.uid, targetChatUid);
+              const messagesRef = ref(db, `chats/${chatKey}/messages`);
+              const newMsgRef = push(messagesRef);
+
+              await set(newMsgRef, {
+                senderUid: currentUser.uid,
+                senderName: currentUserName,
+                type: 'audio',
+                content: audioBase64,
+                timestamp: new Date().toISOString()
+              });
+            };
+            reader.readAsDataURL(audioBlob);
+          };
+
+          mediaRecorder.start();
+          isRecording = true;
+          micBtn.classList.add('text-red-500', 'animate-pulse');
+        } catch (err) {
+          alert("Error al acceder al micrófono: " + err.message);
+        }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        micBtn.classList.remove('text-red-500', 'animate-pulse');
+      }
+    };
+
+    function listenToChatsList() {
+      if (!currentUser) return;
+      const listRef = ref(db, `userChats/${currentUser.uid}`);
+      onValue(listRef, (snapshot) => {
+        const chatList = document.getElementById('chatList');
+        chatList.innerHTML = '';
+
+        if (!snapshot.exists()) {
+          chatList.innerHTML = `<div class="p-3 text-[11px] text-slate-500 text-center">No hay chats activos.</div>`;
+          return;
+        }
+
+        const chats = snapshot.val();
+        Object.keys(chats).forEach(uId => {
+          const c = chats[uId];
+          const item = document.createElement('div');
+          item.className = "p-3 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition bg-slate-800/30";
+          item.innerHTML = `
+            <div class="w-8 h-8 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
+              <i class="fa-solid fa-user text-xs"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-bold text-slate-200 truncate">${c.name}</p>
+              <p class="text-[9px] text-slate-400 truncate">Hacer clic para abrir</p>
+            </div>
+          `;
+          item.onclick = () => window.openChatWithUser(c.uid, c.name);
+          chatList.appendChild(item);
         });
       });
     }
@@ -524,7 +829,6 @@
       if (screen === 'onboarding') onboardingScreen.classList.remove('hidden');
       if (screen === 'app') {
         mainNavbar.classList.remove('hidden');
-        // La barra inferior móvil solo se activa automáticamente en celulares gracias a la clase md:hidden en el HTML
         mobileBottomNav.style.display = window.innerWidth < 768 ? 'flex' : 'none';
       }
     }
@@ -537,7 +841,7 @@
     }
   </script>
 
-  <!-- NAVEGACIÓN Y CHAT -->
+  <!-- NAVEGACIÓN -->
   <script>
     const profileMenuBtn = document.getElementById('profileMenuBtn');
     const profileDropdown = document.getElementById('profileDropdown');
@@ -580,74 +884,8 @@
       }
     }
 
-    let activeChatUser = null;
-    const chatStorage = {};
-
-    function openChatDirectly(userName, phone) {
-      activeChatUser = userName;
-      switchTab('messages');
-
-      document.getElementById('activeChatName').textContent = userName;
-      document.getElementById('activeChatPhone').textContent = "Vendedor / Creador";
-      
-      document.getElementById('chatInput').disabled = false;
-      document.getElementById('sendMsgBtn').disabled = false;
-
-      const chatList = document.getElementById('chatList');
-      if (!document.getElementById('chat-item-' + userName)) {
-        const item = document.createElement('div');
-        item.id = 'chat-item-' + userName;
-        item.className = "p-3 hover:bg-slate-800/50 cursor-pointer flex items-center gap-3 transition bg-slate-800/30";
-        item.innerHTML = `
-          <div class="w-9 h-9 rounded-full bg-indigo-600/20 text-indigo-400 font-bold flex items-center justify-center border border-indigo-500/30">
-            <i class="fa-solid fa-user text-xs"></i>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-slate-200 truncate">${userName}</p>
-            <p class="text-[9px] text-slate-400 truncate">Chat directo</p>
-          </div>
-        `;
-        item.onclick = () => openChatDirectly(userName, phone);
-        chatList.appendChild(item);
-      }
-
-      renderChatMessages();
-    }
-
-    function sendChatMessage(e) {
-      e.preventDefault();
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
-      if (!text || !activeChatUser) return;
-
-      if (!chatStorage[activeChatUser]) {
-        chatStorage[activeChatUser] = [];
-      }
-
-      chatStorage[activeChatUser].push({ sender: 'me', text: text });
-      input.value = '';
-      renderChatMessages();
-    }
-
-    function renderChatMessages() {
-      const box = document.getElementById('chatMessagesBox');
-      box.innerHTML = '';
-
-      if (!activeChatUser || !chatStorage[activeChatUser] || chatStorage[activeChatUser].length === 0) {
-        box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto">Envía un mensaje para iniciar la conversación con ${activeChatUser}.</div>`;
-        return;
-      }
-
-      chatStorage[activeChatUser].forEach(msg => {
-        const isMe = msg.sender === 'me';
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `max-w-[75%] p-2.5 rounded-2xl text-xs ${isMe ? 'bg-indigo-600 text-white ml-auto rounded-br-none' : 'bg-slate-800 text-slate-200 mr-auto rounded-bl-none'}`;
-        msgDiv.textContent = msg.text;
-        box.appendChild(msgDiv);
-      });
-
-      box.scrollTop = box.scrollHeight;
-    }
+    window.switchTab = switchTab;
+    window.toggleFollow = toggleFollow;
   </script>
 </body>
 </html>
