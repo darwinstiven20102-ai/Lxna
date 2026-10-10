@@ -260,8 +260,8 @@
               </div>
 
               <div>
-                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Título</label>
-                <input type="text" id="deskPubTitle" placeholder="Ej. Vendo ítem MM2 o Mi experiencia hoy" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Título <span class="text-slate-500 lowercase">(opcional en cotidianas)</span></label>
+                <input type="text" id="deskPubTitle" placeholder="Ej. Vendo ítem MM2 o Mi experiencia hoy" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
               </div>
 
               <div>
@@ -271,8 +271,8 @@
 
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Categoría</label>
-                  <select id="deskPubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Categoría <span class="text-slate-500 lowercase">(opcional)</span></label>
+                  <select id="deskPubCategory" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                     <option value="">Categoría...</option>
                     <option value="Arte / Dibujo">Arte / Dibujo</option>
                     <option value="Videojuegos">Videojuegos</option>
@@ -284,11 +284,11 @@
                 </div>
                 <div>
                   <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Tema</label>
-                  <input type="text" id="deskPubGameName" placeholder="Ej. Roblox, Charla" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                  <input type="text" id="deskPubGameName" placeholder="Ej. Roblox, Charla" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 </div>
               </div>
 
-              <!-- PRECIO (SI SE DEJA VACÍO SERÁ PUBLICACIÓN COTIDIANA) -->
+              <!-- PRECIO (SI SE INGRESA SE VUELVE VENTA) -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio <span class="text-slate-500 lowercase">(opcional)</span></label>
@@ -346,7 +346,7 @@
             </div>
           </div>
 
-          <input type="text" id="pubTitle" placeholder="Título de la publicación..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+          <input type="text" id="pubTitle" placeholder="Título de la publicación (opcional)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
 
           <div>
             <textarea id="pubDescription" rows="3" placeholder="¿Qué estás pensando u ofreciendo hoy?..." required class="w-full bg-transparent text-sm text-slate-100 focus:outline-none resize-none placeholder:text-slate-500"></textarea>
@@ -354,8 +354,8 @@
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Categoría</label>
-              <select id="pubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Categoría <span class="text-slate-500 lowercase">(opcional)</span></label>
+              <select id="pubCategory" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 <option value="">Selecciona...</option>
                 <option value="Arte / Dibujo">Arte / Dibujo</option>
                 <option value="Videojuegos">Videojuegos</option>
@@ -367,7 +367,7 @@
             </div>
             <div>
               <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Tema</label>
-              <input type="text" id="pubGameName" placeholder="Ej. Roblox, Charla..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <input type="text" id="pubGameName" placeholder="Ej. Roblox, Charla..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
             </div>
           </div>
 
@@ -569,7 +569,7 @@
           <input type="hidden" id="editPostId">
           <div>
             <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Título</label>
-            <input type="text" id="editPostTitle" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+            <input type="text" id="editPostTitle" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
           </div>
           <div>
             <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Descripción</label>
@@ -578,7 +578,7 @@
           <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Servicio</label>
-              <input type="text" id="editPostGame" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <input type="text" id="editPostGame" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
             </div>
             <div>
               <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio (Opcional)</label>
@@ -667,7 +667,7 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y ETIQUETADO AUTOMÁTICO VENTA / COTIDIANA -->
+  <!-- LÓGICA DE FIREBASE Y CONDICIONALES DE VALIDACIÓN -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -991,7 +991,7 @@
       }
     };
 
-    // Publicar desde PC (Detección de precio Venta / Cotidiana)
+    // Publicar desde PC (Título y Categoría opcionales al NO ser Venta)
     window.previewDeskImage = (input) => {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -1014,15 +1014,29 @@
       const priceVal = document.getElementById('deskPubPrice').value.trim();
       const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
 
+      const titleVal = document.getElementById('deskPubTitle').value.trim();
+      const categoryVal = document.getElementById('deskPubCategory').value;
+
+      if (isSale) {
+        if (!titleVal) {
+          alert("Por favor ingresa un título para tu venta.");
+          return;
+        }
+        if (!categoryVal) {
+          alert("Por favor selecciona una categoría para tu venta.");
+          return;
+        }
+      }
+
       const postData = {
         uid: currentUser.uid,
-        category: document.getElementById('deskPubCategory').value,
-        gameName: document.getElementById('deskPubGameName').value,
-        title: document.getElementById('deskPubTitle').value,
+        category: categoryVal || "General",
+        gameName: document.getElementById('deskPubGameName').value.trim() || "General",
+        title: titleVal || "Publicación cotidiana",
         price: isSale ? priceVal : "",
         currency: document.getElementById('deskPubCurrency').value,
         postType: isSale ? "sale" : "daily",
-        description: document.getElementById('deskPubDescription').value,
+        description: document.getElementById('deskPubDescription').value.trim(),
         image: deskTempImageBase64,
         likesCount: 0,
         likes: {},
@@ -1044,32 +1058,43 @@
       }
     };
 
-    // Publicar Móvil (Detección de precio Venta / Cotidiana)
+    // Publicar Móvil (Título y Categoría opcionales al NO ser Venta)
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUser) return;
 
-      const category = document.getElementById('pubCategory').value;
-      const gameName = document.getElementById('pubGameName').value;
-      const title = document.getElementById('pubTitle').value;
       const priceVal = document.getElementById('pubPrice').value.trim();
-      const desc = document.getElementById('pubDescription').value;
+      const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
+
+      const titleVal = document.getElementById('pubTitle').value.trim();
+      const categoryVal = document.getElementById('pubCategory').value;
+      const gameVal = document.getElementById('pubGameName').value.trim();
+      const descVal = document.getElementById('pubDescription').value.trim();
       const fileInput = document.getElementById('pubImageFile');
       const currencyStr = document.getElementById('pubCurrencySelect').value;
 
-      const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
+      if (isSale) {
+        if (!titleVal) {
+          alert("Por favor ingresa un título para tu venta.");
+          return;
+        }
+        if (!categoryVal) {
+          alert("Por favor selecciona una categoría para tu venta.");
+          return;
+        }
+      }
 
       const reader = new FileReader();
       reader.onload = async function(event) {
         const postData = {
           uid: currentUser.uid,
-          category: category,
-          gameName: gameName,
-          title: title,
+          category: categoryVal || "General",
+          gameName: gameVal || "General",
+          title: titleVal || "Publicación cotidiana",
           price: isSale ? priceVal : "",
           currency: currencyStr,
           postType: isSale ? "sale" : "daily",
-          description: desc,
+          description: descVal,
           image: event.target.result,
           likesCount: 0,
           likes: {},
@@ -1186,7 +1211,6 @@
       const isFollowing = myFollowsMap[post.uid];
       const followsMe = globalFollowsData[post.uid] && globalFollowsData[post.uid][currentUser?.uid];
 
-      // Determinar si es Venta o Cotidiana
       const isSalePost = post.price && post.price !== "" && parseFloat(post.price) > 0;
       const badgeHTML = isSalePost 
         ? `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider"><i class="fa-solid fa-bag-shopping mr-1"></i> Venta</span>`
@@ -1240,14 +1264,14 @@
                 <h4 class="text-xs sm:text-sm font-black text-slate-100 hover:text-pink-300 transition">${authorName}</h4>
                 ${badgeHTML}
               </div>
-              <span class="text-[10px] sm:text-xs text-pink-300/80 font-semibold">${post.category} • ${post.gameName}</span>
+              <span class="text-[10px] sm:text-xs text-pink-300/80 font-semibold">${post.category || 'General'} • ${post.gameName || 'General'}</span>
             </div>
           </div>
           ${dotsMenuHTML}
         </div>
 
         <div>
-          <h3 class="font-bold text-sm sm:text-base text-slate-100">${post.title}</h3>
+          <h3 class="font-bold text-sm sm:text-base text-slate-100">${post.title || 'Publicación cotidiana'}</h3>
           <p class="text-slate-300 text-xs sm:text-sm mt-1 leading-relaxed">${post.description}</p>
         </div>
 
@@ -1291,7 +1315,7 @@
       document.getElementById('modalPostImage').src = post.image;
       document.getElementById('modalAuthorAvatar').src = authorAvatar;
       document.getElementById('modalAuthorName').textContent = authorName;
-      document.getElementById('modalPostTitle').textContent = post.title;
+      document.getElementById('modalPostTitle').textContent = post.title || 'Publicación cotidiana';
 
       renderModalComments(post.comments);
       document.getElementById('commentsModal').classList.remove('hidden');
@@ -1443,9 +1467,9 @@
       const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
 
       const updated = {
-        title: document.getElementById('editPostTitle').value,
-        description: document.getElementById('editPostDesc').value,
-        gameName: document.getElementById('editPostGame').value,
+        title: document.getElementById('editPostTitle').value.trim() || (isSale ? "Venta" : "Publicación cotidiana"),
+        description: document.getElementById('editPostDesc').value.trim(),
+        gameName: document.getElementById('editPostGame').value.trim() || "General",
         price: isSale ? priceVal : "",
         postType: isSale ? "sale" : "daily"
       };
