@@ -61,7 +61,7 @@
         </span>
       </div>
 
-      <!-- NAVEGACIÓN PC Y TABLET (TODAS LAS PESTAÑAS INTEGRADAS) -->
+      <!-- NAVEGACIÓN PC Y TABLET -->
       <div class="hidden md:flex items-center gap-2 lg:gap-3">
         <button onclick="switchTab('feed')" class="text-xs lg:text-sm font-extrabold text-slate-200 hover:text-pink-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-pink-500/40 px-3.5 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md">
           <i class="fa-solid fa-house text-base text-pink-400"></i> Feed
@@ -81,12 +81,12 @@
         </button>
       </div>
 
-      <!-- Menú de Usuario / Cuenta (Compacto) -->
+      <!-- Menú de Usuario / Cuenta -->
       <div class="flex items-center gap-3 relative">
         <div class="relative">
-          <button id="profileMenuBtn" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 p-1.5 pr-3 rounded-full transition-all cursor-pointer shadow-lg">
-            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-pink-400 object-cover">
-            <span id="navUserName" class="text-xs font-bold text-slate-200 hidden sm:inline">Usuario</span>
+          <button id="profileMenuBtn" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 p-1.5 pr-3.5 rounded-full transition-all cursor-pointer shadow-lg">
+            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-pink-400 object-cover">
+            <span id="navUserName" class="text-xs sm:text-sm font-bold text-slate-200 hidden sm:inline">Usuario</span>
             <i class="fa-solid fa-chevron-down text-xs text-pink-400"></i>
           </button>
 
@@ -115,7 +115,7 @@
     </div>
   </header>
 
-  <!-- NAVBAR INFERIOR MÓVIL (SOLO MÓVIL) -->
+  <!-- NAVBAR INFERIOR MÓVIL -->
   <nav id="mobileBottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-purple-500/20 h-16 z-50 px-4 justify-around items-center md:hidden">
     <button onclick="switchTab('feed')" class="flex flex-col items-center justify-center text-slate-400 hover:text-pink-400 transition cursor-pointer py-1">
       <i class="fa-solid fa-house text-xl"></i>
@@ -206,7 +206,7 @@
       </div>
     </section>
 
-    <!-- 3. FEED ESTILO MOONFED (DISEÑO DIVIDIDO EN 2 COLUMNAS CON PANEL DE CREAR POST AMPLIO Y STICKY) -->
+    <!-- 3. FEED ESTILO MOONFED -->
     <section id="tabFeed" class="hidden w-full max-w-7xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start w-full">
         
@@ -227,7 +227,7 @@
           <div id="feedPostsContainer" class="space-y-4 w-full"></div>
         </div>
 
-        <!-- COLUMNA DERECHA: FORMULARIO DE CREAR POST MÁS AMPLIO Y 100% FIJO (STICKY) -->
+        <!-- COLUMNA DERECHA: FORMULARIO CREAR POST STICKY -->
         <div class="hidden md:block md:col-span-5 lg:col-span-4 sticky top-24 order-1 md:order-2">
           <div class="bg-slate-900/95 border border-purple-500/40 rounded-3xl p-6 shadow-2xl backdrop-blur-md space-y-5">
             <div class="text-center pb-3 border-b border-slate-800">
@@ -311,7 +311,7 @@
       </div>
     </section>
 
-    <!-- 4. PUBLICAR MÓVIL (Pestaña dedicada para celulares) -->
+    <!-- 4. PUBLICAR MÓVIL -->
     <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-4 py-2 md:hidden">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl p-4 md:p-6 shadow-2xl space-y-4">
         <div class="text-center pb-3 border-b border-slate-800">
@@ -505,6 +505,49 @@
       </div>
     </section>
 
+    <!-- MODAL DE PUBLICACIÓN Y COMENTARIOS (NUEVO) -->
+    <div id="commentsModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
+      <div class="bg-slate-900 border border-purple-500/30 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row overflow-hidden shadow-2xl relative">
+        
+        <!-- Botón para cerrar modal -->
+        <button onclick="window.closeCommentsModal()" class="absolute top-3 right-3 z-30 bg-slate-950/80 hover:bg-pink-500 text-slate-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+
+        <!-- LADO IZQUIERDO: IMAGEN DE LA PUBLICACIÓN -->
+        <div class="md:w-1/2 bg-slate-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-slate-800 p-2 max-h-64 md:max-h-full overflow-hidden">
+          <img id="modalPostImage" src="" class="max-h-full max-w-full object-contain rounded-xl">
+        </div>
+
+        <!-- LADO DERECHO: DETALLES Y COMENTARIOS -->
+        <div class="md:w-1/2 flex flex-col h-full bg-slate-900/95 overflow-hidden">
+          
+          <!-- Encabezado del Post en Modal -->
+          <div class="p-4 border-b border-slate-800 flex items-center gap-3 shrink-0">
+            <img id="modalAuthorAvatar" src="" class="w-10 h-10 rounded-full border-2 border-pink-400 object-cover cursor-pointer" onclick="window.openPublicProfileFromModal()">
+            <div class="min-w-0 flex-1">
+              <h4 id="modalAuthorName" class="text-sm font-extrabold text-slate-100 hover:text-pink-300 cursor-pointer truncate" onclick="window.openPublicProfileFromModal()">Usuario</h4>
+              <p id="modalPostTitle" class="text-xs text-slate-400 truncate">Título del post</p>
+            </div>
+          </div>
+
+          <!-- Lista de Comentarios con Fotos y Nombres -->
+          <div id="modalCommentsList" class="flex-1 p-4 overflow-y-auto space-y-3 divide-y divide-slate-800/40"></div>
+
+          <!-- Caja de Entrada de Nuevo Comentario -->
+          <div class="p-3 border-t border-slate-800 bg-slate-950 shrink-0">
+            <div class="flex gap-2">
+              <input type="text" id="modalCommentInput" placeholder="Escribe un comentario..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <button onclick="window.submitModalComment()" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-md">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- MODAL EDITAR PUBLICACIÓN -->
     <div id="editPostModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur flex items-center justify-center p-4">
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 max-w-lg w-full space-y-4 shadow-2xl">
@@ -540,7 +583,7 @@
       </div>
     </div>
 
-    <!-- 7. CHAT FIJO CON SCROLL INTERNO BLOQUEADO -->
+    <!-- 7. CHAT FIJO -->
     <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto h-[calc(100vh-8rem)] min-h-[500px] max-h-[650px] overflow-hidden">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl shadow-2xl overflow-hidden md:grid md:grid-cols-3 h-full w-full relative">
         <div id="chatListPanel" class="w-full md:w-auto h-full border-r border-slate-800 flex flex-col bg-slate-950/60 overflow-hidden">
@@ -614,7 +657,7 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y MULTICUENTA -->
+  <!-- LÓGICA DE FIREBASE Y MODAL DE COMENTARIOS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -656,6 +699,7 @@
     let currentActiveTab = 'feed';
     let pendingBubbleTarget = null;
     let deskTempImageBase64 = null;
+    let activeModalPostId = null;
 
     async function handleGoogleLogin(isAddingAccount = false) {
       try {
@@ -1111,11 +1155,14 @@
       switchTab('publicProfile');
     };
 
+    // FUNCIÓN PARA CONSTRUIR LA TARJETA DE CADA PUBLICACIÓN
     function buildPostCard(postId, post, authorUser) {
       const isMine = currentUser && post.uid === currentUser.uid;
       const likesCount = post.likesCount || 0;
       const hasLiked = currentUser && post.likes && post.likes[currentUser.uid];
       const currencyLabel = post.currency || 'USD';
+
+      const commentsCount = post.comments ? Object.keys(post.comments).length : 0;
 
       const authorName = authorUser.name || post.author || 'Usuario';
       const authorAvatar = authorUser.photoURL || post.authorPhoto || 'https://via.placeholder.com/40';
@@ -1160,72 +1207,135 @@
       ` : followBtnHTML;
 
       const postCard = document.createElement('div');
-      postCard.className = "bg-slate-900/90 border border-purple-500/20 rounded-3xl p-4 shadow-xl space-y-3 relative backdrop-blur-sm";
-      
-      let commentsHTML = '';
-      if (post.comments) {
-        Object.keys(post.comments).forEach(cId => {
-          const c = post.comments[cId];
-          commentsHTML += `
-            <div class="bg-slate-950 p-2.5 rounded-xl text-xs space-y-0.5">
-              <span class="font-bold text-pink-400">${c.author}:</span>
-              <p class="text-slate-300">${c.text}</p>
-            </div>
-          `;
-        });
-      }
+      postCard.className = "bg-slate-900/90 border border-purple-500/20 rounded-3xl p-4 sm:p-5 shadow-xl space-y-3.5 relative backdrop-blur-sm";
 
       postCard.innerHTML = `
         <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">
-          <div class="flex items-center gap-2.5 cursor-pointer" onclick="window.openPublicProfile('${post.uid}')">
-            <img src="${authorAvatar}" class="w-8 h-8 rounded-full border border-pink-400 object-cover">
+          <div class="flex items-center gap-3 cursor-pointer" onclick="window.openPublicProfile('${post.uid}')">
+            <img src="${authorAvatar}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-pink-400 object-cover shadow-md">
             <div>
-              <h4 class="text-xs font-bold text-slate-200 hover:text-pink-300 transition">${authorName}</h4>
-              <span class="text-[10px] text-slate-400">${post.category} • ${post.gameName}</span>
+              <h4 class="text-xs sm:text-sm font-black text-slate-100 hover:text-pink-300 transition">${authorName}</h4>
+              <span class="text-[10px] sm:text-xs text-pink-300/80 font-semibold">${post.category} • ${post.gameName}</span>
             </div>
           </div>
           ${dotsMenuHTML}
         </div>
 
         <div>
-          <h3 class="font-bold text-sm text-slate-100">${post.title}</h3>
-          <p class="text-slate-300 text-xs mt-1 leading-relaxed">${post.description}</p>
+          <h3 class="font-bold text-sm sm:text-base text-slate-100">${post.title}</h3>
+          <p class="text-slate-300 text-xs sm:text-sm mt-1 leading-relaxed">${post.description}</p>
         </div>
 
-        <div class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 max-h-96 flex items-center justify-center">
-          <img src="${post.image}" class="w-full object-cover">
+        <div class="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 max-h-96 flex items-center justify-center cursor-pointer" onclick="window.openCommentsModal('${postId}')">
+          <img src="${post.image}" class="w-full object-cover hover:scale-102 transition duration-300">
         </div>
 
         <div class="flex justify-between items-center pt-1">
-          <span class="text-emerald-400 font-black text-sm">$${post.price} ${currencyLabel}</span>
-          <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-md">
+          <span class="text-emerald-400 font-black text-sm sm:text-base">$${post.price} ${currencyLabel}</span>
+          <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white text-xs sm:text-sm font-extrabold px-4 py-2 rounded-xl transition flex items-center gap-2 cursor-pointer shadow-md">
             <i class="fa-solid fa-paper-plane"></i> Mensaje
           </button>
         </div>
 
-        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
-          <button onclick="window.toggleLikeFB('${postId}', ${hasLiked}, '${post.uid}')" class="flex items-center gap-1.5 hover:text-pink-400 transition cursor-pointer ${hasLiked ? 'text-pink-400 font-bold' : ''}">
-            <i class="fa-solid fa-thumbs-up"></i> <span>Me gusta (${likesCount})</span>
+        <!-- BOTONES ME GUSTA Y COMENTARIOS CON TAMAÑOS MÁS GRANDES -->
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs sm:text-sm text-slate-300">
+          <button onclick="window.toggleLikeFB('${postId}', ${hasLiked}, '${post.uid}')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-pink-400 transition cursor-pointer font-bold ${hasLiked ? 'text-pink-400' : ''}">
+            <i class="fa-solid fa-thumbs-up text-base sm:text-lg"></i> 
+            <span>Me gusta (${likesCount})</span>
           </button>
-          <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer">
-            <i class="fa-solid fa-comment"></i> <span>Comentar</span>
+          
+          <button onclick="window.openCommentsModal('${postId}')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl hover:bg-slate-800 hover:text-pink-400 transition cursor-pointer font-bold">
+            <i class="fa-solid fa-comment text-base sm:text-lg text-pink-400"></i> 
+            <span>Comentarios (${commentsCount})</span>
           </button>
-        </div>
-
-        <div id="comments-box-${postId}" class="hidden pt-3 border-t border-slate-800/80 space-y-3">
-          <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
-            ${commentsHTML || '<p class="text-[11px] text-slate-500">Sé el primero en comentar.</p>'}
-          </div>
-          <div class="flex gap-2">
-            <input type="text" id="comment-input-${postId}" placeholder="Escribe un comentario..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
-            <button onclick="window.addCommentFB('${postId}', '${post.uid}')" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
-          </div>
         </div>
       `;
       return postCard;
     }
+
+    // MODAL DE COMENTARIOS COMPLETO CON FOTOS Y NOMBRES
+    window.openCommentsModal = (postId) => {
+      activeModalPostId = postId;
+      const post = allPostsData[postId];
+      if (!post) return;
+
+      const authorUser = allUsersData[post.uid] || {};
+      const authorName = authorUser.name || post.author || 'Usuario';
+      const authorAvatar = authorUser.photoURL || post.authorPhoto || 'https://via.placeholder.com/40';
+
+      document.getElementById('modalPostImage').src = post.image;
+      document.getElementById('modalAuthorAvatar').src = authorAvatar;
+      document.getElementById('modalAuthorName').textContent = authorName;
+      document.getElementById('modalPostTitle').textContent = post.title;
+
+      renderModalComments(post.comments);
+      document.getElementById('commentsModal').classList.remove('hidden');
+    };
+
+    window.closeCommentsModal = () => {
+      document.getElementById('commentsModal').classList.add('hidden');
+      activeModalPostId = null;
+    };
+
+    window.openPublicProfileFromModal = () => {
+      if (!activeModalPostId) return;
+      const post = allPostsData[activeModalPostId];
+      if (post) {
+        window.closeCommentsModal();
+        window.openPublicProfile(post.uid);
+      }
+    };
+
+    function renderModalComments(commentsObj) {
+      const list = document.getElementById('modalCommentsList');
+      list.innerHTML = '';
+
+      if (!commentsObj || Object.keys(commentsObj).length === 0) {
+        list.innerHTML = `<div class="text-center text-xs text-slate-500 py-8">Aún no hay comentarios. ¡Sé el primero en comentar!</div>`;
+        return;
+      }
+
+      Object.keys(commentsObj).forEach(cId => {
+        const c = commentsObj[cId];
+        const commenterUser = allUsersData[c.uid] || {};
+        const commenterName = commenterUser.name || c.author || 'Usuario';
+        const commenterAvatar = commenterUser.photoURL || 'https://via.placeholder.com/40';
+
+        const div = document.createElement('div');
+        div.className = "flex items-start gap-3 pt-3";
+        div.innerHTML = `
+          <img src="${commenterAvatar}" class="w-8 h-8 rounded-full border border-pink-400 object-cover cursor-pointer shrink-0" onclick="window.closeCommentsModal(); window.openPublicProfile('${c.uid}')">
+          <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 text-xs flex-1">
+            <p class="font-bold text-pink-400 hover:underline cursor-pointer" onclick="window.closeCommentsModal(); window.openPublicProfile('${c.uid}')">${commenterName}</p>
+            <p class="text-slate-200 mt-1 leading-relaxed">${c.text}</p>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    window.submitModalComment = async () => {
+      if (!currentUser || !activeModalPostId) return;
+      const input = document.getElementById('modalCommentInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const commentRef = ref(db, `posts/${activeModalPostId}/comments`);
+      const newCommentRef = push(commentRef);
+      await set(newCommentRef, {
+        author: currentUserData.name || 'Usuario',
+        uid: currentUser.uid,
+        text: text,
+        createdAt: new Date().toISOString()
+      });
+
+      const post = allPostsData[activeModalPostId];
+      if (post && post.uid) {
+        sendNotification(post.uid, "💬 Nuevo Comentario", `${currentUserData.name || 'Alguien'} comentó: "${text}"`);
+      }
+
+      input.value = '';
+    };
 
     function listenToPostsFB() {
       const postsRef = ref(db, 'posts');
@@ -1262,6 +1372,11 @@
         });
 
         document.getElementById('profilePostsCount').textContent = myPostsCount;
+
+        // Si el modal está abierto, actualizar sus comentarios en tiempo real
+        if (activeModalPostId && allPostsData[activeModalPostId]) {
+          renderModalComments(allPostsData[activeModalPostId].comments);
+        }
       });
     }
 
@@ -1385,29 +1500,6 @@
       }
 
       await update(postRef, { likesCount: count, likes: likes });
-    };
-
-    window.addCommentFB = async (postId, ownerUid) => {
-      if (!currentUser) return;
-      const input = document.getElementById(`comment-input-${postId}`);
-      const text = input.value.trim();
-      if (!text) return;
-
-      const commentRef = ref(db, `posts/${postId}/comments`);
-      const newCommentRef = push(commentRef);
-      await set(newCommentRef, {
-        author: currentUserData.name || 'Usuario',
-        uid: currentUser.uid,
-        text: text,
-        createdAt: new Date().toISOString()
-      });
-
-      sendNotification(ownerUid, "💬 Nuevo Comentario", `${currentUserData.name || 'Alguien'} comentó: "${text}"`);
-      input.value = '';
-    };
-
-    window.toggleCommentsBox = (postId) => {
-      document.getElementById(`comments-box-${postId}`).classList.toggle('hidden');
     };
 
     let targetChatUid = null;
