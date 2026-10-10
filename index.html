@@ -31,7 +31,7 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pb-20 md:pb-0 overflow-x-hidden">
 
-  <!-- BURBUJA NOTIFICACIÓN FLOTANTE (MÁS GRANDE EN PC/TABLET) -->
+  <!-- BURBUJA NOTIFICACIÓN FLOTANTE -->
   <div id="msgFloatingBubble" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-8 z-[100] cursor-pointer animate-float-cute transition-all duration-300">
     <div onclick="openBubbleChat()" class="relative bg-slate-900/95 backdrop-blur-xl border-2 border-pink-500/60 hover:border-pink-400 p-3.5 pr-6 md:p-4 md:pr-7 rounded-3xl shadow-[0_0_35px_rgba(244,114,182,0.45)] flex items-center gap-4">
       <div class="relative">
@@ -61,46 +61,43 @@
         </span>
       </div>
 
-      <!-- Navegación Escritorio & Tablet (SIN BOTÓN DE PUBLICAR EN PC) -->
-      <div class="hidden md:flex items-center gap-6">
-        <button onclick="switchTab('feed')" class="text-sm font-extrabold text-slate-200 hover:text-pink-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-pink-500/40 px-5 py-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2.5 hover:scale-105 shadow-md">
-          <i class="fa-solid fa-house text-lg text-pink-400"></i> Feed Principal
+      <!-- NAVEGACIÓN PC Y TABLET (TODAS LAS PESTAÑAS INTEGRADAS) -->
+      <div class="hidden md:flex items-center gap-2 lg:gap-3">
+        <button onclick="switchTab('feed')" class="text-xs lg:text-sm font-extrabold text-slate-200 hover:text-pink-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-pink-500/40 px-3.5 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md">
+          <i class="fa-solid fa-house text-base text-pink-400"></i> Feed
         </button>
-        <button onclick="switchTab('messages')" class="text-sm font-extrabold text-slate-200 hover:text-indigo-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 px-5 py-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2.5 hover:scale-105 shadow-md relative">
-          <i class="fa-solid fa-paper-plane text-lg text-indigo-400"></i> Mensajes
+        <button onclick="switchTab('messages')" class="text-xs lg:text-sm font-extrabold text-slate-200 hover:text-indigo-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 px-3.5 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md relative">
+          <i class="fa-solid fa-paper-plane text-base text-indigo-400"></i> Mensajes
+        </button>
+        <button onclick="switchTab('userProfile')" class="text-xs lg:text-sm font-extrabold text-slate-200 hover:text-pink-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-pink-500/40 px-3.5 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md">
+          <i class="fa-solid fa-user text-base text-pink-400"></i> Mi Perfil
+        </button>
+        <button onclick="switchTab('posts')" class="text-xs lg:text-sm font-extrabold text-slate-200 hover:text-purple-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-purple-500/40 px-3.5 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md">
+          <i class="fa-solid fa-store text-base text-purple-400"></i> Mis Posts
+        </button>
+        <button onclick="switchTab('notifications')" class="text-xs lg:text-sm font-extrabold text-slate-200 hover:text-indigo-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 px-3.5 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md relative">
+          <i class="fa-solid fa-bell text-base text-indigo-400"></i> Notificaciones
+          <span id="deskNotifBadge" class="hidden absolute top-2 right-2 w-2 h-2 rounded-full bg-pink-500"></span>
         </button>
       </div>
 
-      <!-- Perfil y Menú Desplegable -->
+      <!-- Menú de Usuario / Cuenta (Compacto) -->
       <div class="flex items-center gap-3 relative">
         <div class="relative">
-          <button id="profileMenuBtn" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 p-2 pr-4 rounded-full transition-all cursor-pointer shadow-lg hover:scale-105">
-            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-pink-400 object-cover">
+          <button id="profileMenuBtn" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 p-1.5 pr-3 rounded-full transition-all cursor-pointer shadow-lg">
+            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-pink-400 object-cover">
             <span id="navUserName" class="text-xs font-bold text-slate-200 hidden sm:inline">Usuario</span>
             <i class="fa-solid fa-chevron-down text-xs text-pink-400"></i>
           </button>
 
-          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-purple-500/30 rounded-3xl shadow-2xl py-2 z-50">
+          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 bg-slate-900 border border-purple-500/30 rounded-2xl shadow-2xl py-2 z-50">
             <div class="px-4 py-2 border-b border-slate-800 mb-1">
               <p id="dropdownName" class="text-xs font-bold text-slate-200">Nombre</p>
               <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
             </div>
             
-            <button onclick="switchTab('userProfile')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-pink-300 flex items-center gap-3 transition cursor-pointer">
-              <i class="fa-solid fa-user w-4 text-center text-pink-400"></i> Mi Perfil
-            </button>
-
-            <button onclick="switchTab('posts')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-purple-300 flex items-center gap-3 transition cursor-pointer">
-              <i class="fa-solid fa-store w-4 text-center text-purple-400"></i> Mis Publicaciones
-            </button>
-            <button onclick="switchTab('notifications')" class="w-full text-left px-4 py-2.5 text-sm text-slate-300 hover:bg-slate-800 hover:text-indigo-300 flex items-center gap-3 transition cursor-pointer relative">
-              <i class="fa-solid fa-bell w-4 text-center text-indigo-400"></i> Notificaciones
-              <span id="notifBadge" class="hidden absolute right-3 w-2 h-2 rounded-full bg-pink-500"></span>
-            </button>
-
-            <!-- Sección de Cuentas Vinculadas -->
             <div id="linkedAccountsSection" class="border-t border-slate-800 mt-1 pt-1 hidden">
-              <div class="px-4 py-1 text-[10px] font-bold text-slate-500 uppercase">Cambiar de cuenta</div>
+              <div class="px-4 py-1 text-[10px] font-bold text-slate-500 uppercase">Cambiar cuenta</div>
               <div id="linkedAccountsList" class="space-y-0.5 px-2"></div>
             </div>
 
@@ -209,13 +206,11 @@
       </div>
     </section>
 
-    <!-- 3. FEED ESTILO MOONFED (DISEÑO DIVIDIDO EN PC/TABLET) -->
-    <section id="tabFeed" class="hidden w-full max-w-6xl mx-auto">
-      
-      <!-- Layout de 2 columnas para PC/Tablet y 1 columna para Móvil -->
+    <!-- 3. FEED ESTILO MOONFED (DISEÑO DIVIDIDO EN 2 COLUMNAS CON PANEL DE CREAR POST AMPLIO Y STICKY) -->
+    <section id="tabFeed" class="hidden w-full max-w-7xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start w-full">
         
-        <!-- COLUMNA IZQUIERDA: FEED PRINCIPAL (Ocupa más espacio en PC) -->
+        <!-- COLUMNA IZQUIERDA: FEED PRINCIPAL -->
         <div class="md:col-span-7 lg:col-span-8 space-y-4 w-full order-2 md:order-1">
           <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900 border border-purple-500/30 p-4 sm:p-5 shadow-xl backdrop-blur-md flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -232,61 +227,81 @@
           <div id="feedPostsContainer" class="space-y-4 w-full"></div>
         </div>
 
-        <!-- COLUMNA DERECHA: FORMULARIO DE CREAR POST FIJO (EXCLUSIVO PC/TABLET) -->
+        <!-- COLUMNA DERECHA: FORMULARIO DE CREAR POST MÁS AMPLIO Y 100% FIJO (STICKY) -->
         <div class="hidden md:block md:col-span-5 lg:col-span-4 sticky top-24 order-1 md:order-2">
-          <div class="bg-slate-900/95 border border-purple-500/30 rounded-3xl p-5 shadow-2xl backdrop-blur-md space-y-4">
+          <div class="bg-slate-900/95 border border-purple-500/40 rounded-3xl p-6 shadow-2xl backdrop-blur-md space-y-5">
             <div class="text-center pb-3 border-b border-slate-800">
-              <h2 class="text-sm font-black text-slate-100 uppercase tracking-wide">✨ Crear Publicación</h2>
+              <h2 class="text-sm font-black text-slate-100 uppercase tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i> Crear Publicación
+              </h2>
             </div>
 
-            <form id="desktopPublishForm" class="space-y-3.5" onsubmit="handleDesktopPublish(event)">
-              <div class="flex items-center gap-3">
-                <img id="deskFormUserAvatar" src="https://via.placeholder.com/40" class="w-9 h-9 rounded-full border-2 border-pink-400 object-cover">
+            <form id="desktopPublishForm" class="space-y-4" onsubmit="handleDesktopPublish(event)">
+              <div class="flex items-center gap-3 bg-slate-950/80 p-3 rounded-2xl border border-slate-800/80">
+                <img id="deskFormUserAvatar" src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full border-2 border-pink-400 object-cover">
                 <div>
                   <p id="deskFormUserName" class="text-xs font-bold text-slate-100">Usuario</p>
                   <span class="text-[10px] text-pink-400 font-bold"><i class="fa-solid fa-globe"></i> Público</span>
                 </div>
               </div>
 
-              <input type="text" id="deskPubTitle" placeholder="Título (Ej. Vendo ítem MM2)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
-
-              <textarea id="deskPubDescription" rows="2" placeholder="¿Qué estás ofreciendo hoy?..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none resize-none"></textarea>
-
-              <div class="grid grid-cols-2 gap-2">
-                <select id="deskPubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
-                  <option value="">Categoría...</option>
-                  <option value="Arte / Dibujo">Arte / Dibujo</option>
-                  <option value="Videojuegos">Videojuegos</option>
-                  <option value="Ropa Virtual">Ropa Virtual</option>
-                  <option value="Programación">Programación</option>
-                  <option value="Otro">Otro</option>
-                </select>
-                <input type="text" id="deskPubGameName" placeholder="Juego (Ej. Roblox)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Título</label>
+                <input type="text" id="deskPubTitle" placeholder="Ej. Vendo ítem MM2 o Arte digital" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
               </div>
 
-              <div class="flex gap-2">
-                <input type="number" step="any" id="deskPubPrice" placeholder="Precio" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
-                <select id="deskPubCurrency" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
-                  <option value="USD">USD</option>
-                  <option value="COP">COP</option>
-                  <option value="MXN">MXN</option>
-                  <option value="Robux">Robux</option>
-                </select>
+              <div>
+                <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Descripción</label>
+                <textarea id="deskPubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy? Detalla tu servicio o reglas..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none resize-none"></textarea>
               </div>
 
-              <div class="border border-slate-800 rounded-xl p-2.5 bg-slate-950/80 flex items-center justify-between">
-                <span class="text-[11px] font-semibold text-slate-300">Imagen adjunta</span>
-                <label class="bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer flex items-center gap-1.5">
-                  <i class="fa-solid fa-image"></i> Subir
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Categoría</label>
+                  <select id="deskPubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                    <option value="">Categoría...</option>
+                    <option value="Arte / Dibujo">Arte / Dibujo</option>
+                    <option value="Videojuegos">Videojuegos</option>
+                    <option value="Ropa Virtual">Ropa Virtual</option>
+                    <option value="Programación">Programación</option>
+                    <option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Servicio</label>
+                  <input type="text" id="deskPubGameName" placeholder="Ej. Roblox" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio</label>
+                  <input type="number" step="any" id="deskPubPrice" placeholder="Valor" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Moneda</label>
+                  <select id="deskPubCurrency" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                    <option value="USD">USD ($)</option>
+                    <option value="COP">COP ($)</option>
+                    <option value="MXN">MXN ($)</option>
+                    <option value="Robux">Robux</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="border border-slate-800 rounded-2xl p-3 bg-slate-950/80 flex items-center justify-between">
+                <span class="text-xs font-semibold text-slate-300">Imagen adjunta</span>
+                <label class="bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
+                  <i class="fa-solid fa-image"></i> Subir foto
                   <input type="file" id="deskPubImageFile" accept="image/*" required class="hidden" onchange="previewDeskImage(this)">
                 </label>
               </div>
 
-              <div id="deskImagePreviewBox" class="hidden rounded-xl overflow-hidden border border-slate-800 max-h-32">
+              <div id="deskImagePreviewBox" class="hidden rounded-2xl overflow-hidden border border-slate-800 max-h-36">
                 <img id="deskImagePreview" class="w-full h-full object-cover">
               </div>
 
-              <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-pink-500/30 cursor-pointer text-xs">
+              <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-bold py-3 rounded-2xl transition shadow-lg shadow-pink-500/30 cursor-pointer text-xs">
                 Publicar en Moonfed✨
               </button>
             </form>
@@ -922,7 +937,7 @@
       }
     };
 
-    // FUNCIÓN DE PUBLICAR DESDE PC (PANEL DERECHO)
+    // Publicar desde PC
     window.previewDeskImage = (input) => {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -1320,19 +1335,22 @@
         const container = document.getElementById('notificationsContainer');
         const countSpan = document.getElementById('notifCount');
         const badge = document.getElementById('notifBadge');
+        const deskBadge = document.getElementById('deskNotifBadge');
         container.innerHTML = '';
 
         if (!snapshot.exists()) {
           container.innerHTML = `<div class="p-4 text-xs text-slate-500 text-center">No tienes notificaciones recientes.</div>`;
           countSpan.textContent = "0 nuevas";
-          badge.classList.add('hidden');
+          if (badge) badge.classList.add('hidden');
+          if (deskBadge) deskBadge.classList.add('hidden');
           return;
         }
 
         const notifs = snapshot.val();
         const keys = Object.keys(notifs).reverse();
         countSpan.textContent = `${keys.length} nuevas`;
-        badge.classList.remove('hidden');
+        if (badge) badge.classList.remove('hidden');
+        if (deskBadge) deskBadge.classList.remove('hidden');
 
         keys.forEach(k => {
           const n = notifs[k];
@@ -1671,7 +1689,7 @@
 
       if (tabName === 'feed') document.getElementById('tabFeed').classList.remove('hidden');
       if (tabName === 'publish') document.getElementById('tabPublish').classList.remove('hidden');
-      if (tabName === 'posts') document.getElementById('tabPosts').classList.add('hidden');
+      if (tabName === 'posts') document.getElementById('tabPosts').classList.remove('hidden');
       if (tabName === 'userProfile') document.getElementById('tabUserProfile').classList.remove('hidden');
       if (tabName === 'publicProfile') document.getElementById('tabPublicProfile').classList.remove('hidden');
       if (tabName === 'messages') {
