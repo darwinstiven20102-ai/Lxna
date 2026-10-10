@@ -31,19 +31,20 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pb-20 md:pb-0 overflow-x-hidden">
 
-  <!-- BURBUJA NOTIFICACIÓN DE MENSAJE FLOTANTE CUTE -->
-  <div id="msgFloatingBubble" class="hidden fixed bottom-20 right-4 md:bottom-6 md:right-6 z-[100] cursor-pointer animate-float-cute transition-all duration-300">
-    <div onclick="openBubbleChat()" class="relative bg-slate-900/90 backdrop-blur-xl border-2 border-pink-500/50 hover:border-pink-400 p-2.5 pr-4 rounded-full shadow-[0_0_25px_rgba(244,114,182,0.4)] flex items-center gap-3">
+  <!-- BURBUJA NOTIFICACIÓN FLOTANTE (MÁS GRANDE EN PC/TABLET) -->
+  <div id="msgFloatingBubble" class="hidden fixed bottom-20 right-4 md:bottom-8 md:right-8 z-[100] cursor-pointer animate-float-cute transition-all duration-300">
+    <div onclick="openBubbleChat()" class="relative bg-slate-900/95 backdrop-blur-xl border-2 border-pink-500/60 hover:border-pink-400 p-3.5 pr-6 md:p-4 md:pr-7 rounded-3xl shadow-[0_0_35px_rgba(244,114,182,0.45)] flex items-center gap-4">
       <div class="relative">
-        <img id="bubbleAvatar" src="https://via.placeholder.com/40" class="w-11 h-11 rounded-full object-cover border-2 border-purple-400">
+        <img id="bubbleAvatar" src="https://via.placeholder.com/50" class="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-pink-400 shadow-md">
         <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 border-2 border-slate-900 rounded-full animate-ping"></span>
         <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 border-2 border-slate-900 rounded-full"></span>
       </div>
-      <div class="max-w-[140px] sm:max-w-[180px]">
-        <p id="bubbleName" class="text-xs font-black text-pink-300 truncate">Nuevo mensaje</p>
-        <p id="bubbleText" class="text-[11px] text-slate-300 truncate font-medium">Toca para responder...</p>
+      <div class="max-w-[180px] md:max-w-[240px]">
+        <p class="text-[10px] md:text-xs font-black uppercase text-pink-400 tracking-wider">Nuevo mensaje recibido</p>
+        <p id="bubbleName" class="text-xs md:text-sm font-black text-slate-100 truncate mt-0.5">Usuario</p>
+        <p id="bubbleText" class="text-[11px] md:text-xs text-slate-300 truncate font-medium">Toca para abrir el chat...</p>
       </div>
-      <button onclick="event.stopPropagation(); closeMessageBubble();" class="text-slate-400 hover:text-pink-400 p-1 text-xs">
+      <button onclick="event.stopPropagation(); closeMessageBubble();" class="text-slate-400 hover:text-pink-400 p-1.5 text-sm ml-1">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
@@ -51,38 +52,35 @@
 
   <!-- NAVBAR SUPERIOR -->
   <header id="mainNavbar" class="hidden border-b border-purple-500/20 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
       
-      <!-- LOGO MOONFED SUPER CUTE Y DESTACADO -->
+      <!-- LOGO MOONFED -->
       <div class="flex items-center cursor-pointer select-none group" onclick="switchTab('feed')">
         <span class="font-black text-3xl sm:text-4xl tracking-tight bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-300 bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(244,114,182,0.6)] group-hover:scale-105 transition-transform duration-300">
           Moonfed✨
         </span>
       </div>
 
-      <!-- Navegación Escritorio & Tablet (BOTONES Y TEXTOS MÁS GRANDES Y DESTACADOS) -->
-      <div class="hidden md:flex items-center gap-4 sm:gap-6">
-        <button onclick="switchTab('feed')" class="text-sm font-extrabold text-slate-200 hover:text-pink-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-pink-500/40 px-4 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md">
-          <i class="fa-solid fa-house text-base text-pink-400"></i> Feed
+      <!-- Navegación Escritorio & Tablet (SIN BOTÓN DE PUBLICAR EN PC) -->
+      <div class="hidden md:flex items-center gap-6">
+        <button onclick="switchTab('feed')" class="text-sm font-extrabold text-slate-200 hover:text-pink-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-pink-500/40 px-5 py-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2.5 hover:scale-105 shadow-md">
+          <i class="fa-solid fa-house text-lg text-pink-400"></i> Feed Principal
         </button>
-        <button onclick="switchTab('publish')" class="text-sm font-extrabold text-slate-200 hover:text-purple-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-purple-500/40 px-4 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md">
-          <i class="fa-solid fa-circle-plus text-base text-purple-400"></i> Publicar
-        </button>
-        <button onclick="switchTab('messages')" class="text-sm font-extrabold text-slate-200 hover:text-indigo-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 px-4 py-2.5 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2 hover:scale-105 shadow-md relative">
-          <i class="fa-solid fa-paper-plane text-base text-indigo-400"></i> Mensajes
+        <button onclick="switchTab('messages')" class="text-sm font-extrabold text-slate-200 hover:text-indigo-300 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/40 px-5 py-3 rounded-2xl transition-all duration-200 cursor-pointer flex items-center gap-2.5 hover:scale-105 shadow-md relative">
+          <i class="fa-solid fa-paper-plane text-lg text-indigo-400"></i> Mensajes
         </button>
       </div>
 
       <!-- Perfil y Menú Desplegable -->
       <div class="flex items-center gap-3 relative">
         <div class="relative">
-          <button id="profileMenuBtn" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 p-2 pr-3.5 rounded-full transition-all cursor-pointer shadow-lg hover:scale-105">
-            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-pink-400 object-cover">
+          <button id="profileMenuBtn" class="flex items-center gap-2.5 bg-slate-900 hover:bg-slate-800 border border-purple-500/30 p-2 pr-4 rounded-full transition-all cursor-pointer shadow-lg hover:scale-105">
+            <img id="navUserAvatar" src="https://via.placeholder.com/40" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-pink-400 object-cover">
             <span id="navUserName" class="text-xs font-bold text-slate-200 hidden sm:inline">Usuario</span>
             <i class="fa-solid fa-chevron-down text-xs text-pink-400"></i>
           </button>
 
-          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-purple-500/30 rounded-2xl shadow-2xl py-2 z-50">
+          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-purple-500/30 rounded-3xl shadow-2xl py-2 z-50">
             <div class="px-4 py-2 border-b border-slate-800 mb-1">
               <p id="dropdownName" class="text-xs font-bold text-slate-200">Nombre</p>
               <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
@@ -120,7 +118,7 @@
     </div>
   </header>
 
-  <!-- NAVBAR INFERIOR MÓVIL -->
+  <!-- NAVBAR INFERIOR MÓVIL (SOLO MÓVIL) -->
   <nav id="mobileBottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur border-t border-purple-500/20 h-16 z-50 px-4 justify-around items-center md:hidden">
     <button onclick="switchTab('feed')" class="flex flex-col items-center justify-center text-slate-400 hover:text-pink-400 transition cursor-pointer py-1">
       <i class="fa-solid fa-house text-xl"></i>
@@ -141,7 +139,7 @@
   </nav>
 
   <!-- CONTENEDOR PRINCIPAL -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center overflow-x-hidden">
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 md:p-6 flex flex-col justify-center items-center overflow-x-hidden">
 
     <!-- 1. LOGIN CON GOOGLE -->
     <section id="loginScreen" class="max-w-md w-full text-center py-12 px-4">
@@ -211,29 +209,95 @@
       </div>
     </section>
 
-    <!-- 3. FEED ESTILO MOONFED -->
-    <section id="tabFeed" class="hidden w-full max-w-2xl mx-auto space-y-4">
-      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900 border border-purple-500/30 p-4 sm:p-5 shadow-xl backdrop-blur-md flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center text-pink-400 shadow-inner">
-            <i class="fa-solid fa-newspaper text-xl"></i>
+    <!-- 3. FEED ESTILO MOONFED (DISEÑO DIVIDIDO EN PC/TABLET) -->
+    <section id="tabFeed" class="hidden w-full max-w-6xl mx-auto">
+      
+      <!-- Layout de 2 columnas para PC/Tablet y 1 columna para Móvil -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start w-full">
+        
+        <!-- COLUMNA IZQUIERDA: FEED PRINCIPAL (Ocupa más espacio en PC) -->
+        <div class="md:col-span-7 lg:col-span-8 space-y-4 w-full order-2 md:order-1">
+          <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900 border border-purple-500/30 p-4 sm:p-5 shadow-xl backdrop-blur-md flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center text-pink-400 shadow-inner">
+                <i class="fa-solid fa-newspaper text-xl"></i>
+              </div>
+              <div>
+                <h1 class="text-base sm:text-xl font-black text-slate-100 tracking-wide">Feed de la Comunidad</h1>
+                <p class="text-[11px] text-pink-300 font-medium">Las mejores publicaciones de Moonfed✨</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <h1 class="text-base sm:text-xl font-black text-slate-100 tracking-wide">Feed de la Comunidad</h1>
-            <p class="text-[11px] text-pink-300 hidden sm:block font-medium">Las mejores publicaciones de Moonfed✨</p>
+          
+          <div id="feedPostsContainer" class="space-y-4 w-full"></div>
+        </div>
+
+        <!-- COLUMNA DERECHA: FORMULARIO DE CREAR POST FIJO (EXCLUSIVO PC/TABLET) -->
+        <div class="hidden md:block md:col-span-5 lg:col-span-4 sticky top-24 order-1 md:order-2">
+          <div class="bg-slate-900/95 border border-purple-500/30 rounded-3xl p-5 shadow-2xl backdrop-blur-md space-y-4">
+            <div class="text-center pb-3 border-b border-slate-800">
+              <h2 class="text-sm font-black text-slate-100 uppercase tracking-wide">✨ Crear Publicación</h2>
+            </div>
+
+            <form id="desktopPublishForm" class="space-y-3.5" onsubmit="handleDesktopPublish(event)">
+              <div class="flex items-center gap-3">
+                <img id="deskFormUserAvatar" src="https://via.placeholder.com/40" class="w-9 h-9 rounded-full border-2 border-pink-400 object-cover">
+                <div>
+                  <p id="deskFormUserName" class="text-xs font-bold text-slate-100">Usuario</p>
+                  <span class="text-[10px] text-pink-400 font-bold"><i class="fa-solid fa-globe"></i> Público</span>
+                </div>
+              </div>
+
+              <input type="text" id="deskPubTitle" placeholder="Título (Ej. Vendo ítem MM2)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+
+              <textarea id="deskPubDescription" rows="2" placeholder="¿Qué estás ofreciendo hoy?..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none resize-none"></textarea>
+
+              <div class="grid grid-cols-2 gap-2">
+                <select id="deskPubCategory" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                  <option value="">Categoría...</option>
+                  <option value="Arte / Dibujo">Arte / Dibujo</option>
+                  <option value="Videojuegos">Videojuegos</option>
+                  <option value="Ropa Virtual">Ropa Virtual</option>
+                  <option value="Programación">Programación</option>
+                  <option value="Otro">Otro</option>
+                </select>
+                <input type="text" id="deskPubGameName" placeholder="Juego (Ej. Roblox)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              </div>
+
+              <div class="flex gap-2">
+                <input type="number" step="any" id="deskPubPrice" placeholder="Precio" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                <select id="deskPubCurrency" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                  <option value="USD">USD</option>
+                  <option value="COP">COP</option>
+                  <option value="MXN">MXN</option>
+                  <option value="Robux">Robux</option>
+                </select>
+              </div>
+
+              <div class="border border-slate-800 rounded-xl p-2.5 bg-slate-950/80 flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-slate-300">Imagen adjunta</span>
+                <label class="bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white px-3 py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer flex items-center gap-1.5">
+                  <i class="fa-solid fa-image"></i> Subir
+                  <input type="file" id="deskPubImageFile" accept="image/*" required class="hidden" onchange="previewDeskImage(this)">
+                </label>
+              </div>
+
+              <div id="deskImagePreviewBox" class="hidden rounded-xl overflow-hidden border border-slate-800 max-h-32">
+                <img id="deskImagePreview" class="w-full h-full object-cover">
+              </div>
+
+              <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-pink-500/30 cursor-pointer text-xs">
+                Publicar en Moonfed✨
+              </button>
+            </form>
           </div>
         </div>
-        <button onclick="switchTab('publish')" class="relative group bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white text-xs font-black px-4 py-3 rounded-2xl transition-all duration-200 shadow-lg shadow-pink-500/30 hover:scale-105 cursor-pointer flex items-center gap-2">
-          <i class="fa-solid fa-plus text-sm group-hover:rotate-90 transition-transform"></i>
-          <span>Crear Post</span>
-        </button>
-      </div>
 
-      <div id="feedPostsContainer" class="space-y-4"></div>
+      </div>
     </section>
 
-    <!-- 4. PUBLICAR TIPO POST CREATOR -->
-    <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-4 py-2">
+    <!-- 4. PUBLICAR MÓVIL (Pestaña dedicada para celulares) -->
+    <section id="tabPublish" class="hidden max-w-xl w-full mx-auto space-y-4 py-2 md:hidden">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl p-4 md:p-6 shadow-2xl space-y-4">
         <div class="text-center pb-3 border-b border-slate-800">
           <h2 class="text-base font-black text-slate-100">Crear publicación en Moonfed✨</h2>
@@ -251,10 +315,10 @@
             </div>
           </div>
 
-          <input type="text" id="pubTitle" placeholder="Título de la publicación (Ej. Vendo Murder Mystery 2)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+          <input type="text" id="pubTitle" placeholder="Título de la publicación..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
 
           <div>
-            <textarea id="pubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy? Detalla tu servicio, reglas o ítems..." required class="w-full bg-transparent text-sm text-slate-100 focus:outline-none resize-none placeholder:text-slate-500"></textarea>
+            <textarea id="pubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy?..." required class="w-full bg-transparent text-sm text-slate-100 focus:outline-none resize-none placeholder:text-slate-500"></textarea>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -278,26 +342,22 @@
           <div class="space-y-1">
             <label class="block text-[10px] font-bold uppercase text-slate-400">Precio y Moneda</label>
             <div class="flex gap-2">
-              <input type="number" step="any" id="pubPrice" placeholder="Valor (Ej. 50000 o 10.50)" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <input type="number" step="any" id="pubPrice" placeholder="Valor" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
               
-              <select id="pubCurrencySelect" onchange="window.handleCurrencyChange(this)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <select id="pubCurrencySelect" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 <option value="USD">USD ($)</option>
                 <option value="COP">COP ($)</option>
                 <option value="MXN">MXN ($)</option>
-                <option value="ARS">ARS ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="CUSTOM">Otro / Libre...</option>
+                <option value="Robux">Robux</option>
               </select>
-
-              <input type="text" id="pubCustomCurrency" placeholder="Moneda (Ej. Robux)" class="hidden w-28 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
             </div>
           </div>
 
           <div class="border border-slate-800 rounded-2xl p-3 bg-slate-950/80 flex items-center justify-between">
-            <span class="text-xs font-semibold text-slate-300">Agregar foto a tu publicación</span>
+            <span class="text-xs font-semibold text-slate-300">Agregar foto</span>
             <label class="bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5">
               <i class="fa-solid fa-image"></i> Foto
-              <input type="file" id="pubImageFile" accept="image/*" required class="hidden" onchange="window.previewSelectedImage(this)">
+              <input type="file" id="pubImageFile" accept="image/*" required class="hidden" onchange="previewMobileImage(this)">
             </label>
           </div>
           
@@ -316,18 +376,16 @@
     <section id="tabPosts" class="hidden w-full max-w-2xl mx-auto space-y-4">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl p-4 flex justify-between items-center shadow-xl">
         <h1 class="text-xl font-black">Mis Publicaciones</h1>
-        <button onclick="switchTab('publish')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer shadow-md">
+        <button onclick="switchTab('publish')" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer shadow-md">
           <i class="fa-solid fa-plus mr-1"></i> Nueva
         </button>
       </div>
       <div id="myPostsContainer" class="space-y-4"></div>
     </section>
 
-    <!-- 6. SECCIÓN PERFIL CON BANNER Y DATOS -->
+    <!-- 6. SECCIÓN PERFIL -->
     <section id="tabUserProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl shadow-2xl overflow-hidden">
-        
-        <!-- Contenedor de Banner de Perfil -->
         <div id="profileBannerBox" class="h-32 sm:h-44 w-full bg-gradient-to-r from-purple-900 via-pink-950 to-slate-900 relative bg-cover bg-center"></div>
 
         <div class="p-6 relative pt-0">
@@ -353,25 +411,24 @@
             </button>
           </div>
 
-          <!-- Contadores -->
           <div class="flex justify-center sm:justify-start gap-6 py-4 border-b border-slate-800/80">
             <div class="text-center sm:text-left">
               <span id="profilePostsCount" class="block font-black text-base text-slate-100">0</span>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Posts</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Posts</span>
             </div>
             <div class="text-center sm:text-left">
               <span id="profileFollowersCount" class="block font-black text-base text-pink-400">0</span>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Seguidores</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Seguidores</span>
             </div>
             <div class="text-center sm:text-left">
               <span id="profileFollowingCount" class="block font-black text-base text-slate-100">0</span>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Siguiendo</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Siguiendo</span>
             </div>
           </div>
 
           <!-- Modal de Edición -->
           <div id="editNameModal" class="hidden my-4 bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-4">
-            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Ajustes de Perfil</h4>
+            <h4 class="text-xs font-bold text-slate-300 uppercase">Ajustes de Perfil</h4>
             <div class="space-y-3">
               <div>
                 <label class="block text-[10px] font-bold text-slate-400 mb-1">Nombre Completo</label>
@@ -418,11 +475,11 @@
           <div class="flex justify-center sm:justify-start gap-6 py-4 border-b border-slate-800/80">
             <div class="text-center sm:text-left">
               <span id="pubProfilePostsCount" class="block font-black text-base text-slate-100">0</span>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Posts</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Posts</span>
             </div>
             <div class="text-center sm:text-left">
               <span id="pubProfileFollowersCount" class="block font-black text-base text-pink-400">0</span>
-              <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Seguidores</span>
+              <span class="text-[10px] text-slate-400 uppercase font-semibold">Seguidores</span>
             </div>
           </div>
           <div class="pt-4">
@@ -471,8 +528,6 @@
     <!-- 7. CHAT FIJO CON SCROLL INTERNO BLOQUEADO -->
     <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto h-[calc(100vh-8rem)] min-h-[500px] max-h-[650px] overflow-hidden">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl shadow-2xl overflow-hidden md:grid md:grid-cols-3 h-full w-full relative">
-        
-        <!-- Lista de Chats -->
         <div id="chatListPanel" class="w-full md:w-auto h-full border-r border-slate-800 flex flex-col bg-slate-950/60 overflow-hidden">
           <div class="p-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
             <h2 class="font-black text-sm tracking-tight text-slate-100 flex items-center gap-2">
@@ -482,7 +537,6 @@
           <div id="chatList" class="flex-1 overflow-y-auto overflow-x-hidden divide-y divide-slate-900/60"></div>
         </div>
 
-        <!-- Conversación -->
         <div id="chatConversationPanel" class="hidden md:flex col-span-2 flex-col bg-slate-950/90 h-full w-full absolute md:relative inset-0 z-20 overflow-hidden">
           <div class="p-3 px-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/90 backdrop-blur shrink-0">
             <div class="flex items-center gap-3">
@@ -501,12 +555,10 @@
             </div>
           </div>
 
-          <!-- Historial de Mensajes -->
           <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto overflow-x-hidden space-y-2.5 no-scrollbar">
             <div class="text-center text-xs text-slate-500 my-auto pt-10">Toca un usuario para iniciar la conversación.</div>
           </div>
 
-          <!-- Input de Chat -->
           <div class="p-3 border-t border-slate-800/80 bg-slate-900/90 backdrop-blur shrink-0">
             <form id="chatForm" onsubmit="sendTextMessage(event)" class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-full px-3 py-1.5 focus-within:border-pink-500 transition w-full">
               <label class="p-1.5 text-slate-400 hover:text-pink-400 cursor-pointer transition flex items-center justify-center shrink-0">
@@ -529,7 +581,7 @@
       </div>
     </section>
 
-    <!-- 8. NOTIFICACIONES EN TIEMPO REAL -->
+    <!-- 8. NOTIFICACIONES -->
     <section id="tabNotifications" class="hidden max-w-xl w-full mx-auto space-y-4 py-4">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl p-6 shadow-xl space-y-4">
         <h2 class="text-xl font-black flex items-center justify-between">
@@ -547,7 +599,7 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y BURBUJA DE CHAT EN TIEMPO REAL -->
+  <!-- LÓGICA DE FIREBASE Y MULTICUENTA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -588,6 +640,7 @@
 
     let currentActiveTab = 'feed';
     let pendingBubbleTarget = null;
+    let deskTempImageBase64 = null;
 
     async function handleGoogleLogin(isAddingAccount = false) {
       try {
@@ -694,7 +747,6 @@
       }
     });
 
-    // SISTEMA DE ESCUCHA GLOBAL PARA BURBUJA FLOTANTE EN TIEMPO REAL
     function listenToGlobalMessagesForBubble() {
       if (!currentUser) return;
       const userChatsRef = ref(db, `userChats/${currentUser.uid}`);
@@ -713,11 +765,10 @@
             const lastMsgKey = Object.keys(msgs).pop();
             const lastMsg = msgs[lastMsgKey];
 
-            // Si el mensaje es de la otra persona y NO estoy en la pestaña de mensajes actualmente
             if (lastMsg.senderUid !== currentUser.uid && currentActiveTab !== 'messages') {
               const senderObj = allUsersData[otherUid] || {};
               const senderName = senderObj.name || lastMsg.senderName || 'Usuario';
-              const senderPhoto = senderObj.photoURL || 'https://via.placeholder.com/40';
+              const senderPhoto = senderObj.photoURL || 'https://via.placeholder.com/50';
 
               let textPreview = lastMsg.type === 'text' ? lastMsg.content : (lastMsg.type === 'image' ? '📷 Foto' : '🎙️ Nota de voz');
 
@@ -871,6 +922,56 @@
       }
     };
 
+    // FUNCIÓN DE PUBLICAR DESDE PC (PANEL DERECHO)
+    window.previewDeskImage = (input) => {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          deskTempImageBase64 = e.target.result;
+          document.getElementById('deskImagePreview').src = deskTempImageBase64;
+          document.getElementById('deskImagePreviewBox').classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    };
+
+    window.handleDesktopPublish = async (e) => {
+      e.preventDefault();
+      if (!currentUser || !deskTempImageBase64) {
+        alert("Por favor selecciona una imagen para la publicación.");
+        return;
+      }
+
+      const postData = {
+        uid: currentUser.uid,
+        category: document.getElementById('deskPubCategory').value,
+        gameName: document.getElementById('deskPubGameName').value,
+        title: document.getElementById('deskPubTitle').value,
+        price: document.getElementById('deskPubPrice').value,
+        currency: document.getElementById('deskPubCurrency').value,
+        description: document.getElementById('deskPubDescription').value,
+        image: deskTempImageBase64,
+        likesCount: 0,
+        likes: {},
+        comments: {},
+        createdAt: new Date().toISOString()
+      };
+
+      try {
+        const postsRef = ref(db, 'posts');
+        const newPostRef = push(postsRef);
+        await set(newPostRef, postData);
+
+        document.getElementById('desktopPublishForm').reset();
+        document.getElementById('deskImagePreviewBox').classList.add('hidden');
+        deskTempImageBase64 = null;
+        switchTab('feed');
+      } catch (err) {
+        alert("Error al publicar.");
+      }
+    };
+
+    // Publicar Móvil
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -881,17 +982,10 @@
       const priceVal = document.getElementById('pubPrice').value;
       const desc = document.getElementById('pubDescription').value;
       const fileInput = document.getElementById('pubImageFile');
-
-      const selectMoneda = document.getElementById('pubCurrencySelect').value;
-      let currencyStr = selectMoneda;
-      if (selectMoneda === 'CUSTOM') {
-        currencyStr = document.getElementById('pubCustomCurrency').value || 'USD';
-      }
+      const currencyStr = document.getElementById('pubCurrencySelect').value;
 
       const reader = new FileReader();
       reader.onload = async function(event) {
-        const imageUrl = event.target.result;
-
         const postData = {
           uid: currentUser.uid,
           category: category,
@@ -900,7 +994,7 @@
           price: priceVal,
           currency: currencyStr,
           description: desc,
-          image: imageUrl,
+          image: event.target.result,
           likesCount: 0,
           likes: {},
           comments: {},
@@ -909,18 +1003,14 @@
 
         try {
           const postsRef = ref(db, 'posts');
-          const newPostRef = push(postsRef);
-          await set(newPostRef, postData);
-
+          await set(push(postsRef), postData);
           publishForm.reset();
           document.getElementById('imagePreviewContainer').classList.add('hidden');
-          document.getElementById('pubCustomCurrency').classList.add('hidden');
           switchTab('feed');
         } catch (error) {
           alert("Error al publicar.");
         }
       };
-
       if (fileInput.files && fileInput.files[0]) {
         reader.readAsDataURL(fileInput.files[0]);
       }
@@ -928,9 +1018,7 @@
 
     window.toggleFollowUser = async (targetUid) => {
       if (!currentUser || !targetUid || targetUid === currentUser.uid) return;
-
       const followRef = ref(db, `follows/${currentUser.uid}/${targetUid}`);
-
       if (myFollowsMap[targetUid]) {
         await remove(followRef);
       } else {
@@ -944,7 +1032,6 @@
         switchTab('userProfile');
         return;
       }
-
       const userObj = allUsersData[targetUid] || {};
       const targetName = userObj.name || 'Usuario';
       const targetPhoto = userObj.photoURL || 'https://via.placeholder.com/100';
@@ -956,11 +1043,7 @@
       document.getElementById('pubProfileCountry').innerHTML = `<i class="fa-solid fa-location-dot mr-1"></i> ${targetCountry}`;
 
       const bannerBox = document.getElementById('pubProfileBannerBox');
-      if (targetBanner) {
-        bannerBox.style.backgroundImage = `url('${targetBanner}')`;
-      } else {
-        bannerBox.style.backgroundImage = 'none';
-      }
+      bannerBox.style.backgroundImage = targetBanner ? `url('${targetBanner}')` : 'none';
 
       const actionsBox = document.getElementById('pubProfileActions');
       actionsBox.innerHTML = '';
@@ -972,7 +1055,7 @@
       let btnText = "Seguir";
 
       if (isFollowing && followsMe) {
-        btnClass = "bg-emerald-600 hover:bg-emerald-500 text-white";
+        btnClass = "bg-emerald-600 text-white";
         btnText = "Amigos";
       } else if (isFollowing) {
         btnClass = "bg-slate-800 text-slate-300";
@@ -1100,7 +1183,7 @@
 
         <div class="flex justify-between items-center pt-1">
           <span class="text-emerald-400 font-black text-sm">$${post.price} ${currencyLabel}</span>
-          <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-400 hover:to-purple-500 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-md">
+          <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-md">
             <i class="fa-solid fa-paper-plane"></i> Mensaje
           </button>
         </div>
@@ -1109,7 +1192,7 @@
           <button onclick="window.toggleLikeFB('${postId}', ${hasLiked}, '${post.uid}')" class="flex items-center gap-1.5 hover:text-pink-400 transition cursor-pointer ${hasLiked ? 'text-pink-400 font-bold' : ''}">
             <i class="fa-solid fa-thumbs-up"></i> <span>Me gusta (${likesCount})</span>
           </button>
-          <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-pink-400 transition cursor-pointer">
+          <button onclick="window.toggleCommentsBox('${postId}')" class="flex items-center gap-1.5 hover:text-indigo-400 transition cursor-pointer">
             <i class="fa-solid fa-comment"></i> <span>Comentar</span>
           </button>
         </div>
@@ -1554,6 +1637,9 @@
       document.getElementById('dropdownName').textContent = name;
       document.getElementById('dropdownEmail').textContent = user.email;
 
+      document.getElementById('deskFormUserAvatar').src = avatar;
+      document.getElementById('deskFormUserName').textContent = name;
+
       document.getElementById('formUserAvatar').src = avatar;
       document.getElementById('formUserName').textContent = name;
 
@@ -1563,11 +1649,7 @@
       document.getElementById('profilePageCountry').innerHTML = `<i class="fa-solid fa-location-dot mr-1"></i> ${vData.country || 'Colombia'}`;
 
       const bannerBox = document.getElementById('profileBannerBox');
-      if (banner) {
-        bannerBox.style.backgroundImage = `url('${banner}')`;
-      } else {
-        bannerBox.style.backgroundImage = 'none';
-      }
+      bannerBox.style.backgroundImage = banner ? `url('${banner}')` : 'none';
     }
 
     function switchTab(tabName) {
@@ -1589,7 +1671,7 @@
 
       if (tabName === 'feed') document.getElementById('tabFeed').classList.remove('hidden');
       if (tabName === 'publish') document.getElementById('tabPublish').classList.remove('hidden');
-      if (tabName === 'posts') document.getElementById('tabPosts').classList.remove('hidden');
+      if (tabName === 'posts') document.getElementById('tabPosts').classList.add('hidden');
       if (tabName === 'userProfile') document.getElementById('tabUserProfile').classList.remove('hidden');
       if (tabName === 'publicProfile') document.getElementById('tabPublicProfile').classList.remove('hidden');
       if (tabName === 'messages') {
