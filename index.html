@@ -53,7 +53,7 @@
             <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
           </button>
 
-          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl py-2 z-50">
+          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl py-2 z-50">
             <div class="px-4 py-2 border-b border-slate-800 mb-1">
               <p id="dropdownName" class="text-xs font-bold text-slate-200">Nombre</p>
               <p id="dropdownEmail" class="text-[10px] text-slate-400 truncate">correo@ejemplo.com</p>
@@ -71,7 +71,16 @@
               <span id="notifBadge" class="hidden absolute right-3 w-2 h-2 rounded-full bg-indigo-500"></span>
             </button>
 
+            <!-- Sección de Cuentas Vinculadas -->
+            <div id="linkedAccountsSection" class="border-t border-slate-800 mt-1 pt-1 hidden">
+              <div class="px-4 py-1 text-[10px] font-bold text-slate-500 uppercase">Cambiar de cuenta</div>
+              <div id="linkedAccountsList" class="space-y-0.5 px-2"></div>
+            </div>
+
             <div class="border-t border-slate-800 mt-1 pt-1">
+              <button id="addAccountBtn" class="w-full text-left px-4 py-2 text-xs text-indigo-400 hover:bg-indigo-500/10 flex items-center gap-3 transition cursor-pointer">
+                <i class="fa-solid fa-user-plus w-4 text-center"></i> Agregar cuenta
+              </button>
               <button id="logoutBtn" class="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 flex items-center gap-3 transition cursor-pointer">
                 <i class="fa-solid fa-right-from-bracket w-4 text-center"></i> Cerrar sesión
               </button>
@@ -305,7 +314,7 @@
             </button>
           </div>
 
-          <!-- Contadores de Seguidores Totales y Posts -->
+          <!-- Contadores -->
           <div class="flex justify-center sm:justify-start gap-6 py-4 border-b border-slate-800/80">
             <div class="text-center sm:text-left">
               <span id="profilePostsCount" class="block font-extrabold text-base text-slate-100">0</span>
@@ -321,16 +330,14 @@
             </div>
           </div>
 
-          <!-- Modal de Edición de Nombre y Banner -->
+          <!-- Modal de Edición -->
           <div id="editNameModal" class="hidden my-4 bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-4">
             <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Ajustes de Perfil</h4>
-            
             <div class="space-y-3">
               <div>
                 <label class="block text-[10px] font-bold text-slate-400 mb-1">Nombre Completo</label>
                 <input type="text" id="editNameInput" placeholder="Nuevo nombre" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500">
               </div>
-
               <div>
                 <label class="block text-[10px] font-bold text-slate-400 mb-1">Imagen de Banner</label>
                 <label class="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 cursor-pointer hover:border-indigo-500 transition">
@@ -339,12 +346,9 @@
                   <input type="file" id="editBannerInput" accept="image/*" class="hidden" onchange="document.getElementById('bannerFileName').textContent = this.files[0]?.name || 'Subir imagen de fondo...'">
                 </label>
               </div>
-
               <div class="flex justify-end gap-2 pt-1">
                 <button onclick="window.toggleEditNameModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold px-3 py-2 rounded-xl transition">Cancelar</button>
-                <button onclick="window.saveNewProfileData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer">
-                  Guardar Cambios
-                </button>
+                <button onclick="window.saveNewProfileData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer">Guardar Cambios</button>
               </div>
             </div>
           </div>
@@ -357,13 +361,10 @@
       </div>
     </section>
 
-    <!-- 6.5 VISTA PÚBLICA DE PERFIL DE OTRO USUARIO CON BANNER Y DATOS -->
+    <!-- 6.5 VISTA PÚBLICA DE PERFIL DE OTRO USUARIO -->
     <section id="tabPublicProfile" class="hidden w-full max-w-2xl mx-auto space-y-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-        
-        <!-- Banner del Perfil Público -->
         <div id="pubProfileBannerBox" class="h-32 sm:h-44 w-full bg-gradient-to-r from-slate-800 to-indigo-950 relative bg-cover bg-center"></div>
-
         <div class="p-6 relative pt-0">
           <div class="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 -mt-12 sm:-mt-16 pb-6 border-b border-slate-800">
             <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
@@ -373,11 +374,8 @@
                 <p id="pubProfileCountry" class="text-xs text-indigo-400 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i> Colombia</p>
               </div>
             </div>
-
-            <!-- Acciones de Perfil de Otro Usuario -->
             <div id="pubProfileActions" class="flex gap-2"></div>
           </div>
-
           <div class="flex justify-center sm:justify-start gap-6 py-4 border-b border-slate-800/80">
             <div class="text-center sm:text-left">
               <span id="pubProfilePostsCount" class="block font-extrabold text-base text-slate-100">0</span>
@@ -388,7 +386,6 @@
               <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Seguidores</span>
             </div>
           </div>
-
           <div class="pt-4">
             <h3 class="text-sm font-bold text-slate-300 mb-3"><i class="fa-solid fa-newspaper mr-1"></i> Publicaciones</h3>
             <div id="pubProfilePostsGrid" class="space-y-4"></div>
@@ -404,7 +401,6 @@
           <h3 class="font-bold text-sm text-slate-100">Editar Publicación</h3>
           <button onclick="window.closeEditPostModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
         </div>
-
         <form id="editPostForm" class="space-y-3">
           <input type="hidden" id="editPostId">
           <div>
@@ -444,7 +440,6 @@
           </div>
           <div id="chatList" class="flex-1 overflow-y-auto overflow-x-hidden divide-y divide-slate-900/60"></div>
         </div>
-
         <div id="chatConversationPanel" class="hidden md:flex col-span-2 flex-col bg-slate-950/90 h-full w-full absolute md:relative inset-0 z-20 overflow-hidden">
           <div class="p-3 px-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/90 backdrop-blur">
             <div class="flex items-center gap-3">
@@ -462,24 +457,19 @@
               </div>
             </div>
           </div>
-
           <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto overflow-x-hidden space-y-2.5 flex flex-col justify-end no-scrollbar">
             <div class="text-center text-xs text-slate-500 my-auto">Toca un usuario para iniciar la conversación.</div>
           </div>
-
           <div class="p-3 border-t border-slate-800/80 bg-slate-900/90 backdrop-blur">
             <form id="chatForm" onsubmit="sendTextMessage(event)" class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-full px-3 py-1.5 focus-within:border-indigo-500 transition w-full">
               <label class="p-1.5 text-slate-400 hover:text-indigo-400 cursor-pointer transition flex items-center justify-center">
                 <i class="fa-regular fa-image text-lg"></i>
                 <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="sendChatImage(this)">
               </label>
-
               <button type="button" id="micBtn" onclick="toggleAudioRecording()" class="p-1.5 text-slate-400 hover:text-red-400 cursor-pointer transition flex items-center justify-center">
                 <i class="fa-solid fa-microphone text-base"></i>
               </button>
-
               <input type="text" id="chatInput" placeholder="Envía un mensaje..." class="flex-1 min-w-0 bg-transparent border-none text-xs text-slate-100 focus:outline-none px-1" disabled>
-              
               <button type="submit" id="sendMsgBtn" class="text-indigo-500 hover:text-indigo-400 font-bold text-xs px-2 transition cursor-pointer disabled:opacity-40" disabled>
                 Enviar
               </button>
@@ -507,7 +497,7 @@
 
   </main>
 
-  <!-- LÓGICA COMPLETA DE FIREBASE -->
+  <!-- LÓGICA DE MULTICUENTAS Y FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -535,6 +525,7 @@
     const mobileBottomNav = document.getElementById('mobileBottomNav');
     const googleAuthBtn = document.getElementById('googleAuthBtn');
     const logoutBtn = document.getElementById('logoutBtn');
+    const addAccountBtn = document.getElementById('addAccountBtn');
     const vendorForm = document.getElementById('vendorForm');
     const publishForm = document.getElementById('publishForm');
 
@@ -545,28 +536,109 @@
     let myFollowsMap = {};
     let globalFollowsData = {};
 
-    googleAuthBtn.addEventListener('click', async () => {
+    // INICIAR SESIÓN CON GOOGLE (PRINCIPAL O AGREGAR NUEVA CUENTA)
+    async function handleGoogleLogin(isAddingAccount = false) {
       try {
         const result = await signInWithPopup(auth, provider);
-        currentUser = result.user;
-        await checkVendorRegistration(currentUser);
+        const user = result.user;
+        
+        // Guardar cuenta en lista local para multicuenta
+        saveAccountLocally({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL
+        });
+
+        await checkVendorRegistration(user);
       } catch (error) {
         alert("Error de autenticación: " + error.message);
       }
-    });
+    }
+
+    googleAuthBtn.addEventListener('click', () => handleGoogleLogin(false));
+    addAccountBtn.addEventListener('click', () => handleGoogleLogin(true));
+
+    function saveAccountLocally(account) {
+      let accounts = JSON.parse(localStorage.getItem('moonshop_accounts') || '[]');
+      if (!accounts.some(acc => acc.uid === account.uid)) {
+        accounts.push(account);
+        localStorage.setItem('moonshop_accounts', JSON.stringify(accounts));
+      }
+      localStorage.setItem('moonshop_active_uid', account.uid);
+      renderLinkedAccounts();
+    }
+
+    function renderLinkedAccounts() {
+      const container = document.getElementById('linkedAccountsList');
+      const section = document.getElementById('linkedAccountsSection');
+      const accounts = JSON.parse(localStorage.getItem('moonshop_accounts') || '[]');
+
+      container.innerHTML = '';
+      if (accounts.length <= 1) {
+        section.classList.add('hidden');
+        return;
+      }
+
+      section.classList.remove('hidden');
+      accounts.forEach(acc => {
+        const isCurrent = currentUser && acc.uid === currentUser.uid;
+        const div = document.createElement('button');
+        div.className = `w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition cursor-pointer ${isCurrent ? 'bg-indigo-600/20 text-indigo-400 font-bold border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800'}`;
+        div.innerHTML = `
+          <div class="flex items-center gap-2 truncate">
+            <img src="${acc.photoURL || 'https://via.placeholder.com/30'}" class="w-6 h-6 rounded-full object-cover">
+            <span class="truncate">${acc.name}</span>
+          </div>
+          ${isCurrent ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}
+        `;
+        div.onclick = () => switchAccount(acc.uid);
+        container.appendChild(div);
+      });
+    }
+
+    window.switchAccount = async (targetUid) => {
+      // Simular cambio de cuenta guardando en local storage y recargando datos
+      localStorage.setItem('moonshop_active_uid', targetUid);
+      const dbRef = ref(db);
+      const snapshot = await get(child(dbRef, `vendors/${targetUid}`));
+      if (snapshot.exists()) {
+        currentUserData = snapshot.val();
+        // Si ya está autenticado en firebase auth o simulamos
+        location.reload();
+      }
+    };
 
     logoutBtn.addEventListener('click', () => {
+      // Remover cuenta actual de la lista local
+      if (currentUser) {
+        let accounts = JSON.parse(localStorage.getItem('moonshop_accounts') || '[]');
+        accounts = accounts.filter(acc => acc.uid !== currentUser.uid);
+        localStorage.setItem('moonshop_accounts', JSON.stringify(accounts));
+        if (accounts.length > 0) {
+          localStorage.setItem('moonshop_active_uid', accounts[0].uid);
+        } else {
+          localStorage.removeItem('moonshop_active_uid');
+        }
+      }
       signOut(auth);
     });
 
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
+        saveAccountLocally({
+          uid: user.uid,
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL
+        });
         await checkVendorRegistration(user);
         listenToVendors();
         listenToFollows();
         listenToPostsFB();
         listenToNotifications();
+        renderLinkedAccounts();
       } else {
         currentUser = null;
         showScreen('login');
@@ -585,16 +657,13 @@
       });
     }
 
-    // LISTAR Y CALCULAR SEGUIDORES TOTALES EN TIEMPO REAL
     function listenToFollows() {
       if (!currentUser) return;
 
       onValue(ref(db, 'follows'), (snapshot) => {
         globalFollowsData = snapshot.exists() ? snapshot.val() : {};
-        
         myFollowsMap = globalFollowsData[currentUser.uid] || {};
 
-        // Calcular cuántos usuarios me siguen a mí
         let myFollowersCount = 0;
         Object.keys(globalFollowsData).forEach(fromUid => {
           if (globalFollowsData[fromUid][currentUser.uid]) {
@@ -674,7 +743,6 @@
       document.getElementById('editNameModal').classList.toggle('hidden');
     };
 
-    // GUARDAR NOMBRE Y BANNER
     window.saveNewProfileData = async () => {
       if (!currentUser) return;
       const newName = document.getElementById('editNameInput').value.trim();
@@ -834,7 +902,6 @@
         });
       }
 
-      // Contar seguidores del usuario ajeno
       let targetFollowersCount = 0;
       Object.keys(globalFollowsData).forEach(fUid => {
         if (globalFollowsData[fUid][targetUid]) targetFollowersCount++;
