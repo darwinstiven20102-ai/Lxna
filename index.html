@@ -9,7 +9,7 @@
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     html, body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -24,13 +24,12 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col pb-20 md:pb-0 overflow-x-hidden">
 
   <!-- NAVBAR SUPERIOR -->
-  <header id="mainNavbar" class="hidden border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+  <header id="mainNavbar" class="hidden border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('feed')">
-        <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
-          <i class="fa-solid fa-store"></i>
-        </div>
-        <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+      
+      <!-- LOGO / TÍTULO MOON SHOP (SIN ÍCONO Y CON DISEÑO LLAMATIVO) -->
+      <div class="flex items-center cursor-pointer select-none" onclick="switchTab('feed')">
+        <span class="font-black text-2xl tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(129,140,248,0.4)] hover:scale-105 transition-transform duration-200">
           Moon Shop
         </span>
       </div>
@@ -182,14 +181,24 @@
       </div>
     </section>
 
-    <!-- 3. FEED ESTILO FACEBOOK -->
+    <!-- 3. FEED ESTILO FACEBOOK (ENCABEZADO MEJORADO Y MODERNO) -->
     <section id="tabFeed" class="hidden w-full max-w-2xl mx-auto space-y-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex items-center justify-between">
-        <h1 class="text-lg md:text-xl font-bold"><i class="fa-solid fa-newspaper text-indigo-500 mr-2"></i> Feed de la Comunidad</h1>
-        <button onclick="switchTab('publish')" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition cursor-pointer">
-          <i class="fa-solid fa-plus mr-1"></i> Crear Post
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/20 p-4 sm:p-5 shadow-xl backdrop-blur-md flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-inner">
+            <i class="fa-solid fa-newspaper text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-extrabold text-slate-100 tracking-wide">Feed de la Comunidad</h1>
+            <p class="text-[11px] text-slate-400 hidden sm:block">Mira las últimas ofertas e ítems publicados</p>
+          </div>
+        </div>
+        <button onclick="switchTab('publish')" class="relative group bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all duration-200 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50 hover:scale-105 cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-plus text-sm group-hover:rotate-90 transition-transform"></i>
+          <span>Crear Post</span>
         </button>
       </div>
+
       <div id="feedPostsContainer" class="space-y-4"></div>
     </section>
 
@@ -429,24 +438,28 @@
       </div>
     </div>
 
-    <!-- 7. CHAT FIJO Y AUDIOS -->
-    <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto overflow-hidden">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden md:grid md:grid-cols-3 h-[78vh] md:h-[600px] relative w-full">
+    <!-- 7. CHAT FIJO ESTÉTICO CON SCROLL INTERNO BLOQUEADO -->
+    <section id="tabMessages" class="hidden w-full max-w-4xl mx-auto h-[calc(100vh-8rem)] min-h-[500px] max-h-[650px] overflow-hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden md:grid md:grid-cols-3 h-full w-full relative">
+        
+        <!-- Lista de Chats (Fija con scroll propio) -->
         <div id="chatListPanel" class="w-full md:w-auto h-full border-r border-slate-800 flex flex-col bg-slate-950/60 overflow-hidden">
-          <div class="p-4 border-b border-slate-800/80 flex items-center justify-between">
+          <div class="p-4 border-b border-slate-800/80 flex items-center justify-between shrink-0">
             <h2 class="font-extrabold text-sm tracking-tight text-slate-100 flex items-center gap-2">
               <i class="fa-solid fa-paper-plane text-indigo-500"></i> Mensajes Directos
             </h2>
           </div>
           <div id="chatList" class="flex-1 overflow-y-auto overflow-x-hidden divide-y divide-slate-900/60"></div>
         </div>
+
+        <!-- Conversación (Contenedor Fijo con scroll en el historial) -->
         <div id="chatConversationPanel" class="hidden md:flex col-span-2 flex-col bg-slate-950/90 h-full w-full absolute md:relative inset-0 z-20 overflow-hidden">
-          <div class="p-3 px-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/90 backdrop-blur">
+          <div class="p-3 px-4 border-b border-slate-800/80 flex items-center justify-between bg-slate-900/90 backdrop-blur shrink-0">
             <div class="flex items-center gap-3">
               <button onclick="closeMobileChat()" class="md:hidden text-slate-300 hover:text-white p-1 text-base cursor-pointer">
                 <i class="fa-solid fa-arrow-left"></i>
               </button>
-              <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[1.5px] flex items-center justify-center">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 p-[1.5px] flex items-center justify-center shrink-0">
                 <img id="activeChatAvatar" src="https://via.placeholder.com/40" class="w-full h-full rounded-full object-cover">
               </div>
               <div>
@@ -457,20 +470,27 @@
               </div>
             </div>
           </div>
-          <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto overflow-x-hidden space-y-2.5 flex flex-col justify-end no-scrollbar">
-            <div class="text-center text-xs text-slate-500 my-auto">Toca un usuario para iniciar la conversación.</div>
+
+          <!-- Historial de Mensajes (Solo este elemento se desliza hacia arriba/abajo) -->
+          <div id="chatMessagesBox" class="flex-1 p-4 overflow-y-auto overflow-x-hidden space-y-2.5 no-scrollbar">
+            <div class="text-center text-xs text-slate-500 my-auto pt-10">Toca un usuario para iniciar la conversación.</div>
           </div>
-          <div class="p-3 border-t border-slate-800/80 bg-slate-900/90 backdrop-blur">
+
+          <!-- Input de Chat (Fijo abajo) -->
+          <div class="p-3 border-t border-slate-800/80 bg-slate-900/90 backdrop-blur shrink-0">
             <form id="chatForm" onsubmit="sendTextMessage(event)" class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-full px-3 py-1.5 focus-within:border-indigo-500 transition w-full">
-              <label class="p-1.5 text-slate-400 hover:text-indigo-400 cursor-pointer transition flex items-center justify-center">
+              <label class="p-1.5 text-slate-400 hover:text-indigo-400 cursor-pointer transition flex items-center justify-center shrink-0">
                 <i class="fa-regular fa-image text-lg"></i>
                 <input type="file" id="chatImageInput" accept="image/*" class="hidden" onchange="sendChatImage(this)">
               </label>
-              <button type="button" id="micBtn" onclick="toggleAudioRecording()" class="p-1.5 text-slate-400 hover:text-red-400 cursor-pointer transition flex items-center justify-center">
+
+              <button type="button" id="micBtn" onclick="toggleAudioRecording()" class="p-1.5 text-slate-400 hover:text-red-400 cursor-pointer transition flex items-center justify-center shrink-0">
                 <i class="fa-solid fa-microphone text-base"></i>
               </button>
+
               <input type="text" id="chatInput" placeholder="Envía un mensaje..." class="flex-1 min-w-0 bg-transparent border-none text-xs text-slate-100 focus:outline-none px-1" disabled>
-              <button type="submit" id="sendMsgBtn" class="text-indigo-500 hover:text-indigo-400 font-bold text-xs px-2 transition cursor-pointer disabled:opacity-40" disabled>
+              
+              <button type="submit" id="sendMsgBtn" class="text-indigo-500 hover:text-indigo-400 font-bold text-xs px-2 transition cursor-pointer disabled:opacity-40 shrink-0" disabled>
                 Enviar
               </button>
             </form>
@@ -536,13 +556,11 @@
     let myFollowsMap = {};
     let globalFollowsData = {};
 
-    // INICIAR SESIÓN CON GOOGLE (PRINCIPAL O AGREGAR NUEVA CUENTA)
     async function handleGoogleLogin(isAddingAccount = false) {
       try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         
-        // Guardar cuenta en lista local para multicuenta
         saveAccountLocally({
           uid: user.uid,
           name: user.displayName,
@@ -598,19 +616,16 @@
     }
 
     window.switchAccount = async (targetUid) => {
-      // Simular cambio de cuenta guardando en local storage y recargando datos
       localStorage.setItem('moonshop_active_uid', targetUid);
       const dbRef = ref(db);
       const snapshot = await get(child(dbRef, `vendors/${targetUid}`));
       if (snapshot.exists()) {
         currentUserData = snapshot.val();
-        // Si ya está autenticado en firebase auth o simulamos
         location.reload();
       }
     };
 
     logoutBtn.addEventListener('click', () => {
-      // Remover cuenta actual de la lista local
       if (currentUser) {
         let accounts = JSON.parse(localStorage.getItem('moonshop_accounts') || '[]');
         accounts = accounts.filter(acc => acc.uid !== currentUser.uid);
@@ -1253,7 +1268,7 @@
         box.innerHTML = '';
 
         if (!snapshot.exists()) {
-          box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto">Inicia la conversación con ${targetChatName}.</div>`;
+          box.innerHTML = `<div class="text-center text-xs text-slate-500 my-auto pt-10">Inicia la conversación con ${targetChatName}.</div>`;
           return;
         }
 
