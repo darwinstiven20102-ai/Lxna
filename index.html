@@ -261,12 +261,12 @@
 
               <div>
                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Título</label>
-                <input type="text" id="deskPubTitle" placeholder="Ej. Vendo ítem MM2 o Arte digital" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                <input type="text" id="deskPubTitle" placeholder="Ej. Vendo ítem MM2 o Mi experiencia hoy" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
               </div>
 
               <div>
                 <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Descripción</label>
-                <textarea id="deskPubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy? Detalla tu servicio o reglas..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none resize-none"></textarea>
+                <textarea id="deskPubDescription" rows="3" placeholder="¿Qué estás pensando u ofreciendo hoy?..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-3 text-xs text-slate-100 focus:outline-none resize-none"></textarea>
               </div>
 
               <div class="grid grid-cols-2 gap-3">
@@ -278,19 +278,21 @@
                     <option value="Videojuegos">Videojuegos</option>
                     <option value="Ropa Virtual">Ropa Virtual</option>
                     <option value="Programación">Programación</option>
+                    <option value="Cotidiano / Blog">Cotidiano / Blog</option>
                     <option value="Otro">Otro</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Servicio</label>
-                  <input type="text" id="deskPubGameName" placeholder="Ej. Roblox" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Tema</label>
+                  <input type="text" id="deskPubGameName" placeholder="Ej. Roblox, Charla" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 </div>
               </div>
 
+              <!-- PRECIO (SI SE DEJA VACÍO SERÁ PUBLICACIÓN COTIDIANA) -->
               <div class="grid grid-cols-2 gap-3">
                 <div>
-                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio</label>
-                  <input type="number" step="any" id="deskPubPrice" placeholder="Valor" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+                  <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio <span class="text-slate-500 lowercase">(opcional)</span></label>
+                  <input type="number" step="any" id="deskPubPrice" placeholder="Sin precio = Cotidiana" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 </div>
                 <div>
                   <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Moneda</label>
@@ -347,7 +349,7 @@
           <input type="text" id="pubTitle" placeholder="Título de la publicación..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
 
           <div>
-            <textarea id="pubDescription" rows="3" placeholder="¿Qué estás ofreciendo hoy?..." required class="w-full bg-transparent text-sm text-slate-100 focus:outline-none resize-none placeholder:text-slate-500"></textarea>
+            <textarea id="pubDescription" rows="3" placeholder="¿Qué estás pensando u ofreciendo hoy?..." required class="w-full bg-transparent text-sm text-slate-100 focus:outline-none resize-none placeholder:text-slate-500"></textarea>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -359,19 +361,20 @@
                 <option value="Videojuegos">Videojuegos</option>
                 <option value="Ropa Virtual">Ropa Virtual</option>
                 <option value="Programación">Programación</option>
+                <option value="Cotidiano / Blog">Cotidiano / Blog</option>
                 <option value="Otro">Otro</option>
               </select>
             </div>
             <div>
-              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Servicio</label>
-              <input type="text" id="pubGameName" placeholder="Ej. Roblox, MM2..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Juego / Tema</label>
+              <input type="text" id="pubGameName" placeholder="Ej. Roblox, Charla..." required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
             </div>
           </div>
 
           <div class="space-y-1">
-            <label class="block text-[10px] font-bold uppercase text-slate-400">Precio y Moneda</label>
+            <label class="block text-[10px] font-bold uppercase text-slate-400">Precio <span class="text-slate-500 lowercase">(opcional - sin precio es cotidiana)</span></label>
             <div class="flex gap-2">
-              <input type="number" step="any" id="pubPrice" placeholder="Valor" required class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <input type="number" step="any" id="pubPrice" placeholder="Valor del ítem..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
               
               <select id="pubCurrencySelect" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
                 <option value="USD">USD ($)</option>
@@ -523,20 +526,15 @@
     <div id="commentsModal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5">
       <div class="bg-slate-900 border border-purple-500/30 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row overflow-hidden shadow-2xl relative">
         
-        <!-- Botón para cerrar modal -->
         <button onclick="window.closeCommentsModal()" class="absolute top-3 right-3 z-30 bg-slate-950/80 hover:bg-pink-500 text-slate-300 hover:text-white w-8 h-8 rounded-full flex items-center justify-center transition cursor-pointer">
           <i class="fa-solid fa-xmark text-sm"></i>
         </button>
 
-        <!-- LADO IZQUIERDO: IMAGEN DE LA PUBLICACIÓN -->
         <div class="md:w-1/2 bg-slate-950 flex items-center justify-center border-b md:border-b-0 md:border-r border-slate-800 p-2 max-h-64 md:max-h-full overflow-hidden">
           <img id="modalPostImage" src="" class="max-h-full max-w-full object-contain rounded-xl">
         </div>
 
-        <!-- LADO DERECHO: DETALLES Y COMENTARIOS -->
         <div class="md:w-1/2 flex flex-col h-full bg-slate-900/95 overflow-hidden">
-          
-          <!-- Encabezado del Post en Modal -->
           <div class="p-4 border-b border-slate-800 flex items-center gap-3 shrink-0">
             <img id="modalAuthorAvatar" src="" class="w-10 h-10 rounded-full border-2 border-pink-400 object-cover cursor-pointer" onclick="window.openPublicProfileFromModal()">
             <div class="min-w-0 flex-1">
@@ -545,10 +543,8 @@
             </div>
           </div>
 
-          <!-- Lista de Comentarios con Fotos y Nombres -->
           <div id="modalCommentsList" class="flex-1 p-4 overflow-y-auto space-y-3 divide-y divide-slate-800/40"></div>
 
-          <!-- Caja de Entrada de Nuevo Comentario -->
           <div class="p-3 border-t border-slate-800 bg-slate-950 shrink-0">
             <div class="flex gap-2">
               <input type="text" id="modalCommentInput" placeholder="Escribe un comentario..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
@@ -585,8 +581,8 @@
               <input type="text" id="editPostGame" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
             </div>
             <div>
-              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio</label>
-              <input type="number" step="any" id="editPostPrice" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
+              <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Precio (Opcional)</label>
+              <input type="number" step="any" id="editPostPrice" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-pink-500">
             </div>
           </div>
           <div class="flex justify-end gap-2 pt-2">
@@ -671,7 +667,7 @@
 
   </main>
 
-  <!-- LÓGICA DE FIREBASE Y MODAL DE COMENTARIOS -->
+  <!-- LÓGICA DE FIREBASE Y ETIQUETADO AUTOMÁTICO VENTA / COTIDIANA -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -995,7 +991,7 @@
       }
     };
 
-    // Publicar desde PC
+    // Publicar desde PC (Detección de precio Venta / Cotidiana)
     window.previewDeskImage = (input) => {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -1015,13 +1011,17 @@
         return;
       }
 
+      const priceVal = document.getElementById('deskPubPrice').value.trim();
+      const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
+
       const postData = {
         uid: currentUser.uid,
         category: document.getElementById('deskPubCategory').value,
         gameName: document.getElementById('deskPubGameName').value,
         title: document.getElementById('deskPubTitle').value,
-        price: document.getElementById('deskPubPrice').value,
+        price: isSale ? priceVal : "",
         currency: document.getElementById('deskPubCurrency').value,
+        postType: isSale ? "sale" : "daily",
         description: document.getElementById('deskPubDescription').value,
         image: deskTempImageBase64,
         likesCount: 0,
@@ -1044,7 +1044,7 @@
       }
     };
 
-    // Publicar Móvil
+    // Publicar Móvil (Detección de precio Venta / Cotidiana)
     publishForm.addEventListener('submit', (e) => {
       e.preventDefault();
       if (!currentUser) return;
@@ -1052,10 +1052,12 @@
       const category = document.getElementById('pubCategory').value;
       const gameName = document.getElementById('pubGameName').value;
       const title = document.getElementById('pubTitle').value;
-      const priceVal = document.getElementById('pubPrice').value;
+      const priceVal = document.getElementById('pubPrice').value.trim();
       const desc = document.getElementById('pubDescription').value;
       const fileInput = document.getElementById('pubImageFile');
       const currencyStr = document.getElementById('pubCurrencySelect').value;
+
+      const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
 
       const reader = new FileReader();
       reader.onload = async function(event) {
@@ -1064,8 +1066,9 @@
           category: category,
           gameName: gameName,
           title: title,
-          price: priceVal,
+          price: isSale ? priceVal : "",
           currency: currencyStr,
+          postType: isSale ? "sale" : "daily",
           description: desc,
           image: event.target.result,
           likesCount: 0,
@@ -1183,6 +1186,12 @@
       const isFollowing = myFollowsMap[post.uid];
       const followsMe = globalFollowsData[post.uid] && globalFollowsData[post.uid][currentUser?.uid];
 
+      // Determinar si es Venta o Cotidiana
+      const isSalePost = post.price && post.price !== "" && parseFloat(post.price) > 0;
+      const badgeHTML = isSalePost 
+        ? `<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider"><i class="fa-solid fa-bag-shopping mr-1"></i> Venta</span>`
+        : `<span class="bg-pink-500/10 text-pink-400 border border-pink-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider"><i class="fa-solid fa-comment-dots mr-1"></i> Cotidiana</span>`;
+
       let followBtnHTML = '';
       if (!isMine) {
         let btnStyle = "bg-pink-500/20 hover:bg-pink-500 text-pink-300 hover:text-white";
@@ -1227,7 +1236,10 @@
           <div class="flex items-center gap-3 cursor-pointer" onclick="window.openPublicProfile('${post.uid}')">
             <img src="${authorAvatar}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-pink-400 object-cover shadow-md">
             <div>
-              <h4 class="text-xs sm:text-sm font-black text-slate-100 hover:text-pink-300 transition">${authorName}</h4>
+              <div class="flex items-center gap-2">
+                <h4 class="text-xs sm:text-sm font-black text-slate-100 hover:text-pink-300 transition">${authorName}</h4>
+                ${badgeHTML}
+              </div>
               <span class="text-[10px] sm:text-xs text-pink-300/80 font-semibold">${post.category} • ${post.gameName}</span>
             </div>
           </div>
@@ -1244,7 +1256,9 @@
         </div>
 
         <div class="flex justify-between items-center pt-1">
-          <span class="text-emerald-400 font-black text-sm sm:text-base">$${post.price} ${currencyLabel}</span>
+          ${isSalePost 
+            ? `<span class="text-emerald-400 font-black text-sm sm:text-base">$${post.price}${currencyLabel}</span>` 
+            : `<span class="text-slate-400 italic text-xs font-semibold">Publicación cotidiana</span>`}
           <button onclick="window.openChatWithUser('${post.uid}', '${authorName}', '${authorAvatar}')" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white text-xs sm:text-sm font-extrabold px-4 py-2 rounded-xl transition flex items-center gap-2 cursor-pointer shadow-md">
             <i class="fa-solid fa-paper-plane"></i> Mensaje
           </button>
@@ -1425,11 +1439,15 @@
       const pId = document.getElementById('editPostId').value;
       if (!pId) return;
 
+      const priceVal = document.getElementById('editPostPrice').value.trim();
+      const isSale = priceVal !== "" && !isNaN(priceVal) && parseFloat(priceVal) > 0;
+
       const updated = {
         title: document.getElementById('editPostTitle').value,
         description: document.getElementById('editPostDesc').value,
         gameName: document.getElementById('editPostGame').value,
-        price: document.getElementById('editPostPrice').value
+        price: isSale ? priceVal : "",
+        postType: isSale ? "sale" : "daily"
       };
 
       await update(ref(db, `posts/${pId}`), updated);
